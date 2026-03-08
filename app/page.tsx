@@ -56,22 +56,31 @@ export default function DriveManager() {
     }
   };
 
+  // --- UPDATED: Handle Multiple Uploads ---
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const selectedFiles = e.target.files;
+    if (!selectedFiles || selectedFiles.length === 0) return;
 
     setIsUploading(true);
     try {
-      const { url } = await getUploadUrl(file.name, file.type);
-      await fetch(url, {
-        method: "PUT",
-        body: file,
-        headers: { "Content-Type": file.type },
+      // Convert FileList to an array and map to an array of upload promises
+      const uploadPromises = Array.from(selectedFiles).map(async (file) => {
+        const { url } = await getUploadUrl(file.name, file.type);
+        return fetch(url, {
+          method: "PUT",
+          body: file,
+          headers: { "Content-Type": file.type },
+        });
       });
+
+      // Wait for all uploads to complete concurrently
+      await Promise.all(uploadPromises);
+
+      // Refresh the file list once everything is done
       await fetchFiles();
     } catch (error) {
       console.error("Upload failed", error);
-      alert("Failed to upload file.");
+      alert("Failed to upload one or more files.");
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -139,8 +148,8 @@ export default function DriveManager() {
         {/* Title & Info */}
         <div className="flex items-center gap-3 font-bold text-neutral-800 text-lg md:text-xl">
           <span>Storage Manager</span>
-          <span className="text-xs  md:text-base ml-5 font-mono">
-            No of files: {files.length}
+          <span className="text-sm md:text-base  bg-neutral-300 border border-neutral-400 px-2 py-1">
+            TOTAL: {files.length}
           </span>
         </div>
 
@@ -193,18 +202,19 @@ export default function DriveManager() {
               ref={fileInputRef}
               onChange={handleUpload}
               disabled={isUploading}
+              multiple /* <-- UPDATED: Added multiple attribute */
             />
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 text-white  bg-neutral-900 rounded-md hover:bg-neutral-800  px-4 py-1 md:py-1 text-md  md:text-base font-semibold disabled:opacity-50  tracking-wide cursor-pointer"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 text-white  bg-neutral-900 rounded-md hover:bg-neutral-800  px-4 py-1 md:py-1 text-md  md:text-base font-semibold disabled:opacity-50 uppercase tracking-wide cursor-pointer"
             >
               {isUploading ? (
                 <FaSpinner className="animate-spin" size={18} />
               ) : (
                 <FaCloudUploadAlt size={20} />
               )}
-              {isUploading ? "Uploading please wait..." : "Upload"}
+              {isUploading ? "UPLOADING..." : "UPLOAD"}
             </button>
           </div>
         </div>
@@ -239,7 +249,7 @@ export default function DriveManager() {
                         Extension
                       </th>
                       <th className="p-3 md:p-4 w-32 md:w-48 text-center">
-                        Crud
+                        ACTIONS
                       </th>
                     </tr>
                   </thead>
@@ -255,13 +265,13 @@ export default function DriveManager() {
                           className="border-b border-neutral-300 hover:bg-blue-50 cursor-pointer transition-colors"
                           onClick={() => setSelectedFile(file)}
                         >
-                          <td className="border-r border-neutral-300 p-3 md:p-4 text-neutral-900 text-center flex justify-center items-center h-full">
+                          <td className="border-r border-neutral-300 p-3 md:p-4 text-neutral-600 text-center flex justify-center items-center h-full">
                             {getFileIcon(fileType, "text-xl md:text-2xl")}
                           </td>
-                          <td className="border-r border-neutral-300 p-3 md:p-4  text-sm md:text-base text-neutral-900 truncate max-w-[200px] md:max-w-md lg:max-w-xl">
+                          <td className="border-r border-neutral-300 p-3 md:p-4  text-sm md:text-base text-neutral-800 truncate max-w-[200px] md:max-w-md lg:max-w-xl">
                             {fileName}
                           </td>
-                          <td className="border-r border-neutral-300 p-3 md:p-4 text-center  text-sm md:text-sm text-neutral-600 bg-neutral-50">
+                          <td className="border-r border-neutral-300 p-3 md:p-4 text-center  text-xs md:text-sm text-neutral-600 bg-neutral-50">
                             {ext}
                           </td>
                           <td
@@ -270,19 +280,19 @@ export default function DriveManager() {
                           >
                             <button
                               onClick={(e) => handleDownload(e, file.key)}
-                              className="flex items-center gap-1 bg-neutral-900 border border-neutral-800 cursor-pointer rounded-sm  p-2 md:p-3 font-semibold text-white"
+                              className="flex items-center gap-1 bg-neutral-200 border border-neutral-400 hover:bg-neutral-300 p-2 md:p-3 font-semibold text-xs md:text-sm text-neutral-800"
                               title="Download"
                             >
                               <FaDownload size={16} />{" "}
-                              <span className="hidden md:inline"></span>
+                              <span className="hidden md:inline">DWN</span>
                             </button>
                             <button
                               onClick={(e) => handleDelete(e, file.key)}
-                              className="flex items-center gap-1 rounded-sm bg-red-600 cursor-pointer border border-red-300  p-2 md:p-3 font-semibold text-xs md:text-sm text-white"
+                              className="flex items-center gap-1 bg-red-100 border border-red-300 hover:bg-red-200 p-2 md:p-3 font-semibold text-xs md:text-sm text-red-800"
                               title="Delete"
                             >
                               <FaTrash size={16} />{" "}
-                              <span className="hidden md:inline"></span>
+                              <span className="hidden md:inline">DEL</span>
                             </button>
                           </td>
                         </tr>
@@ -303,7 +313,7 @@ export default function DriveManager() {
                     <div
                       key={file.key}
                       onClick={() => setSelectedFile(file)}
-                      className="bg-white rounded-md  border border-neutral-400 hover:bg-blue-50 hover:border-blue-400 cursor-pointer flex flex-col group transition-all"
+                      className="bg-white border border-neutral-400 hover:bg-blue-50 hover:border-blue-400 cursor-pointer flex flex-col group transition-all"
                     >
                       <div className="h-32 sm:h-40 md:h-48 bg-neutral-200 border-b border-neutral-400 flex flex-col items-center justify-center relative overflow-hidden">
                         {fileType === "image" ? (
@@ -330,34 +340,34 @@ export default function DriveManager() {
                         ) : (
                           getFileIcon(
                             fileType,
-                            "text-5xl md:text-6xl text-neutral-900",
+                            "text-5xl md:text-6xl text-neutral-400",
                           )
                         )}
                       </div>
 
                       <div className="p-3 flex flex-col justify-between flex-1">
                         <span
-                          className="text-sm md:text-base  truncate text-neutral-900 mb-2"
+                          className="text-sm md:text-base  truncate text-neutral-800 mb-2"
                           title={fileName}
                         >
                           {fileName}
                         </span>
 
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mt-auto">
-                          <span className="text-xs rounded-sm  bg-neutral-200 border font-semibold border-neutral-300 px-2 py-1 text-neutral-800">
+                          <span className="text-xs  bg-neutral-200 border border-neutral-300 px-2 py-1 text-neutral-700">
                             {ext}
                           </span>
                           <div className="flex gap-2 w-full sm:w-auto">
                             <button
                               onClick={(e) => handleDownload(e, file.key)}
-                              className="flex-1 flex justify-center bg-neutral-900 cursor-pointer rounded-sm  p-2 text-neutral-100"
+                              className="flex-1 flex justify-center bg-neutral-100 hover:bg-neutral-300 border border-neutral-300 p-2 text-neutral-700"
                               title="Download"
                             >
                               <FaDownload size={16} />
                             </button>
                             <button
                               onClick={(e) => handleDelete(e, file.key)}
-                              className="flex-1 cursor-pointer  rounded-sm  flex justify-center bg-red-500 hover:bg-red-600 border border-red-200 p-2 text-white"
+                              className="flex-1 flex justify-center bg-red-50 hover:bg-red-200 border border-red-200 p-2 text-red-700"
                               title="Delete"
                             >
                               <FaTrash size={16} />
@@ -391,21 +401,21 @@ export default function DriveManager() {
             <div className="flex flex-wrap justify-center gap-3 w-full md:w-auto">
               <button
                 onClick={(e) => handleDownload(e, selectedFile.key)}
-                className="flex items-center rounded-sm gap-2 bg-neutral-700 border border-neutral-500 hover:bg-neutral-600 px-4 py-2 text-sm md:text-base font-bold"
+                className="flex items-center gap-2 bg-neutral-700 border border-neutral-500 hover:bg-neutral-600 px-4 py-2 text-sm md:text-base font-bold"
               >
-                <FaDownload size={18} />
+                <FaDownload size={18} /> DOWNLOAD
               </button>
               <button
                 onClick={(e) => handleDelete(e, selectedFile.key)}
-                className="flex items-center rounded-sm gap-2 bg-red-900 border border-red-700 hover:bg-red-800 px-4 py-2 text-sm md:text-base font-bold text-red-100"
+                className="flex items-center gap-2 bg-red-900 border border-red-700 hover:bg-red-800 px-4 py-2 text-sm md:text-base font-bold text-red-100"
               >
-                <FaTrash size={18} />
+                <FaTrash size={18} /> DELETE
               </button>
               <button
                 onClick={() => setSelectedFile(null)}
-                className="flex items-center rounded-sm gap-2 bg-neutral-700 border border-neutral-500 hover:bg-neutral-600 px-4 py-2 text-sm md:text-base font-bold"
+                className="flex items-center gap-2 bg-neutral-700 border border-neutral-500 hover:bg-neutral-600 px-4 py-2 text-sm md:text-base font-bold"
               >
-                <FaTimes size={18} />
+                <FaTimes size={18} /> CLOSE
               </button>
             </div>
           </div>
