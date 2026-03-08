@@ -10,13 +10,13 @@ import {
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3Client } from "@/lib/s3";
 
-const BUCKET_NAME = process.env.AWS_BUCKET_NAME as string;
+const Bucketname = process.env.BUCKET_NAME as string;
 
 export async function getUploadUrl(fileName: string, contentType: string) {
   const key = `photos/${Date.now()}-${fileName.replace(/\s+/g, "-")}`;
 
   const command = new PutObjectCommand({
-    Bucket: BUCKET_NAME,
+    Bucket: Bucketname,
     Key: key,
     ContentType: contentType,
   });
@@ -27,7 +27,7 @@ export async function getUploadUrl(fileName: string, contentType: string) {
 
 export async function listPhotos() {
   const command = new ListObjectsV2Command({
-    Bucket: BUCKET_NAME,
+    Bucket: Bucketname,
     Prefix: "photos/",
   });
 
@@ -38,7 +38,7 @@ export async function listPhotos() {
   const photos = await Promise.all(
     files.map(async (file) => {
       const getCommand = new GetObjectCommand({
-        Bucket: BUCKET_NAME,
+        Bucket: Bucketname,
         Key: file.Key,
       });
       // Generate a temporary viewing URL valid for 1 hour
@@ -53,7 +53,7 @@ export async function listPhotos() {
 
 export async function deletePhoto(key: string) {
   const command = new DeleteObjectCommand({
-    Bucket: BUCKET_NAME,
+    Bucket: Bucketname,
     Key: key,
   });
   await s3Client.send(command);
@@ -63,7 +63,7 @@ export async function deletePhoto(key: string) {
 export async function getDownloadUrl(key: string) {
   // Forces the browser to download the file rather than just viewing it
   const command = new GetObjectCommand({
-    Bucket: BUCKET_NAME,
+    Bucket: Bucketname,
     Key: key,
     ResponseContentDisposition: `attachment; filename="${key.split("/").pop()}"`,
   });
