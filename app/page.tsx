@@ -142,21 +142,21 @@ export default function DriveManager() {
   );
 
   return (
-    <div className="w-full min-h-screen bg-neutral-100 text-neutral-900  text-base md:text-lg selection:bg-blue-300 flex flex-col">
+    <div className="w-full min-h-screen bg-neutral-900 text-neutral-100  text-base md:text-lg  flex flex-col">
       {/* --- Top Control Panel --- */}
-      <div className="bg-neutral-200 border-b border-neutral-400 p-3 md:p-4 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+      <div className="bg-neutral-800 border-b border-neutral-800 p-3 md:p-4 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         {/* Title & Info */}
-        <div className="flex items-center gap-3 font-bold text-neutral-800 text-lg md:text-xl">
+        <div className="flex items-center gap-3 font-bold text-neutral-100 text-lg md:text-xl">
           <span>Storage Manager</span>
-          <span className="text-sm md:text-base  bg-neutral-300 border border-neutral-400 px-2 py-1">
-            TOTAL: {files.length}
+          <span className="text-sm md:text-base  bg-neutral-700 rounded-full  px-2 py-1">
+            No of files: {files.length}
           </span>
         </div>
 
         {/* Toolbar Controls */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
           {/* Search */}
-          <div className="flex items-center border border-neutral-400 rounded-sm bg-white px-3 py-2 flex-1 sm:flex-none">
+          <div className="flex items-center border-2 border-[#444444] rounded-full bg-[#313131] px-3 py-2 flex-1 sm:flex-none">
             <FaSearch className="text-neutral-500 mr-3" size={18} />
             <input
               type="text"
@@ -169,28 +169,29 @@ export default function DriveManager() {
 
           <div className="flex gap-3  w-full sm:w-auto">
             {/* View Toggles */}
-            <div className="flex border rounded-md border-neutral-400 bg-white">
+            <div className="flex border border-neutral-700 rounded-2xl bg-neutral-800 overflow-hidden">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-3 border-r border-neutral-400 flex-1 sm:flex-none flex justify-center ${
+                className={`p-3 flex-1 sm:flex-none flex justify-center items-center border-r border-neutral-700 transition-colors ${
                   viewMode === "grid"
-                    ? "bg-neutral-300"
-                    : "hover:bg-neutral-100"
+                    ? "bg-neutral-700 text-white"
+                    : "text-neutral-300 hover:bg-neutral-700"
                 }`}
                 title="Grid View"
               >
-                <FaThLarge size={20} className="text-neutral-800" />
+                <FaThLarge size={18} />
               </button>
+
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-3 flex-1 sm:flex-none flex justify-center ${
+                className={`p-3 flex-1 sm:flex-none flex justify-center items-center transition-colors ${
                   viewMode === "list"
-                    ? "bg-neutral-300"
-                    : "hover:bg-neutral-100"
+                    ? "bg-neutral-700 text-white"
+                    : "text-neutral-300 hover:bg-neutral-700"
                 }`}
                 title="List View"
               >
-                <FaListUl size={20} className="text-neutral-800" />
+                <FaListUl size={18} />
               </button>
             </div>
 
@@ -207,7 +208,7 @@ export default function DriveManager() {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 text-white  bg-neutral-900 rounded-md hover:bg-neutral-800  px-4 py-1 md:py-1 text-md  md:text-base font-semibold disabled:opacity-50 uppercase tracking-wide cursor-pointer"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 text-white  bg-blue-700 rounded-full hover:bg-blue-600  px-2 py-1 md:py-1 text-md  md:text-base font-semibold disabled:opacity-50 uppercase tracking-wide cursor-pointer"
             >
               {isUploading ? (
                 <FaSpinner className="animate-spin" size={18} />
@@ -235,20 +236,20 @@ export default function DriveManager() {
           <>
             {viewMode === "list" ? (
               /* --- Data Table View --- */
-              <div className="overflow-x-auto border border-neutral-400 bg-white rounded-lg">
+              <div className="overflow-x-auto border-2 border-[#444444] bg-[#313131] rounded-lg">
                 <table className="w-full  border-collapse text-left whitespace-nowrap">
-                  <thead className="bg-neutral-200 border-b border-neutral-400  text-neutral-800 font-bold text-sm md:text-base">
+                  <thead className="bg-[#181818] border-b border-[#444444]  text-neutral-100 font-semibold text-sm md:text-base">
                     <tr>
-                      <th className="border-r border-neutral-400 p-3 md:p-4 w-12 text-center">
+                      <th className="border-r border-[#444444] p-2 md:p-2 w-12 text-center">
                         Type
                       </th>
-                      <th className="border-r border-neutral-400 p-3 md:p-4">
+                      <th className="border-r border-[#444444] p-2 md:p-2">
                         Filename
                       </th>
-                      <th className="border-r border-neutral-400 p-3 md:p-4 w-24 text-center">
+                      <th className="border-r border-[#444444] p-2 md:p-2 w-24 text-center">
                         Extension
                       </th>
-                      <th className="p-3 md:p-4 w-32 md:w-48 text-center">
+                      <th className="p-2 md:p-2 w-32 md:w-48 text-center">
                         ACTIONS
                       </th>
                     </tr>
@@ -262,37 +263,37 @@ export default function DriveManager() {
                       return (
                         <tr
                           key={file.key}
-                          className="border-b border-neutral-300 hover:bg-blue-50 cursor-pointer transition-colors"
+                          className="border-b border-[#444444] hover:bg-[#252525] cursor-pointer transition-colors"
                           onClick={() => setSelectedFile(file)}
                         >
-                          <td className="border-r border-neutral-300 p-3 md:p-4 text-neutral-600 text-center flex justify-center items-center h-full">
+                          <td className="border-r border-[#444444] p-2 md:p-2 text-green-500 text-center flex justify-center items-center h-full">
                             {getFileIcon(fileType, "text-xl md:text-2xl")}
                           </td>
-                          <td className="border-r border-neutral-300 p-3 md:p-4  text-sm md:text-base text-neutral-800 truncate max-w-[200px] md:max-w-md lg:max-w-xl">
+                          <td className="border-r border-[#444444] p-2 md:p-2  text-sm md:text-base text-neutral-100 truncate max-w-[200px] md:max-w-md lg:max-w-xl">
                             {fileName}
                           </td>
-                          <td className="border-r border-neutral-300 p-3 md:p-4 text-center  text-xs md:text-sm text-neutral-600 bg-neutral-50">
+                          <td className="border-r border-[#444444] p-2 md:p-2 text-center  text-sm md:text-sm text-neutral-100 bg-[#313131]">
                             {ext}
                           </td>
                           <td
-                            className="p-2 md:p-3 flex items-center justify-center gap-2"
+                            className="p-2 md:p-2 flex items-center justify-center gap-2"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <button
                               onClick={(e) => handleDownload(e, file.key)}
-                              className="flex items-center gap-1 bg-neutral-200 border border-neutral-400 hover:bg-neutral-300 p-2 md:p-3 font-semibold text-xs md:text-sm text-neutral-800"
+                              className="flex items-center gap-1 bg-neutral-900 p-2 md:p-2 rounded-xl cursor-pointer font-semibold text-sm md:text-sm text-neutral-100"
                               title="Download"
                             >
                               <FaDownload size={16} />{" "}
-                              <span className="hidden md:inline">DWN</span>
+                              <span className="hidden md:inline"></span>
                             </button>
                             <button
                               onClick={(e) => handleDelete(e, file.key)}
-                              className="flex items-center gap-1 bg-red-100 border border-red-300 hover:bg-red-200 p-2 md:p-3 font-semibold text-xs md:text-sm text-red-800"
+                              className="flex items-center gap-1 bg-red-600  hover:bg-red-500 p-2 md:p-2 font-semibold text-xs md:text-sm cursor-pointer text-white rounded-xl"
                               title="Delete"
                             >
                               <FaTrash size={16} />{" "}
-                              <span className="hidden md:inline">DEL</span>
+                              <span className="hidden md:inline"></span>
                             </button>
                           </td>
                         </tr>
@@ -313,9 +314,9 @@ export default function DriveManager() {
                     <div
                       key={file.key}
                       onClick={() => setSelectedFile(file)}
-                      className="bg-white border border-neutral-400 hover:bg-blue-50 hover:border-blue-400 cursor-pointer flex flex-col group transition-all"
+                      className="bg-[#202020] border border-[#444444] rounded-3xl cursor-pointer flex flex-col group transition-all"
                     >
-                      <div className="h-32 sm:h-40 md:h-48 bg-neutral-200 border-b border-neutral-400 flex flex-col items-center justify-center relative overflow-hidden">
+                      <div className="h-32 sm:h-40 md:h-48 bg-[#313131] border-b border-[#444444] rounded-3xl flex flex-col items-center justify-center relative overflow-hidden">
                         {fileType === "image" ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
@@ -330,7 +331,7 @@ export default function DriveManager() {
                               src={file.url}
                               className="w-full h-full object-cover"
                             />
-                            <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                            <div className="absolute inset-0 bg-[#000000]/50 flex items-center justify-center">
                               <FaPlay
                                 className="text-white drop-shadow-md"
                                 size={32}
@@ -347,27 +348,27 @@ export default function DriveManager() {
 
                       <div className="p-3 flex flex-col justify-between flex-1">
                         <span
-                          className="text-sm md:text-base  truncate text-neutral-800 mb-2"
+                          className="text-sm md:text-base  truncate text-neutral-100 mb-2"
                           title={fileName}
                         >
                           {fileName}
                         </span>
 
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mt-auto">
-                          <span className="text-xs  bg-neutral-200 border border-neutral-300 px-2 py-1 text-neutral-700">
+                          <span className="text-xs   px-2 py-1 font-bold text-green-500">
                             {ext}
                           </span>
                           <div className="flex gap-2 w-full sm:w-auto">
                             <button
                               onClick={(e) => handleDownload(e, file.key)}
-                              className="flex-1 flex justify-center bg-neutral-100 hover:bg-neutral-300 border border-neutral-300 p-2 text-neutral-700"
+                              className="flex-1 flex justify-center bg-blue-500 rounded-full cursor-pointer hover:bg-blue-600 border border-blue-600 p-2 text-white"
                               title="Download"
                             >
                               <FaDownload size={16} />
                             </button>
                             <button
                               onClick={(e) => handleDelete(e, file.key)}
-                              className="flex-1 flex justify-center bg-red-50 hover:bg-red-200 border border-red-200 p-2 text-red-700"
+                              className="flex-1 flex justify-center cursor-pointer bg-red-500 rounded-full hover:bg-red-600 border border-red-600 p-2 text-white"
                               title="Delete"
                             >
                               <FaTrash size={16} />
@@ -387,35 +388,35 @@ export default function DriveManager() {
       {/* --- File Viewer Overlay --- */}
       {selectedFile && (
         <div
-          className="fixed inset-0 z-50 bg-neutral-900/95 flex flex-col"
+          className="fixed inset-0 z-50 bg-neutral-900/20 backdrop-blur-xs flex flex-col"
           onClick={() => setSelectedFile(null)}
         >
           {/* Overlay Toolbar */}
           <div
-            className="bg-neutral-800 border-b border-neutral-600 p-3 md:p-4 flex flex-col md:flex-row justify-between items-center text-neutral-200 gap-4"
+            className="bg-black/20 border-b border-neutral-600 mt-2 mr-2 ml-2   rounded-full  p-2 md:p-2 flex flex-col md:flex-row justify-between items-center text-neutral-200 gap-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className=" text-sm md:text-lg lg:text-xl truncate w-full md:w-auto text-center md:text-left">
+            <div className=" text-md md:text-lg lg:text-xl truncate  w-full md:w-auto text-center md:text-left">
               {getFileName(selectedFile.key)}
             </div>
             <div className="flex flex-wrap justify-center gap-3 w-full md:w-auto">
               <button
                 onClick={(e) => handleDownload(e, selectedFile.key)}
-                className="flex items-center gap-2 bg-neutral-700 border border-neutral-500 hover:bg-neutral-600 px-4 py-2 text-sm md:text-base font-bold"
+                className="flex items-center gap-2 bg-neutral-700/20 backdrop-blur-xs border border-[#444444]/20 rounded-full cursor-pointer  px-4 py-2 text-sm md:text-base font-bold"
               >
-                <FaDownload size={18} /> DOWNLOAD
+                <FaDownload size={18} />
               </button>
               <button
                 onClick={(e) => handleDelete(e, selectedFile.key)}
-                className="flex items-center gap-2 bg-red-900 border border-red-700 hover:bg-red-800 px-4 py-2 text-sm md:text-base font-bold text-red-100"
+                className="flex items-center gap-2 bg-red-900/20 backdrop-blur-xs border border-[#444444]/20 rounded-full cursor-pointer  px-4 py-2 text-sm md:text-base font-bold text-red-100"
               >
-                <FaTrash size={18} /> DELETE
+                <FaTrash size={18} />
               </button>
               <button
                 onClick={() => setSelectedFile(null)}
-                className="flex items-center gap-2 bg-neutral-700 border border-neutral-500 hover:bg-neutral-600 px-4 py-2 text-sm md:text-base font-bold"
+                className="flex items-center gap-2 bg-neutral-700/20 backdrop-blur-xs border border-[#444444]/20 rounded-full cursor-pointer  px-4 py-2 text-sm md:text-base font-bold"
               >
-                <FaTimes size={18} /> CLOSE
+                <FaTimes size={18} />
               </button>
             </div>
           </div>
