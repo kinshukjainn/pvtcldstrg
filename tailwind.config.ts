@@ -11,8 +11,8 @@ const config: Config = {
     extend: {
       fontFamily: {
         // Add your custom font here
-        lucida: "var(--font-lucida) , sans-serif",
         inter: "var(--font-inter) , sans-serif",
+        lucida: "var(--font-lucida) , sans-serif",
       },
     },
   },

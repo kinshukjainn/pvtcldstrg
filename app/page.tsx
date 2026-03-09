@@ -11,6 +11,8 @@ import {
   FaFileVideo,
   FaFilePdf,
   FaFileAlt,
+  FaFilePowerpoint,
+  FaFileExcel,
   FaSearch,
   FaThLarge,
   FaListUl,
@@ -56,14 +58,12 @@ export default function DriveManager() {
     }
   };
 
-  // --- UPDATED: Handle Multiple Uploads ---
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
     if (!selectedFiles || selectedFiles.length === 0) return;
 
     setIsUploading(true);
     try {
-      // Convert FileList to an array and map to an array of upload promises
       const uploadPromises = Array.from(selectedFiles).map(async (file) => {
         const { url } = await getUploadUrl(file.name, file.type);
         return fetch(url, {
@@ -73,10 +73,7 @@ export default function DriveManager() {
         });
       });
 
-      // Wait for all uploads to complete concurrently
       await Promise.all(uploadPromises);
-
-      // Refresh the file list once everything is done
       await fetchFiles();
     } catch (error) {
       console.error("Upload failed", error);
@@ -123,18 +120,35 @@ export default function DriveManager() {
 
   const getFileType = (fileName: string) => {
     const ext = fileName.split(".").pop()?.toLowerCase() || "";
+
     if (["mp4", "webm", "ogg", "mov"].includes(ext)) return "video";
     if (["pdf"].includes(ext)) return "pdf";
     if (["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(ext))
       return "image";
+    if (["pptx", "ppt"].includes(ext)) return "presentation";
+    if (["xlsx", "xls", "csv"].includes(ext)) return "spreadsheet";
+    if (["md", "txt"].includes(ext)) return "text";
+
     return "other";
   };
 
   const getFileIcon = (type: string, className: string) => {
-    if (type === "video") return <FaFileVideo className={className} />;
-    if (type === "pdf") return <FaFilePdf className={className} />;
-    if (type === "image") return <FaFileImage className={className} />;
-    return <FaFileAlt className={className} />;
+    switch (type) {
+      case "video":
+        return <FaFileVideo className={className} />;
+      case "pdf":
+        return <FaFilePdf className={className} />;
+      case "image":
+        return <FaFileImage className={className} />;
+      case "presentation":
+        return <FaFilePowerpoint className={className} />;
+      case "spreadsheet":
+        return <FaFileExcel className={className} />;
+      case "text":
+        return <FaFileAlt className={className} />;
+      default:
+        return <FaFileAlt className={className} />;
+    }
   };
 
   const filteredFiles = files.filter((file) =>
@@ -198,12 +212,12 @@ export default function DriveManager() {
             {/* Upload Button */}
             <input
               type="file"
-              accept="image/*,video/*,application/pdf"
+              accept="image/*,video/*,application/pdf,.pptx,.ppt,.xlsx,.xls,.csv,.txt,.md"
               className="hidden"
               ref={fileInputRef}
               onChange={handleUpload}
               disabled={isUploading}
-              multiple /* <-- UPDATED: Added multiple attribute */
+              multiple
             />
             <button
               onClick={() => fileInputRef.current?.click()}
@@ -451,7 +465,10 @@ export default function DriveManager() {
               />
             )}
 
-            {getFileType(getFileName(selectedFile.key)) === "other" && (
+            {/* Check against explicitly supported preview types */}
+            {!["image", "video", "pdf"].includes(
+              getFileType(getFileName(selectedFile.key)),
+            ) && (
               <div className="bg-neutral-200 border border-neutral-400 p-10 md:p-16 text-center flex flex-col items-center max-w-lg w-full">
                 <FaFileAlt className="text-7xl md:text-8xl text-neutral-500 mb-6" />
                 <h3 className="font-bold text-neutral-900 text-xl md:text-2xl mb-3">
