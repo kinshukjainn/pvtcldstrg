@@ -1,4 +1,3 @@
-// actions/drive.ts
 "use server";
 
 import {
@@ -60,7 +59,8 @@ export async function listPhotos() {
         const url = await getSignedUrl(s3Client, getCommand, {
           expiresIn: 3600,
         });
-        return { key: file.Key!, url };
+        // Pass the file.Size along to the frontend
+        return { key: file.Key!, url, size: file.Size || 0 };
       }),
     );
 

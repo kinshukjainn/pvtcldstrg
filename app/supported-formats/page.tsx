@@ -92,7 +92,7 @@ export default function SupportedFormatsPage() {
               An image identifier has the following supported extensions:
             </p>
 
-            <div className="bg-white text-black p-3 my-4 font-mono text-xs md:text-sm overflow-x-auto shadow-inner">
+            <div className="bg-white text-black p-3 my-4  text-xs md:text-sm overflow-x-auto shadow-inner">
               .jpg, .jpeg, .png, .gif, .webp, .svg
             </div>
 
@@ -101,7 +101,7 @@ export default function SupportedFormatsPage() {
               select:
             </p>
 
-            <div className="bg-white text-black p-3 my-4 font-mono text-xs md:text-sm overflow-x-auto shadow-inner">
+            <div className="bg-white text-black p-3 my-4  text-xs md:text-sm overflow-x-auto shadow-inner">
               upload -f image profile_picture.webp
             </div>
 
@@ -149,7 +149,7 @@ export default function SupportedFormatsPage() {
               Supported video extensions include:
             </p>
 
-            <div className="bg-white text-black p-3 my-4 font-mono text-xs md:text-sm overflow-x-auto shadow-inner">
+            <div className="bg-white text-black p-3 my-4  text-xs md:text-sm overflow-x-auto shadow-inner">
               .mp4, .webm, .ogg, .mov
             </div>
 
@@ -187,28 +187,28 @@ export default function SupportedFormatsPage() {
             <p className="mb-2 mt-4 text-[#eeeeee] font-semibold text-sm md:text-base">
               PDF Documents:
             </p>
-            <div className="bg-white text-black p-3 my-2 font-mono text-xs md:text-sm overflow-x-auto shadow-inner">
+            <div className="bg-white text-black p-3 my-2  text-xs md:text-sm overflow-x-auto shadow-inner">
               .pdf (Supports inline iframe preview)
             </div>
 
             <p className="mb-2 mt-4 text-[#eeeeee] font-semibold text-sm md:text-base">
               Presentations:
             </p>
-            <div className="bg-white text-black p-3 my-2 font-mono text-xs md:text-sm overflow-x-auto shadow-inner">
+            <div className="bg-white text-black p-3 my-2  text-xs md:text-sm overflow-x-auto shadow-inner">
               .pptx, .ppt
             </div>
 
             <p className="mb-2 mt-4 text-[#eeeeee] font-semibold text-sm md:text-base">
               Spreadsheets & Data:
             </p>
-            <div className="bg-white text-black p-3 my-2 font-mono text-xs md:text-sm overflow-x-auto shadow-inner">
+            <div className="bg-white text-black p-3 my-2  text-xs md:text-sm overflow-x-auto shadow-inner">
               .xlsx, .xls, .csv
             </div>
 
             <p className="mb-2 mt-4 text-[#eeeeee] font-semibold text-sm md:text-base">
               Plain Text & Markdown:
             </p>
-            <div className="bg-white text-black p-3 my-2 font-mono text-xs md:text-sm overflow-x-auto shadow-inner">
+            <div className="bg-white text-black p-3 my-2  text-xs md:text-sm overflow-x-auto shadow-inner">
               .md, .txt
             </div>
 

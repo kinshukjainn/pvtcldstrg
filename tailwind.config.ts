@@ -13,6 +13,7 @@ const config: Config = {
         // Add your custom font here
         inter: "var(--font-inter) , sans-serif",
         lucida: "var(--font-lucida) , sans-serif",
+        googleSans: "var(--font-google-sans) , sans-serif",
       },
     },
   },
