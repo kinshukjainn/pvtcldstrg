@@ -14,6 +14,7 @@ const config: Config = {
         inter: "var(--font-inter) , sans-serif",
         lucida: "var(--font-lucida) , sans-serif",
         googleSans: "var(--font-google-sans) , sans-serif",
+        geist: "var(--font-geist-mono) , monospaced",
       },
     },
   },
