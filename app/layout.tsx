@@ -20,6 +20,17 @@ export const lucideSans = localFont({
   display: "swap",
 });
 
+export const segoeui = localFont({
+  src: [
+    {
+      path: "../public/fonts/segoeui.woff2",
+      weight: "400",
+      style: "normal",
+    },
+  ],
+  variable: "--font-segoe-ui", // optional CSS variable
+  display: "swap", // recommended
+});
 export const googleSans = localFont({
   src: "../public/fonts/another.woff2",
   variable: "--font-google-sans",
@@ -48,7 +59,7 @@ export default function RootLayout({
   return (
     <html lang="en" data-google-analytics-opt-out="">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${lucideSans.variable} ${googleSans.variable} antialiased`}
+        className={`${geistSans.variable} ${segoeui.variable} ${geistMono.variable} ${inter.variable} ${lucideSans.variable} ${googleSans.variable} antialiased`}
       >
         <Header />
         <main>{children}</main>

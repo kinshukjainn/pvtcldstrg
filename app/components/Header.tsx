@@ -6,7 +6,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link href="/">
           <h1 className="text-zinc-100 text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight hover:opacity-80 transition-opacity">
-            fss.pvt
+            @kinshuk&apos;s Cloud Storage
           </h1>
         </Link>
 
