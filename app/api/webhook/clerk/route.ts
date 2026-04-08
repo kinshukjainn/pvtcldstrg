@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/db";
+import { DEFAULT_STORAGE_LIMIT_BYTES } from "@/actions/constants"; // FIX: no more magic number in SQL
 
 export async function POST(req: Request) {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
@@ -49,7 +50,6 @@ export async function POST(req: Request) {
       image_url,
     } = evt.data;
 
-    // Use the actual primary email, not just the first in the array
     const primaryEmail =
       email_addresses.find((e) => e.id === primary_email_address_id)
         ?.email_address ?? email_addresses[0]?.email_address;
@@ -64,7 +64,14 @@ export async function POST(req: Request) {
     try {
       await sql`
         INSERT INTO users (clerk_id, email, name, avatar_url, storage_used, storage_limit)
-        VALUES (${id}, ${primaryEmail}, ${name}, ${image_url ?? null}, 0, 5368709120)
+        VALUES (
+          ${id},
+          ${primaryEmail},
+          ${name},
+          ${image_url ?? null},
+          0,
+          ${DEFAULT_STORAGE_LIMIT_BYTES}
+        )
         ON CONFLICT (clerk_id) DO NOTHING
       `;
       return NextResponse.json({ message: "User synced" }, { status: 201 });
@@ -94,7 +101,11 @@ export async function POST(req: Request) {
     try {
       await sql`
         UPDATE users
-        SET email = ${primaryEmail}, name = ${name}, avatar_url = ${image_url ?? null}, updated_at = NOW()
+        SET
+          email      = ${primaryEmail},
+          name       = ${name},
+          avatar_url = ${image_url ?? null},
+          updated_at = NOW()
         WHERE clerk_id = ${id}
       `;
       return NextResponse.json({ message: "User updated" }, { status: 200 });
@@ -122,6 +133,5 @@ export async function POST(req: Request) {
     }
   }
 
-  // Unhandled event type — acknowledge it
   return new Response("", { status: 200 });
 }

@@ -21,7 +21,7 @@ import {
 } from "react-icons/fa";
 import {
   getUploadUrl,
-  confirmUploadDB, // <-- New import
+  confirmUploadDB,
   listPhotos,
   deletePhoto,
   getDownloadUrl,
@@ -30,7 +30,7 @@ import {
 type DriveFile = {
   key: string;
   url: string;
-  size?: number; // Added to support storage calculation
+  size?: number;
 };
 
 type PhotoItem = {
@@ -39,7 +39,6 @@ type PhotoItem = {
   size?: number;
 };
 
-// Helper function to format file size
 const formatBytes = (bytes: number, decimals = 2) => {
   if (!+bytes) return "0 Bytes";
   const k = 1024;
@@ -53,38 +52,55 @@ export default function DriveManager() {
   const [files, setFiles] = useState<DriveFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
+  const [page, setPage] = useState(0);
+  const [totalFiles, setTotalFiles] = useState(0);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [selectedFile, setSelectedFile] = useState<DriveFile | null>(null);
-
-  // New state for custom delete confirmation modal
   const [fileToDelete, setFileToDelete] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    fetchFiles();
+    fetchFiles(0, true);
   }, []);
 
-  const fetchFiles = async () => {
-    setIsLoading(true);
+  // ─── FIX #3: paginated fetch — only loads FILE_LIST_PAGE_SIZE files at once ───
+  const fetchFiles = async (pageNum = 0, replace = false) => {
+    if (replace) {
+      setIsLoading(true);
+    } else {
+      setIsLoadingMore(true);
+    }
+
     try {
-      const data = await listPhotos();
-      setFiles(
-        data.map((item: PhotoItem) => ({
-          key: item.key || item.url,
-          url: item.url,
-          size: item.size,
-        })),
-      );
+      const data = await listPhotos(pageNum);
+      const mapped = data.files.map((item: PhotoItem) => ({
+        key: item.key || item.url,
+        url: item.url,
+        size: item.size,
+      }));
+
+      setFiles((prev) => (replace ? mapped : [...prev, ...mapped]));
+      setHasMore(data.hasMore);
+      setTotalFiles(data.total);
+      setPage(pageNum);
     } catch (error) {
       console.error("Failed to fetch:", error);
     } finally {
       setIsLoading(false);
+      setIsLoadingMore(false);
     }
   };
 
+  const handleLoadMore = () => fetchFiles(page + 1, false);
+
+  // ─── FIX #1: Presigned POST upload ───────────────────────────────────────────
+  // getUploadUrl now returns { url, fields, key } instead of { url, key }.
+  // The upload uses FormData with a POST request so AWS enforces content-length-range.
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
     if (!selectedFiles || selectedFiles.length === 0) return;
@@ -92,28 +108,39 @@ export default function DriveManager() {
     setIsUploading(true);
     try {
       const uploadPromises = Array.from(selectedFiles).map(async (file) => {
-        // 1. Get URL and check DB size limit
-        const { url, key } = await getUploadUrl(
+        // 1. Get Presigned POST credentials (includes AWS-enforced size policy)
+        const { url, fields, key } = await getUploadUrl(
           file.name,
           file.type,
           file.size,
         );
 
-        // 2. Upload to S3 directly
+        // 2. Build the multipart form S3 expects for a Presigned POST
+        const formData = new FormData();
+        Object.entries(fields).forEach(([k, v]) =>
+          formData.append(k, v as string),
+        );
+        // "file" must be the LAST field per S3 Presigned POST spec
+        formData.append("file", file);
+
         const response = await fetch(url, {
-          method: "PUT",
-          body: file,
-          headers: { "Content-Type": file.type },
+          method: "POST",
+          body: formData,
         });
 
-        if (!response.ok) throw new Error("S3 Upload Failed");
+        // S3 returns 204 on success for presigned POST (not 200)
+        if (!response.ok && response.status !== 204) {
+          throw new Error(`S3 upload failed: ${response.status}`);
+        }
 
-        // 3. Confirm in Neon DB so storage usage updates
-        await confirmUploadDB(key, file.name, file.size);
+        // 3. FIX #2: confirmUploadDB now calls HeadObject to verify the file
+        //    actually arrived and reads the real size from AWS — not the client.
+        await confirmUploadDB(key, file.name, file.size, file.type);
       });
 
       await Promise.all(uploadPromises);
-      await fetchFiles();
+      // Refresh from page 0 so the new files appear at the top
+      await fetchFiles(0, true);
     } catch (error) {
       console.error("Upload failed", error);
       alert(
@@ -133,23 +160,20 @@ export default function DriveManager() {
 
   const confirmDelete = async () => {
     if (!fileToDelete) return;
-
-    // Find the file to get its size before deleting
     const fileObj = files.find((f) => f.key === fileToDelete);
     if (!fileObj) return;
 
     const key = fileToDelete;
     setFileToDelete(null);
-
     setFiles((prev) => prev.filter((p) => p.key !== key));
     if (selectedFile?.key === key) setSelectedFile(null);
+    setTotalFiles((t) => t - 1);
 
     try {
-      // Pass the size so the backend can subtract it from the DB
       await deletePhoto(key, fileObj.size || 0);
     } catch (error) {
       console.error("Delete failed", error);
-      fetchFiles();
+      fetchFiles(0, true);
     }
   };
 
@@ -167,7 +191,6 @@ export default function DriveManager() {
     }
   };
 
-  // --- Helper Functions ---
   const getFileName = (key: string) => key.split("/").pop() || key;
 
   const getFileExtension = (fileName: string) =>
@@ -175,7 +198,6 @@ export default function DriveManager() {
 
   const getFileType = (fileName: string) => {
     const ext = fileName.split(".").pop()?.toLowerCase() || "";
-
     if (["mp4", "webm", "ogg", "mov"].includes(ext)) return "video";
     if (["pdf"].includes(ext)) return "pdf";
     if (["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(ext))
@@ -183,7 +205,6 @@ export default function DriveManager() {
     if (["pptx", "ppt"].includes(ext)) return "presentation";
     if (["xlsx", "xls", "csv"].includes(ext)) return "spreadsheet";
     if (["md", "txt"].includes(ext)) return "text";
-
     return "other";
   };
 
@@ -199,8 +220,6 @@ export default function DriveManager() {
         return <FaFilePowerpoint className={className} />;
       case "spreadsheet":
         return <FaFileExcel className={className} />;
-      case "text":
-        return <FaFileAlt className={className} />;
       default:
         return <FaFileAlt className={className} />;
     }
@@ -210,34 +229,29 @@ export default function DriveManager() {
     getFileName(file.key).toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  // Calculate total size of all fetched files
   const totalSize = files.reduce((acc, file) => acc + (file.size || 0), 0);
 
   return (
-    // Changed to  and standard neutral-950 base
-    <div className="w-full min-h-screen bg-[#0d1014] text-neutral-200  flex flex-col relative overflow-hidden">
+    <div className="w-full min-h-screen bg-[#0d1014] text-neutral-200 flex flex-col relative overflow-hidden">
       {/* --- Top Control Panel --- */}
       <div className="bg-[#0d1014] backdrop-blur-md border-b border-neutral-800 p-4 md:p-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 z-10">
-        {/* Title & Info */}
         <div className="flex flex-wrap items-center gap-3 font-medium text-neutral-100">
           <span className="text-xs md:text-sm bg-transparent backdrop-blur-sm border border-neutral-800 rounded-full px-4 py-1.5 flex gap-2 items-center shadow-lg">
             <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-            Files: {files.length}
+            Files: {totalFiles}
           </span>
           <span className="text-xs md:text-sm bg-transparent backdrop-blur-sm border border-neutral-800 rounded-full px-4 py-1.5 flex gap-2 items-center shadow-lg">
             <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-            Storage: {formatBytes(totalSize)}
+            Loaded: {formatBytes(totalSize)}
           </span>
         </div>
 
-        {/* Toolbar Controls */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
-          {/* Search */}
-          <div className="flex items-center border-b-3 border-blue-500 border-2  rounded-t-xl bg-transparent backdrop-blur-md px-4 py-2 flex-1 sm:flex-none  transition-colors">
+          <div className="flex items-center border-b-3 border-blue-500 border-2 rounded-t-xl bg-transparent backdrop-blur-md px-4 py-2 flex-1 sm:flex-none transition-colors">
             <FaSearch className="text-neutral-500 mr-3" size={16} />
             <input
               type="text"
-              placeholder="Search files , images , pdf etc ..."
+              placeholder="Search files, images, pdf etc..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full sm:w-48 md:w-64 outline-none text-md md:text-base bg-transparent placeholder-neutral-600 text-neutral-200"
@@ -245,7 +259,6 @@ export default function DriveManager() {
           </div>
 
           <div className="flex gap-3 w-full sm:w-auto">
-            {/* View Toggles */}
             <div className="flex border border-neutral-800 rounded-xl bg-neutral-900/40 overflow-hidden p-1 backdrop-blur-md">
               <button
                 onClick={() => setViewMode("grid")}
@@ -258,7 +271,6 @@ export default function DriveManager() {
               >
                 <FaThLarge size={16} />
               </button>
-
               <button
                 onClick={() => setViewMode("list")}
                 className={`p-2 px-4 rounded-lg flex-1 sm:flex-none flex justify-center items-center transition-all ${
@@ -272,7 +284,6 @@ export default function DriveManager() {
               </button>
             </div>
 
-            {/* Upload Button */}
             <input
               type="file"
               accept="image/*,video/*,application/pdf,.pptx,.ppt,.xlsx,.xls,.csv,.txt,.md"
@@ -285,7 +296,7 @@ export default function DriveManager() {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
-              className="group flex-1 sm:flex-none flex items-center justify-center gap-2 bg-blue-700 text-neutral-100 px-6 cursor-pointer py-2 rounded-xl font-semibold text-md md:text-base "
+              className="group flex-1 sm:flex-none flex items-center justify-center gap-2 bg-blue-700 text-neutral-100 px-6 cursor-pointer py-2 rounded-xl font-semibold text-md md:text-base"
             >
               {isUploading ? (
                 <FaSpinner className="animate-spin" size={16} />
@@ -314,10 +325,9 @@ export default function DriveManager() {
         ) : (
           <>
             {viewMode === "list" ? (
-              /* --- Data Table View --- */
               <div className="overflow-x-auto border border-neutral-800 bg-neutral-900/40 backdrop-blur-md rounded-2xl shadow-xl">
                 <table className="w-full border-collapse text-left whitespace-nowrap">
-                  <thead className="bg-neutral-900/60 border-b border-neutral-800 text-blue-400 font-medium text-md md:text-sm  tracking-wider">
+                  <thead className="bg-neutral-900/60 border-b border-neutral-800 text-blue-400 font-medium text-md md:text-sm tracking-wider">
                     <tr>
                       <th className="p-4 w-16 text-center">Type</th>
                       <th className="p-4">Filename</th>
@@ -330,7 +340,6 @@ export default function DriveManager() {
                       const fileName = getFileName(file.key);
                       const fileType = getFileType(fileName);
                       const ext = getFileExtension(fileName);
-
                       return (
                         <tr
                           key={file.key}
@@ -372,13 +381,11 @@ export default function DriveManager() {
                 </table>
               </div>
             ) : (
-              /* --- Block/Grid View --- */
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
                 {filteredFiles.map((file) => {
                   const fileName = getFileName(file.key);
                   const fileType = getFileType(fileName);
                   const ext = getFileExtension(fileName);
-
                   return (
                     <div
                       key={file.key}
@@ -413,7 +420,6 @@ export default function DriveManager() {
                           )
                         )}
                       </div>
-
                       <div className="p-4 flex flex-col justify-between flex-1">
                         <span
                           className="text-xs md:text-sm truncate text-neutral-200 font-medium mb-4 group-hover:text-white transition-colors"
@@ -421,7 +427,6 @@ export default function DriveManager() {
                         >
                           {fileName}
                         </span>
-
                         <div className="flex justify-between items-center gap-2 mt-auto">
                           <span className="text-[10px] px-2 py-1 rounded-md bg-neutral-800 text-neutral-400 font-medium tracking-wider">
                             {ext}
@@ -449,6 +454,22 @@ export default function DriveManager() {
                 })}
               </div>
             )}
+
+            {/* ── FIX #3: Load More button — only renders when more pages exist ── */}
+            {hasMore && (
+              <div className="flex justify-center mt-8">
+                <button
+                  onClick={handleLoadMore}
+                  disabled={isLoadingMore}
+                  className="flex items-center gap-2 px-8 py-3 rounded-xl border border-neutral-700 bg-neutral-900/60 text-neutral-300 hover:bg-neutral-800 hover:text-white transition-all font-medium text-sm disabled:opacity-50 cursor-pointer"
+                >
+                  {isLoadingMore ? (
+                    <FaSpinner className="animate-spin" size={14} />
+                  ) : null}
+                  {isLoadingMore ? "Loading..." : "Load More"}
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>
@@ -459,7 +480,6 @@ export default function DriveManager() {
           className="fixed inset-0 z-50 bg-neutral-950/80 backdrop-blur-xl flex flex-col"
           onClick={() => setSelectedFile(null)}
         >
-          {/* Overlay Toolbar */}
           <div
             className="bg-neutral-900/50 border-b border-neutral-800 p-4 flex justify-between items-center text-neutral-200"
             onClick={(e) => e.stopPropagation()}
@@ -494,7 +514,6 @@ export default function DriveManager() {
             </div>
           </div>
 
-          {/* Viewer Content */}
           <div
             className="flex-1 overflow-hidden p-6 md:p-10 flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
@@ -507,7 +526,6 @@ export default function DriveManager() {
                 className="max-w-full max-h-full object-contain rounded-xl shadow-2xl border border-neutral-800"
               />
             )}
-
             {getFileType(getFileName(selectedFile.key)) === "video" && (
               <video
                 src={selectedFile.url}
@@ -516,15 +534,12 @@ export default function DriveManager() {
                 className="max-w-full max-h-full object-contain rounded-xl shadow-2xl border border-neutral-800"
               />
             )}
-
             {getFileType(getFileName(selectedFile.key)) === "pdf" && (
               <iframe
                 src={selectedFile.url}
                 className="w-full h-full max-w-5xl rounded-xl shadow-2xl border border-neutral-800 bg-white"
               />
             )}
-
-            {/* Check against explicitly supported preview types */}
             {!["image", "video", "pdf"].includes(
               getFileType(getFileName(selectedFile.key)),
             ) && (
@@ -577,7 +592,6 @@ export default function DriveManager() {
                 </p>
               </div>
             </div>
-
             <div className="flex flex-col sm:flex-row justify-center gap-3 mt-2 w-full">
               <button
                 onClick={() => setFileToDelete(null)}
