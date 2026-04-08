@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
+import localFont from "next/font/local";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import Header from "@/app/components/Header";
-import localFont from "next/font/local";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -28,9 +30,10 @@ export const segoeui = localFont({
       style: "normal",
     },
   ],
-  variable: "--font-segoe-ui", // optional CSS variable
-  display: "swap", // recommended
+  variable: "--font-segoe-ui",
+  display: "swap",
 });
+
 export const googleSans = localFont({
   src: "../public/fonts/another.woff2",
   variable: "--font-google-sans",
@@ -47,7 +50,7 @@ export const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Private cloud storage",
+  title: "AuraCloud - Private cloud storage",
   description: "This is my own custom private cloud storage",
 };
 
@@ -57,13 +60,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-google-analytics-opt-out="">
-      <body
-        className={`${geistSans.variable} ${segoeui.variable} ${geistMono.variable} ${inter.variable} ${lucideSans.variable} ${googleSans.variable} antialiased`}
-      >
-        <Header />
-        <main>{children}</main>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" data-google-analytics-opt-out="">
+        <body
+          className={`${geistSans.variable} ${segoeui.variable} ${geistMono.variable} ${inter.variable} ${lucideSans.variable} ${googleSans.variable} antialiased`}
+        >
+          <Header />
+          <main>{children}</main>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

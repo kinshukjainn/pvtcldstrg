@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Supported File Formats - Personal Cloud Storage",
+  title: "Dashboard - Personal Cloud Storage",
   description:
-    "Learn about the file formats supported by our personal cloud storage solution.",
+    "Welcome to your personal cloud storage dashboard. Here you can manage your files, view storage usage, and access various features to keep your data organized and secure.",
 };
 
 export default function BlogLayout({
