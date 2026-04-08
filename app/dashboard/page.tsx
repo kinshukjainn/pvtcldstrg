@@ -25,6 +25,7 @@ import {
   listPhotos,
   deletePhoto,
   getDownloadUrl,
+  getStorageInfo,
 } from "@/actions/drive";
 
 type DriveFile = {
@@ -56,6 +57,8 @@ export default function DriveManager() {
   const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(0);
   const [totalFiles, setTotalFiles] = useState(0);
+  const [storageUsed, setStorageUsed] = useState(0);
+  const [storageLimit, setStorageLimit] = useState(0);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
@@ -66,9 +69,19 @@ export default function DriveManager() {
 
   useEffect(() => {
     fetchFiles(0, true);
+    fetchStorageInfo();
   }, []);
 
-  // ─── FIX #3: paginated fetch — only loads FILE_LIST_PAGE_SIZE files at once ───
+  const fetchStorageInfo = async () => {
+    try {
+      const info = await getStorageInfo();
+      setStorageUsed(info.used);
+      setStorageLimit(info.limit);
+    } catch (e) {
+      console.error("Failed to fetch storage info", e);
+    }
+  };
+
   const fetchFiles = async (pageNum = 0, replace = false) => {
     if (replace) {
       setIsLoading(true);
@@ -98,9 +111,6 @@ export default function DriveManager() {
 
   const handleLoadMore = () => fetchFiles(page + 1, false);
 
-  // ─── FIX #1: Presigned POST upload ───────────────────────────────────────────
-  // getUploadUrl now returns { url, fields, key } instead of { url, key }.
-  // The upload uses FormData with a POST request so AWS enforces content-length-range.
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
     if (!selectedFiles || selectedFiles.length === 0) return;
@@ -108,19 +118,16 @@ export default function DriveManager() {
     setIsUploading(true);
     try {
       const uploadPromises = Array.from(selectedFiles).map(async (file) => {
-        // 1. Get Presigned POST credentials (includes AWS-enforced size policy)
         const { url, fields, key } = await getUploadUrl(
           file.name,
           file.type,
           file.size,
         );
 
-        // 2. Build the multipart form S3 expects for a Presigned POST
         const formData = new FormData();
         Object.entries(fields).forEach(([k, v]) =>
           formData.append(k, v as string),
         );
-        // "file" must be the LAST field per S3 Presigned POST spec
         formData.append("file", file);
 
         const response = await fetch(url, {
@@ -128,19 +135,16 @@ export default function DriveManager() {
           body: formData,
         });
 
-        // S3 returns 204 on success for presigned POST (not 200)
         if (!response.ok && response.status !== 204) {
           throw new Error(`S3 upload failed: ${response.status}`);
         }
 
-        // 3. FIX #2: confirmUploadDB now calls HeadObject to verify the file
-        //    actually arrived and reads the real size from AWS — not the client.
         await confirmUploadDB(key, file.name, file.size, file.type);
       });
 
       await Promise.all(uploadPromises);
-      // Refresh from page 0 so the new files appear at the top
       await fetchFiles(0, true);
+      await fetchStorageInfo();
     } catch (error) {
       console.error("Upload failed", error);
       alert(
@@ -171,6 +175,7 @@ export default function DriveManager() {
 
     try {
       await deletePhoto(key, fileObj.size || 0);
+      await fetchStorageInfo();
     } catch (error) {
       console.error("Delete failed", error);
       fetchFiles(0, true);
@@ -229,7 +234,8 @@ export default function DriveManager() {
     getFileName(file.key).toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const totalSize = files.reduce((acc, file) => acc + (file.size || 0), 0);
+  const storagePercent =
+    storageLimit > 0 ? Math.min((storageUsed / storageLimit) * 100, 100) : 0;
 
   return (
     <div className="w-full min-h-screen bg-[#0d1014] text-neutral-200 flex flex-col relative overflow-hidden">
@@ -241,8 +247,16 @@ export default function DriveManager() {
             Files: {totalFiles}
           </span>
           <span className="text-xs md:text-sm bg-transparent backdrop-blur-sm border border-neutral-800 rounded-full px-4 py-1.5 flex gap-2 items-center shadow-lg">
-            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-            Loaded: {formatBytes(totalSize)}
+            <span
+              className={`w-2 h-2 rounded-full ${
+                storagePercent > 90
+                  ? "bg-red-500"
+                  : storagePercent > 70
+                    ? "bg-yellow-500"
+                    : "bg-emerald-500"
+              }`}
+            ></span>
+            Storage: {formatBytes(storageUsed)} / {formatBytes(storageLimit)}
           </span>
         </div>
 
@@ -455,7 +469,6 @@ export default function DriveManager() {
               </div>
             )}
 
-            {/* ── FIX #3: Load More button — only renders when more pages exist ── */}
             {hasMore && (
               <div className="flex justify-center mt-8">
                 <button

@@ -31,7 +31,6 @@ export default function AuthPage() {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [username, setUsername] = useState("");
 
   const [pendingVerification, setPendingVerification] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
@@ -81,7 +80,6 @@ export default function AuthPage() {
       const { error: createErr } = await signUp.password({
         emailAddress: email,
         password,
-        username: username || undefined,
         firstName: firstName || undefined,
         lastName: lastName || undefined,
       });
@@ -106,7 +104,7 @@ export default function AuthPage() {
     } finally {
       setLoading(false);
     }
-  }, [signUp, email, password, firstName, lastName, username]);
+  }, [signUp, email, password, firstName, lastName]);
 
   // ── Verify ────────────────────────────────────────────────────────────────
 
@@ -186,7 +184,7 @@ export default function AuthPage() {
   const canSubmit = pendingVerification
     ? verificationCode.length === 6
     : isSignUp
-      ? !!(email && password && username)
+      ? !!(email && password && firstName && lastName)
       : !!(email && password);
 
   // ─── Render ────────────────────────────────────────────────────────────────
@@ -236,21 +234,6 @@ export default function AuthPage() {
                       className="w-full px-4 py-3  bg-black border-b-2 border-zinc-200 text-white placeholder:text-zinc-500 focus:outline-none  transition-all"
                     />
                   </div>
-
-                  <input
-                    type="text"
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) =>
-                      setUsername(
-                        e.target.value
-                          .toLowerCase()
-                          .replace(/[^a-z0-9_-]/g, ""),
-                      )
-                    }
-                    autoComplete="username"
-                    className="w-full px-4 py-3  bg-black border-b-2 border-zinc-200 text-white placeholder:text-zinc-500 focus:outline-none  transition-all"
-                  />
                 </>
               )}
 

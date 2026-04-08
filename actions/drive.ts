@@ -80,10 +80,7 @@ async function getDbUser(clerkId: string) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 1. Get S3 Presigned POST URL — enforces content-length-range at the AWS level
-//    FIX: replaced PutObjectCommand presigned URL with createPresignedPost so
-//    AWS itself rejects uploads that exceed the declared fileSize, preventing
-//    the "upload 1 KB, then send 500 GB" exploit.
+// 1. Get S3 Presigned POST URL
 // ─────────────────────────────────────────────────────────────────────────────
 export async function getUploadUrl(
   fileName: string,
@@ -102,28 +99,22 @@ export async function getUploadUrl(
   const sanitized = fileName.replace(/\s+/g, "-");
   const key = `uploads/${userId}/${Date.now()}-${sanitized}`;
 
-  // createPresignedPost embeds a content-length-range condition directly in
-  // the AWS policy token — S3 rejects the upload at bucket level if violated.
   const { url, fields } = await createPresignedPost(s3Client, {
     Bucket: getBucketName(),
     Key: key,
     Conditions: [
-      ["content-length-range", 1, fileSize], // min 1 byte, max declared size
-      ["starts-with", "$Content-Type", contentType.split("/")[0]], // correct MIME family
+      ["content-length-range", 1, fileSize],
+      ["starts-with", "$Content-Type", contentType.split("/")[0]],
     ],
     Fields: { "Content-Type": contentType },
-    Expires: 60, // URL valid for 60 seconds
+    Expires: 60,
   });
 
   return { url, fields, key };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 2. Confirm Upload → verify the object actually landed in S3 first, then
-//    insert the file record and update storage_used.
-//    FIX: HeadObject call guarantees (a) the file genuinely reached S3 before
-//    we trust the client, and (b) we use the real ContentLength from AWS, not
-//    whatever size the client claims — closing both the orphan and spoof gaps.
+// 2. Confirm Upload
 // ─────────────────────────────────────────────────────────────────────────────
 export async function confirmUploadDB(
   key: string,
@@ -134,10 +125,8 @@ export async function confirmUploadDB(
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
-  // Ensure the key belongs to this user — never trust the client's key string
   if (!key.startsWith(`uploads/${userId}/`)) throw new Error("Unauthorized");
 
-  // Verify the object actually exists in S3 and get its real byte count
   let actualSize: number;
   try {
     const head = await s3Client.send(
@@ -152,9 +141,7 @@ export async function confirmUploadDB(
 
   const user = await getDbUser(userId);
 
-  // Re-check storage with the real S3 size (not the client-supplied value)
   if (Number(user.storage_used) + actualSize > Number(user.storage_limit)) {
-    // Clean up the orphaned object since we won't record it
     await s3Client.send(
       new DeleteObjectCommand({ Bucket: getBucketName(), Key: key }),
     );
@@ -181,9 +168,7 @@ export async function confirmUploadDB(
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 3. List Files — paginated to prevent signing thousands of URLs at once.
-//    FIX: added LIMIT / OFFSET so only the current page of files is fetched
-//    and signed, keeping server response times fast even for large libraries.
+// 3. List Files — paginated
 // ─────────────────────────────────────────────────────────────────────────────
 export async function listPhotos(page = 0) {
   const { userId } = await auth();
@@ -201,7 +186,6 @@ export async function listPhotos(page = 0) {
     OFFSET ${offset}
   `;
 
-  // Also fetch total count so the UI knows whether more pages exist
   const countResult = await sql`
     SELECT COUNT(*)::int AS total FROM files WHERE user_id = ${user.id}
   `;
