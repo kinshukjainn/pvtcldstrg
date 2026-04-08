@@ -11,7 +11,6 @@ import {
   Zap,
   Layout,
   ArrowRight,
-  CloudRain,
   LockKeyhole,
   HardDrive,
   Cloud,
@@ -19,7 +18,6 @@ import {
   Database,
   Check,
 } from "lucide-react";
-import { FaGithub, FaTwitter } from "react-icons/fa";
 import { AnimatePresence, motion } from "framer-motion";
 
 import Link from "next/link";
@@ -369,10 +367,13 @@ export default function Home() {
 
           <FadeInItem delay={600}>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
-              <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white border-blue-500 border-3  hover:shadow-blue-600 shadow-md cursor-pointer text-zinc-950 font-bold px-8 py-4 rounded-full text-lg transition-all duration-200 group">
+              <Link
+                href="/verify-regis"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white border-blue-500 border-3  hover:shadow-blue-600 shadow-md cursor-pointer text-zinc-950 font-bold px-8 py-4 rounded-full text-lg transition-all duration-200 group"
+              >
                 Start for free
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
+              </Link>
               <Link
                 href="/supported-formats"
                 className="w-full sm:w-auto px-8 py-4 rounded-full text-lg font-medium border-2 cursor-pointer border-white hover:bg-zinc-900 transition-colors duration-200"
@@ -554,32 +555,14 @@ export default function Home() {
             Join thousands of users who have migrated to a simpler, more secure
             way to store their digital life.
           </p>
-          <button className="bg-white  text-zinc-950 font-bold px-6 py-2 cursor-pointer rounded-full text-lg transition-all duration-200">
+          <Link
+            href="/verify-regis"
+            className="bg-white  text-zinc-950 font-bold px-6 py-2 cursor-pointer rounded-full text-lg transition-all duration-200"
+          >
             Create Free Account
-          </button>
+          </Link>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="border-t border-zinc-900 py-12">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2 text-zinc-100 font-semibold">
-            <CloudRain className="w-5 h-5 text-emerald-400" />
-            <span>AuraCloud</span>
-          </div>
-          <div className="text-zinc-500 text-sm">
-            © {new Date().getFullYear()} AuraCloud. All rights reserved.
-          </div>
-          <div className="flex items-center gap-4 text-zinc-500">
-            <a href="#" className="hover:text-emerald-400 transition-colors">
-              <FaTwitter className="w-5 h-5" />
-            </a>
-            <a href="#" className="hover:text-emerald-400 transition-colors">
-              <FaGithub className="w-5 h-5" />
-            </a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

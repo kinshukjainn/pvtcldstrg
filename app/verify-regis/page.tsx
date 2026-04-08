@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import { useSignIn, useSignUp } from "@clerk/nextjs";
 import { FaSpinner } from "react-icons/fa";
 import { BsCloudLightningFill } from "react-icons/bs";
-
+import Link from "next/link";
 // ─── Error helper ────────────────────────────────────────────────────────────
 
 function getErrorMessage(error: unknown): string {
@@ -192,18 +192,18 @@ export default function AuthPage() {
   // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-zinc-950 text-zinc-100">
-      <div className="w-full max-w-md bg-zinc-900/80 backdrop-blur-xl border border-zinc-800 rounded-3xl shadow-2xl p-8 space-y-8 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-black text-zinc-100">
+      <div className="w-full max-w-md bg-black   p-8 space-y-8 relative overflow-hidden">
         {/* Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-32 bg-blue-600/10 blur-[80px] rounded-full pointer-events-none" />
 
         {/* Header */}
         <div className="flex flex-col items-center space-y-3 text-center relative z-10">
-          <div className="p-3 bg-blue-500/10 rounded-2xl border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]">
-            <BsCloudLightningFill className="text-4xl text-blue-500" />
+          <div className="p-3 bg-zinc-800 rounded-full border border-gray-700 ">
+            <BsCloudLightningFill className="text-4xl text-white" />
           </div>
           <h1 className="text-2xl font-bold text-white">{heading}</h1>
-          <p className="text-sm text-zinc-400">{subtext}</p>
+          <p className="text-lg font-semibold text-zinc-100">{subtext}</p>
         </div>
 
         {/* Error */}
@@ -226,14 +226,14 @@ export default function AuthPage() {
                       placeholder="First name"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                      className="w-full px-4 py-3  bg-black border-b-2 border-zinc-200 text-white placeholder:text-zinc-500 focus:outline-none  transition-all"
                     />
                     <input
                       type="text"
                       placeholder="Last name"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                      className="w-full px-4 py-3  bg-black border-b-2 border-zinc-200 text-white placeholder:text-zinc-500 focus:outline-none  transition-all"
                     />
                   </div>
 
@@ -249,7 +249,7 @@ export default function AuthPage() {
                       )
                     }
                     autoComplete="username"
-                    className="w-full px-4 py-3 rounded-xl bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                    className="w-full px-4 py-3  bg-black border-b-2 border-zinc-200 text-white placeholder:text-zinc-500 focus:outline-none  transition-all"
                   />
                 </>
               )}
@@ -261,7 +261,7 @@ export default function AuthPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
-                className="w-full px-4 py-3 rounded-xl bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                className="w-full px-4 py-3  bg-black border-b-2 border-zinc-200 text-white placeholder:text-zinc-500 focus:outline-none  transition-all"
               />
 
               <input
@@ -273,7 +273,7 @@ export default function AuthPage() {
                 onKeyDown={(e) =>
                   e.key === "Enter" && canSubmit && handleSubmit()
                 }
-                className="w-full px-4 py-3 rounded-xl bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                className="w-full px-4 py-3  bg-black border-b-2 border-zinc-200 text-white placeholder:text-zinc-500 focus:outline-none  transition-all"
               />
 
               {/* Clerk CAPTCHA widget – sign-up only */}
@@ -288,7 +288,7 @@ export default function AuthPage() {
               <button
                 onClick={handleSubmit}
                 disabled={loading || !canSubmit}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-semibold bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-600/20"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-full font-semibold bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-600/20"
               >
                 {loading ? (
                   <FaSpinner className="animate-spin" />
@@ -302,7 +302,7 @@ export default function AuthPage() {
               {/* Toggle */}
               <button
                 onClick={toggleMode}
-                className="w-full text-center text-sm text-zinc-400 hover:text-blue-400 transition-colors"
+                className="w-full text-center text-sm text-zinc-100 cursor-pointer font-semibold hover:text-blue-400 transition-colors"
               >
                 {isSignUp
                   ? "Already have an account? Sign in"
@@ -354,8 +354,22 @@ export default function AuthPage() {
           )}
         </div>
 
-        <p className="text-center text-xs text-zinc-600 relative z-10">
-          By continuing, you agree to our Terms of Service
+        <p className="text-center text-xs text-gray-600">
+          By continuing, you agree to our{" "}
+          <Link
+            href="/terms"
+            className="underline text-gray-100 hover:text-gray-200"
+          >
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link
+            href="/privacy"
+            className="underline text-gray-100 hover:text-gray-200"
+          >
+            Privacy Policy
+          </Link>
+          .
         </p>
       </div>
     </div>
