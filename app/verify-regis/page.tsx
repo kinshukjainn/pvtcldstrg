@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { useSignIn, useSignUp } from "@clerk/nextjs";
 import { FaSpinner } from "react-icons/fa";
-import { BsCloudLightningFill } from "react-icons/bs";
+import { BsCloudRain } from "react-icons/bs";
 import Link from "next/link";
 
 function getErrorMessage(error: unknown): string {
@@ -146,8 +146,8 @@ export default function AuthPage() {
   const heading = pendingVerification
     ? "Verify your email"
     : isSignUp
-      ? "Create your account"
-      : "Welcome back";
+      ? "Sign up for an account"
+      : "Login to your account";
 
   const subtext = pendingVerification
     ? `We sent a 6-digit code to ${email}`
@@ -162,18 +162,23 @@ export default function AuthPage() {
       : !!(email && password);
 
   const inputClass =
-    "w-full px-0 py-3 bg-transparent border-b border-white/[0.1] text-[15px] text-white placeholder:text-neutral-600 focus:outline-none focus:border-white/[0.3] transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]";
+    "w-full px-4 py-2 bg-[#181818] rounded-xl border border-[#444444] text-[17px] text-white placeholder:text-neutral-500 focus:outline-none  transition-all duration-500 ";
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#0a0a0c] text-neutral-200">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[#1e1e1e] text-neutral-200">
       <div className="w-full max-w-sm p-2 space-y-8 relative">
         {/* Subtle glow */}
-        <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-64 h-64 bg-blue-500/[0.06] blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-64 h-64 pointer-events-none" />
 
         {/* Header */}
         <div className="flex flex-col items-center space-y-4 text-center relative z-10">
-          <div className="p-3.5 bg-white/[0.04] rounded-2xl border border-white/[0.06]">
-            <BsCloudLightningFill className="text-3xl text-white" />
+          <div className="p-3.5">
+            <BsCloudRain size={65} className="text-5xl text-[#ff9100]" />
+          </div>
+          <div className="space-y-1.5">
+            <h1 className="text-[28px] special-font font-bold text-white">
+              <span className="text-white">Welcome to </span> Kosha
+            </h1>
           </div>
           <div className="space-y-1.5">
             <h1 className="text-[22px] font-semibold text-white tracking-tight">
@@ -247,14 +252,14 @@ export default function AuthPage() {
                 <button
                   onClick={handleSubmit}
                   disabled={loading || !canSubmit}
-                  className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium text-[14px] bg-white text-black hover:bg-neutral-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 active:scale-[0.97]"
+                  className="w-full flex items-center justify-center  gap-2 py-3 px-4 rounded-xl font-medium text-[17px] bg-blue-800 text-white cursor-pointer hover:bg-blue-700  transition-all duration-200 "
                 >
                   {loading ? (
                     <FaSpinner className="animate-spin" />
                   ) : isSignUp ? (
                     "Create Account"
                   ) : (
-                    "Sign In"
+                    "Log In"
                   )}
                 </button>
 

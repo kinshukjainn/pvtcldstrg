@@ -16,6 +16,7 @@ const config: Config = {
         googleSans: "var(--font-google-sans) , sans-serif",
         segoeui: "var(--font-segoeui) , sans-serif",
         geist: "var(--font-geist-mono) , monospaced",
+        supermercado: "var(--font-supermercado) , sans-serif",
       },
     },
   },

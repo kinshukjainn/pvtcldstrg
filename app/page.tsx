@@ -19,9 +19,12 @@ import {
   Check,
   FolderOpen,
   Upload,
+  PartyPopper,
+  Rocket,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAuth, useUser } from "@clerk/nextjs";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 /* ── File Icons ── */
@@ -335,12 +338,53 @@ const QuickAction = ({
   </FadeInItem>
 );
 
+/* ── Onboarding step for new users ── */
+interface OnboardingStepProps {
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  step: number;
+  title: string;
+  description: string;
+  delay: number;
+}
+
+const OnboardingStep = ({
+  icon: Icon,
+  step,
+  title,
+  description,
+  delay,
+}: OnboardingStepProps) => (
+  <FadeInItem delay={delay}>
+    <div className="group flex items-start gap-4 p-4 rounded-xl bg-[#181818] border border-white/[0.06]">
+      <div className="w-10 h-10 bg-[#ff9100]/10 rounded-lg flex items-center justify-center shrink-0">
+        <Icon className="w-5 h-5 text-[#ff9100]" />
+      </div>
+      <div className="min-w-0">
+        <p className="text-[11px] uppercase tracking-widest text-[#ff9100] font-semibold mb-1">
+          Step {step}
+        </p>
+        <h3 className="text-[16px] font-medium text-white mb-0.5">{title}</h3>
+        <p className="text-[13px] text-neutral-400 leading-relaxed">
+          {description}
+        </p>
+      </div>
+    </div>
+  </FadeInItem>
+);
+
+/* ── Check if user just registered ── */
+const useIsNewUser = () => {
+  const searchParams = useSearchParams();
+  return searchParams.get("new") === "true";
+};
+
 /* ── Page ── */
 
 export default function Home() {
   const { isLoaded, userId } = useAuth();
   const { user } = useUser();
   const [iconIndex, setIconIndex] = useState(0);
+  const isNewUser = useIsNewUser();
 
   useEffect(() => {
     const id = setInterval(
@@ -357,11 +401,99 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#1e1e1e] text-neutral-300 selection:bg-blue-500/20 relative">
       {/* ════════════════════════════════════════════════════════════════════
-          HERO — two completely different experiences
+          HERO — three different experiences
           ════════════════════════════════════════════════════════════════════ */}
       <main className="max-w-7xl mx-auto px-6 pt-28 pb-20">
-        {isLoggedIn ? (
-          /* ── Logged-in Hero ── */
+        {isLoggedIn && isNewUser ? (
+          /* ── Just Registered Hero ── */
+          <div className="max-w-2xl mx-auto space-y-10">
+            <FadeInItem delay={0}>
+              <div className="text-center space-y-4">
+                {/* Animated welcome icon */}
+                <motion.div
+                  initial={{ scale: 0, rotate: -20 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 200,
+                    damping: 12,
+                    delay: 0.2,
+                  }}
+                  className="inline-flex items-center justify-center w-16 h-16 bg-[#ff9100]/10 rounded-2xl mb-2"
+                >
+                  <PartyPopper className="w-8 h-8 text-[#ff9100]" />
+                </motion.div>
+
+                <h1 className="text-3xl md:text-5xl font-semibold text-white tracking-tight">
+                  Welcome aboard,{" "}
+                  <span className="text-[#ff9100]">{firstName}!</span>
+                </h1>
+                <p className="text-[17px] text-neutral-300 max-w-md mx-auto leading-relaxed">
+                  Your account is ready. You&apos;ve got{" "}
+                  <span className="text-white font-medium">
+                    5 GB of free storage
+                  </span>{" "}
+                  waiting for you. Here&apos;s how to get started:
+                </p>
+              </div>
+            </FadeInItem>
+
+            {/* Onboarding steps */}
+            <div className="space-y-3">
+              <OnboardingStep
+                icon={Upload}
+                step={1}
+                title="Upload your first file"
+                description="Drag and drop any file into your dashboard — we support PDFs, images, documents, videos, and more."
+                delay={300}
+              />
+              <OnboardingStep
+                icon={FolderOpen}
+                step={2}
+                title="Organize with folders"
+                description="Create folders to keep everything tidy. Your files, your structure."
+                delay={450}
+              />
+              <OnboardingStep
+                icon={ShieldCheck}
+                step={3}
+                title="Enjoy total privacy"
+                description="Your files are encrypted and only accessible by you. No tracking, no ads, no compromises."
+                delay={600}
+              />
+            </div>
+
+            {/* CTA */}
+            <FadeInItem delay={750}>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center gap-2 bg-[#ff9100] text-black font-semibold px-7 py-3.5 rounded-xl text-[16px] hover:bg-[#ffab40] active:scale-[0.97] transition-all duration-200 group"
+                >
+                  <Rocket className="w-4 h-4" />
+                  Go to My Dashboard
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-200" />
+                </Link>
+              </div>
+            </FadeInItem>
+
+            {/* Subtle reassurance */}
+            <FadeInItem delay={900}>
+              <div className="flex items-center justify-center gap-6 text-[12px] text-neutral-600 pt-2">
+                <span className="flex items-center gap-1.5">
+                  <Check className="w-3 h-3 text-emerald-500" /> 5 GB free
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Check className="w-3 h-3 text-emerald-500" /> No credit card
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Check className="w-3 h-3 text-emerald-500" /> Cancel anytime
+                </span>
+              </div>
+            </FadeInItem>
+          </div>
+        ) : isLoggedIn ? (
+          /* ── Returning User Hero ── */
           <div className="max-w-2xl mx-auto space-y-10">
             <FadeInItem delay={0}>
               <div className="text-center space-y-3">

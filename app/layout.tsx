@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Supermercado_One } from "next/font/google";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import localFont from "next/font/local";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -43,6 +44,13 @@ export const googleSans = localFont({
   display: "swap",
 });
 
+const supermercado = Supermercado_One({
+  subsets: ["latin"],
+  weight: "400", // only available weight
+  variable: "--font-supermercado",
+  display: "swap",
+});
+
 export const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -51,7 +59,7 @@ export const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "AuraCloud - Private cloud storage",
+  title: "Kosha - निजी क्लाउड स्टोरेज",
   description: "This is my own custom private cloud storage",
 };
 
@@ -64,7 +72,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" data-google-analytics-opt-out="">
         <body
-          className={`${geistSans.variable} ${segoeui.variable} ${geistMono.variable} ${inter.variable} ${lucideSans.variable} ${googleSans.variable} antialiased`}
+          className={`${geistSans.variable} ${segoeui.variable} ${geistMono.variable} ${inter.variable} ${lucideSans.variable} ${googleSans.variable} ${supermercado.variable}  antialiased`}
         >
           <Header />
           <main>{children}</main>

@@ -11,7 +11,7 @@ export default function Footer() {
           {/* Brand Identity */}
           <div className="flex items-center gap-2 text-zinc-100 font-semibold text-lg">
             <CloudRain className="w-6 h-6 text-emerald-400" />
-            <span>Instant Storage</span>
+            <span>Kosha</span>
           </div>
 
           {/* Navigation Links */}

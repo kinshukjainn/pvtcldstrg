@@ -17,16 +17,16 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/[0.06] bg-[#0a0a0c]/80 backdrop-blur-2xl backdrop-saturate-150">
-      <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 h-18 flex items-center justify-between">
         {/* Logo */}
         <Link
           href="/"
           className="flex items-center gap-2 hover:opacity-80 transition-opacity duration-300 z-50"
           onClick={closeMenu}
         >
-          <BsCloudRain className="w-5 h-5 text-emerald-400" />
-          <span className="text-white font-semibold text-[15px] tracking-tight">
-            Instant Storage
+          <BsCloudRain className="w-8 h-8 text-emerald-400" />
+          <span className="text-white special-font font-semibold text-[24px] tracking-tight">
+            Kosha
           </span>
         </Link>
 
@@ -60,15 +60,15 @@ export default function Header() {
             href="https://github.com/kinshukjainn/pvtcldstrg"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-neutral-500 hover:text-white transition-colors duration-300"
+            className="text-white  transition-colors duration-300"
             aria-label="GitHub Repository"
           >
-            <FaGithub className="w-5 h-5" />
+            <FaGithub className="w-7 h-7" />
           </a>
           {isLoaded && !userId && (
             <Link
               href="/verify-regis"
-              className="inline-flex items-center justify-center text-[13px] font-medium text-black px-4 py-2 rounded-xl bg-white hover:bg-neutral-200 active:scale-[0.97] transition-all duration-200"
+              className="inline-flex items-center justify-center text-[15px] font-medium text-white px-4 py-2 rounded-xl bg-blue-800  active:scale-[0.97] transition-all duration-200"
             >
               Sign in / Up
             </Link>
@@ -135,7 +135,7 @@ export default function Header() {
             {isLoaded && !userId && (
               <Link
                 href="/verify-regis"
-                className="inline-flex items-center justify-center text-[14px] font-medium text-black px-4 py-2.5 rounded-xl bg-white hover:bg-neutral-200 active:scale-[0.97] transition-all duration-200"
+                className="inline-flex items-center justify-center text-[18px] font-medium text-white px-4 py-3 rounded-xl bg-blue-800  active:scale-[0.97] transition-all duration-200"
                 onClick={closeMenu}
               >
                 Sign in / Up
