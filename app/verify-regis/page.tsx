@@ -5,7 +5,6 @@ import { useSignIn, useSignUp } from "@clerk/nextjs";
 import { FaSpinner } from "react-icons/fa";
 import { BsCloudLightningFill } from "react-icons/bs";
 import Link from "next/link";
-// ─── Error helper ────────────────────────────────────────────────────────────
 
 function getErrorMessage(error: unknown): string {
   if (!error) return "An unexpected error occurred.";
@@ -16,8 +15,6 @@ function getErrorMessage(error: unknown): string {
     "An unexpected error occurred. Please try again."
   );
 }
-
-// ─── Component ───────────────────────────────────────────────────────────────
 
 export default function AuthPage() {
   const { signIn } = useSignIn();
@@ -35,22 +32,17 @@ export default function AuthPage() {
   const [pendingVerification, setPendingVerification] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
 
-  // ── Sign In ───────────────────────────────────────────────────────────────
-
   const handleSignIn = useCallback(async () => {
     if (!signIn) return;
     setLoading(true);
     setAuthError(null);
-
     try {
       const { error } = await signIn.password({ identifier: email, password });
-
       if (error) {
         setAuthError(getErrorMessage(error));
         setLoading(false);
         return;
       }
-
       if (signIn.status === "complete") {
         const { error: fErr } = await signIn.finalize();
         if (fErr) {
@@ -69,13 +61,10 @@ export default function AuthPage() {
     }
   }, [signIn, email, password]);
 
-  // ── Sign Up ───────────────────────────────────────────────────────────────
-
   const handleSignUp = useCallback(async () => {
     if (!signUp) return;
     setLoading(true);
     setAuthError(null);
-
     try {
       const { error: createErr } = await signUp.password({
         emailAddress: email,
@@ -83,21 +72,17 @@ export default function AuthPage() {
         firstName: firstName || undefined,
         lastName: lastName || undefined,
       });
-
       if (createErr) {
         setAuthError(getErrorMessage(createErr));
         setLoading(false);
         return;
       }
-
       const { error: sendErr } = await signUp.verifications.sendEmailCode();
-
       if (sendErr) {
         setAuthError(getErrorMessage(sendErr));
         setLoading(false);
         return;
       }
-
       setPendingVerification(true);
     } catch (err) {
       setAuthError(getErrorMessage(err));
@@ -106,24 +91,19 @@ export default function AuthPage() {
     }
   }, [signUp, email, password, firstName, lastName]);
 
-  // ── Verify ────────────────────────────────────────────────────────────────
-
   const handleVerify = useCallback(async () => {
     if (!signUp) return;
     setLoading(true);
     setAuthError(null);
-
     try {
       const { error: verifyErr } = await signUp.verifications.verifyEmailCode({
         code: verificationCode,
       });
-
       if (verifyErr) {
         setAuthError(getErrorMessage(verifyErr));
         setLoading(false);
         return;
       }
-
       if (signUp.status === "complete" || signUp.createdSessionId) {
         const { error: fErr } = await signUp.finalize();
         if (fErr) {
@@ -150,15 +130,11 @@ export default function AuthPage() {
     }
   }, [signUp, verificationCode]);
 
-  // ── Submit ────────────────────────────────────────────────────────────────
-
   const handleSubmit = useCallback(() => {
     if (pendingVerification) return handleVerify();
     if (isSignUp) return handleSignUp();
     return handleSignIn();
   }, [pendingVerification, isSignUp, handleVerify, handleSignUp, handleSignIn]);
-
-  // ── Toggle mode ───────────────────────────────────────────────────────────
 
   const toggleMode = useCallback(() => {
     setIsSignUp((prev) => !prev);
@@ -166,8 +142,6 @@ export default function AuthPage() {
     setPendingVerification(false);
     setVerificationCode("");
   }, []);
-
-  // ── Derived ───────────────────────────────────────────────────────────────
 
   const heading = pendingVerification
     ? "Verify your email"
@@ -187,64 +161,65 @@ export default function AuthPage() {
       ? !!(email && password && firstName && lastName)
       : !!(email && password);
 
-  // ─── Render ────────────────────────────────────────────────────────────────
+  const inputClass =
+    "w-full px-0 py-3 bg-transparent border-b border-white/[0.1] text-[15px] text-white placeholder:text-neutral-600 focus:outline-none focus:border-white/[0.3] transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]";
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-black text-zinc-100">
-      <div className="w-full max-w-md bg-black   p-8 space-y-8 relative overflow-hidden">
-        {/* Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-32 bg-blue-600/10 blur-[80px] rounded-full pointer-events-none" />
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[#0a0a0c] text-neutral-200">
+      <div className="w-full max-w-sm p-2 space-y-8 relative">
+        {/* Subtle glow */}
+        <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-64 h-64 bg-blue-500/[0.06] blur-[100px] rounded-full pointer-events-none" />
 
         {/* Header */}
-        <div className="flex flex-col items-center space-y-3 text-center relative z-10">
-          <div className="p-3 bg-zinc-800 rounded-full border border-gray-700 ">
-            <BsCloudLightningFill className="text-4xl text-white" />
+        <div className="flex flex-col items-center space-y-4 text-center relative z-10">
+          <div className="p-3.5 bg-white/[0.04] rounded-2xl border border-white/[0.06]">
+            <BsCloudLightningFill className="text-3xl text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white">{heading}</h1>
-          <p className="text-lg font-semibold text-zinc-100">{subtext}</p>
+          <div className="space-y-1.5">
+            <h1 className="text-[22px] font-semibold text-white tracking-tight">
+              {heading}
+            </h1>
+            <p className="text-[14px] text-neutral-500">{subtext}</p>
+          </div>
         </div>
 
         {/* Error */}
         {authError && (
-          <div className="p-3 text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-xl text-center relative z-10">
+          <div className="p-3 text-[13px] text-red-400 bg-red-500/[0.06] border border-red-500/[0.1] rounded-xl text-center relative z-10 animate-[fadeIn_0.3s_ease-out]">
             {authError}
           </div>
         )}
 
-        {/* ── Form ─────────────────────────────────────────────────────────── */}
-        <div className="space-y-4 relative z-10">
+        {/* Form */}
+        <div className="space-y-1 relative z-10">
           {!pendingVerification ? (
             <>
-              {/* Sign-up only fields */}
               {isSignUp && (
-                <>
-                  <div className="grid grid-cols-2 gap-3">
-                    <input
-                      type="text"
-                      placeholder="First name"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      className="w-full px-4 py-3  bg-black border-b-2 border-zinc-200 text-white placeholder:text-zinc-500 focus:outline-none  transition-all"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Last name"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      className="w-full px-4 py-3  bg-black border-b-2 border-zinc-200 text-white placeholder:text-zinc-500 focus:outline-none  transition-all"
-                    />
-                  </div>
-                </>
+                <div className="grid grid-cols-2 gap-4">
+                  <input
+                    type="text"
+                    placeholder="First name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className={inputClass}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Last name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className={inputClass}
+                  />
+                </div>
               )}
 
-              {/* Shared fields */}
               <input
                 type="email"
                 placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
-                className="w-full px-4 py-3  bg-black border-b-2 border-zinc-200 text-white placeholder:text-zinc-500 focus:outline-none  transition-all"
+                className={inputClass}
               />
 
               <input
@@ -256,49 +231,49 @@ export default function AuthPage() {
                 onKeyDown={(e) =>
                   e.key === "Enter" && canSubmit && handleSubmit()
                 }
-                className="w-full px-4 py-3  bg-black border-b-2 border-zinc-200 text-white placeholder:text-zinc-500 focus:outline-none  transition-all"
+                className={inputClass}
               />
 
-              {/* Clerk CAPTCHA widget – sign-up only */}
               {isSignUp && (
                 <div
                   id="clerk-captcha"
                   data-cl-theme="dark"
                   data-cl-size="flexible"
+                  className="pt-3"
                 />
               )}
 
-              <button
-                onClick={handleSubmit}
-                disabled={loading || !canSubmit}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-full font-semibold bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-600/20"
-              >
-                {loading ? (
-                  <FaSpinner className="animate-spin" />
-                ) : isSignUp ? (
-                  "Create Account"
-                ) : (
-                  "Sign In"
-                )}
-              </button>
+              <div className="pt-6 space-y-3">
+                <button
+                  onClick={handleSubmit}
+                  disabled={loading || !canSubmit}
+                  className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium text-[14px] bg-white text-black hover:bg-neutral-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 active:scale-[0.97]"
+                >
+                  {loading ? (
+                    <FaSpinner className="animate-spin" />
+                  ) : isSignUp ? (
+                    "Create Account"
+                  ) : (
+                    "Sign In"
+                  )}
+                </button>
 
-              {/* Toggle */}
-              <button
-                onClick={toggleMode}
-                className="w-full text-center text-sm text-zinc-100 cursor-pointer font-semibold hover:text-blue-400 transition-colors"
-              >
-                {isSignUp
-                  ? "Already have an account? Sign in"
-                  : "Don\u2019t have an account? Sign up"}
-              </button>
+                <button
+                  onClick={toggleMode}
+                  className="w-full text-center text-[13px] text-neutral-500 cursor-pointer font-medium hover:text-white transition-colors duration-300 py-1"
+                >
+                  {isSignUp
+                    ? "Already have an account? Sign in"
+                    : "Don\u2019t have an account? Sign up"}
+                </button>
+              </div>
             </>
           ) : (
-            /* ── Verification ──────────────────────────────────────────────── */
             <>
               <input
                 type="text"
                 inputMode="numeric"
-                placeholder="Enter 6-digit code"
+                placeholder="000000"
                 value={verificationCode}
                 onChange={(e) =>
                   setVerificationCode(
@@ -308,53 +283,68 @@ export default function AuthPage() {
                 onKeyDown={(e) =>
                   e.key === "Enter" && canSubmit && handleSubmit()
                 }
-                className="w-full px-4 py-3 rounded-xl bg-zinc-800 border border-zinc-700 text-white text-center text-lg tracking-[0.3em] placeholder:text-zinc-500 placeholder:tracking-normal focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                className="w-full px-4 py-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white text-center text-xl tracking-[0.4em] placeholder:text-neutral-700 placeholder:tracking-[0.4em] focus:outline-none focus:border-white/[0.2] transition-all duration-500"
               />
 
-              <button
-                onClick={handleSubmit}
-                disabled={loading || !canSubmit}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-semibold bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-600/20"
-              >
-                {loading ? (
-                  <FaSpinner className="animate-spin" />
-                ) : (
-                  "Verify & Continue"
-                )}
-              </button>
+              <div className="pt-5 space-y-3">
+                <button
+                  onClick={handleSubmit}
+                  disabled={loading || !canSubmit}
+                  className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium text-[14px] bg-white text-black hover:bg-neutral-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 active:scale-[0.97]"
+                >
+                  {loading ? (
+                    <FaSpinner className="animate-spin" />
+                  ) : (
+                    "Verify & Continue"
+                  )}
+                </button>
 
-              <button
-                onClick={() => {
-                  setPendingVerification(false);
-                  setVerificationCode("");
-                  setAuthError(null);
-                }}
-                className="w-full text-center text-sm text-zinc-400 hover:text-blue-400 transition-colors"
-              >
-                Go back and edit details
-              </button>
+                <button
+                  onClick={() => {
+                    setPendingVerification(false);
+                    setVerificationCode("");
+                    setAuthError(null);
+                  }}
+                  className="w-full text-center text-[13px] text-neutral-500 hover:text-white transition-colors duration-300 py-1"
+                >
+                  Go back
+                </button>
+              </div>
             </>
           )}
         </div>
 
-        <p className="text-center text-xs text-gray-600">
+        <p className="text-center text-[11px] text-neutral-600 relative z-10 pt-2">
           By continuing, you agree to our{" "}
           <Link
             href="/terms"
-            className="underline text-gray-100 hover:text-gray-200"
+            className="text-neutral-400 hover:text-white transition-colors duration-200"
           >
-            Terms of Service
+            Terms
           </Link>{" "}
           and{" "}
           <Link
             href="/privacy"
-            className="underline text-gray-100 hover:text-gray-200"
+            className="text-neutral-400 hover:text-white transition-colors duration-200"
           >
             Privacy Policy
           </Link>
           .
         </p>
       </div>
+
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }

@@ -1,136 +1,149 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { UserButton, useAuth } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 
-// Using react-icons exclusively as requested
 import { BsCloudRain } from "react-icons/bs";
 import { FaGithub } from "react-icons/fa";
-import { FiMenu, FiX } from "react-icons/fi";
+import UserProfileDropdown from "./Userprofiledropdown";
+import { PanelBottomClose, PanelBottomOpen } from "lucide-react";
 
 export default function Header() {
   const { isLoaded, userId } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
-
-  // Helper function to render auth UI to keep code DRY across desktop and mobile
-  const renderAuthUI = () => (
-    <>
-      {isLoaded && !userId && (
-        <Link
-          href="/verify-regis"
-          className="inline-flex items-center justify-center text-md font-medium text-zinc-900 hover:text-black px-4 py-2 rounded-full border border-zinc-800 bg-[#ff9100] hover:bg-[#ff9100]/90 transition-all duration-200"
-          onClick={() => setIsMobileMenuOpen(false)}
-        >
-          Sign in / Up
-        </Link>
-      )}
-      {isLoaded && userId && (
-        <UserButton
-          appearance={{
-            elements: {
-              avatarBox: "w-9 h-9",
-            },
-          }}
-        />
-      )}
-    </>
-  );
+  const closeMenu = () => setIsMobileMenuOpen(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-zinc-800/50 bg-zinc-950/80 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full border-b border-white/[0.06] bg-[#0a0a0c]/80 backdrop-blur-2xl backdrop-saturate-150">
+      <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 hover:opacity-80 transition-opacity z-50"
-          onClick={() => setIsMobileMenuOpen(false)}
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity duration-300 z-50"
+          onClick={closeMenu}
         >
-          <BsCloudRain className="w-6 h-6 text-emerald-400" />
-          <span className="text-zinc-100 font-semibold text-lg">
-            WoolyCloud
+          <BsCloudRain className="w-5 h-5 text-emerald-400" />
+          <span className="text-white font-semibold text-[15px] tracking-tight">
+            Instant Storage
           </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium absolute left-1/2 -translate-x-1/2">
+        <nav className="hidden md:flex items-center gap-7 text-[16px] font-medium absolute left-1/2 -translate-x-1/2">
+          {isLoaded && userId && (
+            <Link
+              href="/dashboard"
+              className="text-neutral-400 hover:text-white transition-colors duration-300"
+            >
+              Dashboard
+            </Link>
+          )}
           <Link
             href="/supported-formats"
-            className="text-zinc-300 hover:text-emerald-400 transition-colors"
+            className="text-neutral-400 hover:text-white transition-colors duration-300"
           >
             Supported Formats
           </Link>
           <Link
             href="/about-us"
-            className="text-zinc-300 hover:text-emerald-400 transition-colors"
+            className="text-neutral-400 hover:text-white transition-colors duration-300"
           >
             About Us
           </Link>
         </nav>
 
-        {/* Desktop Actions (GitHub + Auth) */}
-        <div className="hidden md:flex items-center gap-5">
+        {/* Desktop Actions */}
+        <div className="hidden md:flex items-center gap-4">
           <a
-            href="https://github.com/yourusername/yourrepo"
+            href="https://github.com/kinshukjainn/pvtcldstrg"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-zinc-400 hover:text-white transition-colors"
+            className="text-neutral-500 hover:text-white transition-colors duration-300"
             aria-label="GitHub Repository"
           >
-            <FaGithub className="w-6 h-6" />
+            <FaGithub className="w-5 h-5" />
           </a>
-          {renderAuthUI()}
+          {isLoaded && !userId && (
+            <Link
+              href="/verify-regis"
+              className="inline-flex items-center justify-center text-[13px] font-medium text-black px-4 py-2 rounded-xl bg-white hover:bg-neutral-200 active:scale-[0.97] transition-all duration-200"
+            >
+              Sign in / Up
+            </Link>
+          )}
+          {isLoaded && userId && <UserProfileDropdown variant="desktop" />}
         </div>
 
-        {/* Mobile Menu Toggle Button */}
+        {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden text-zinc-300 hover:text-white z-50 p-2 -mr-2"
+          className="md:hidden cursor-pointer text-neutral-200 bg-blue-800 rounded-md hover:text-white z-50 p-2 -mr-2 transition-colors duration-200"
           onClick={toggleMenu}
           aria-label="Toggle mobile menu"
         >
           {isMobileMenuOpen ? (
-            <FiX className="w-6 h-6" />
+            <PanelBottomOpen className="w-5 h-5" />
           ) : (
-            <FiMenu className="w-6 h-6" />
+            <PanelBottomClose className="w-5 h-5" />
           )}
         </button>
       </div>
 
-      {/* Mobile Navigation Dropdown */}
+      {/* Mobile Navigation */}
       {isMobileMenuOpen && (
-        <div className="absolute top-16 left-0 w-full bg-zinc-950/95 border-b border-zinc-800/50 backdrop-blur-xl md:hidden flex flex-col py-6 px-6 gap-6 shadow-2xl h-[calc(100vh-4rem)]">
-          <nav className="flex flex-col gap-4 text-base font-medium">
+        <div className="absolute top-14 left-0 w-full rounded-b-2xl h-max bg-[#121212] border-b border-white/[0.06] md:hidden flex flex-col py-6 px-6 gap-5 h-[calc(100vh-3.5rem)] animate-[fadeIn_0.2s_ease-out]">
+          <nav className="flex flex-col gap-1 text-[17px] font-medium">
+            {isLoaded && userId && (
+              <Link
+                href="/dashboard"
+                className="text-neutral-300 hover:text-white  p-2 hover:bg-[#202020] rounded-lg transition-colors duration-200 py-2"
+                onClick={closeMenu}
+              >
+                Dashboard
+              </Link>
+            )}
             <Link
               href="/supported-formats"
-              className="text-zinc-300 hover:text-emerald-400 transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-neutral-300 hover:text-white p-2 hover:bg-[#202020] rounded-lg transition-colors duration-200 py-2"
+              onClick={closeMenu}
             >
               Supported Formats
             </Link>
             <Link
               href="/about-us"
-              className="text-zinc-300 hover:text-emerald-400 transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-neutral-300 hover:text-white p-2 hover:bg-[#202020] rounded-lg transition-colors duration-200 py-2"
+              onClick={closeMenu}
             >
               About Us
             </Link>
           </nav>
 
-          <div className="w-full h-px bg-zinc-800/50" />
+          <div className="w-full h-px bg-white/[0.06]" />
 
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
             <a
               href="https://github.com/kinshukjainn/pvtcldstrg"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 text-zinc-400 hover:text-white transition-colors"
+              className="flex items-center gap-3 text-neutral-200 hover:text-white transition-colors duration-200"
             >
-              <FaGithub className="w-6 h-6" />
-              <span>View GitHub Repo</span>
+              <FaGithub className="w-5 h-5" />
+              <span className="text-[16px]">Open Source</span>
             </a>
 
-            <div className="flex items-center gap-4">{renderAuthUI()}</div>
+            {isLoaded && !userId && (
+              <Link
+                href="/verify-regis"
+                className="inline-flex items-center justify-center text-[14px] font-medium text-black px-4 py-2.5 rounded-xl bg-white hover:bg-neutral-200 active:scale-[0.97] transition-all duration-200"
+                onClick={closeMenu}
+              >
+                Sign in / Up
+              </Link>
+            )}
+            {isLoaded && userId && (
+              <UserProfileDropdown variant="mobile" onAction={closeMenu} />
+            )}
           </div>
         </div>
       )}

@@ -17,9 +17,11 @@ import {
   Layers,
   Database,
   Check,
+  FolderOpen,
+  Upload,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-
+import { useAuth, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 
 /* ── File Icons ── */
@@ -226,8 +228,9 @@ const FadeInItem = ({
       className={className}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(20px)",
-        transition: "opacity 0.6s ease, transform 0.6s ease",
+        transform: visible ? "translateY(0)" : "translateY(16px)",
+        transition:
+          "opacity 0.7s cubic-bezier(0.23,1,0.32,1), transform 0.7s cubic-bezier(0.23,1,0.32,1)",
       }}
     >
       {children}
@@ -271,23 +274,72 @@ const FeatureCard = ({
       ref={cardRef}
       style={{
         opacity: inView ? 1 : 0,
-        transform: inView ? "translateY(0)" : "translateY(24px)",
-        transition: `opacity 0.5s ease ${delay}ms, transform 0.5s ease ${delay}ms`,
+        transform: inView ? "translateY(0)" : "translateY(20px)",
+        transition: `opacity 0.6s cubic-bezier(0.23,1,0.32,1) ${delay}ms, transform 0.6s cubic-bezier(0.23,1,0.32,1) ${delay}ms`,
       }}
-      className="bg-zinc-900/10 backdrop-blur-xs border border-zinc-800 p-8 rounded-4xl  transition-colors"
+      className="bg-[#181818]  p-3 rounded-xl  transition-all duration-500"
     >
-      <div className="w-12 h-12 bg-black/70 backdrop-blur-xs rounded-4xl flex items-center justify-center mb-6">
-        <Icon className="w-6 h-6 text-white " />
+      <div className="w-11 h-11 bg-white/[0.04] rounded-lg flex items-center justify-center mb-5">
+        <Icon className="w-5 h-5 text-white group-hover:text-[#ff9100] transition-colors duration-300" />
       </div>
-      <h3 className="text-xl font-bold text-zinc-100 mb-3">{title}</h3>
-      <p className="text-zinc-400 leading-relaxed">{description}</p>
+      <h3 className="text-[19px] font-medium text-white mb-2">{title}</h3>
+      <p className="text-[15px] text-neutral-200 leading-relaxed">
+        {description}
+      </p>
     </div>
   );
 };
 
+/* ── Greeting helper ── */
+const getGreeting = () => {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+};
+
+/* ── Quick Action Card (logged-in hero) ── */
+interface QuickActionProps {
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  title: string;
+  description: string;
+  href: string;
+  delay: number;
+}
+
+const QuickAction = ({
+  icon: Icon,
+  title,
+  description,
+  href,
+  delay,
+}: QuickActionProps) => (
+  <FadeInItem delay={delay}>
+    <Link
+      href={href}
+      className="group flex items-start gap-4 p-2 rounded-lg bg-[#181818] border border-white/[0.06]  hover:border-2 hover:border-[#ff9100] w-full transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] active:scale-[0.98]"
+    >
+      <div className="w-12 h-12 bg-[#141414] rounded-xl flex items-center justify-center shrink-0  transition-colors duration-300">
+        <Icon className="w-5 h-5 text-white group-hover:text-[#ff9100] transition-colors duration-300" />
+      </div>
+      <div className="min-w-0">
+        <h3 className="text-[17px] font-medium text-white mb-0.5 group-hover:text-white transition-colors">
+          {title}
+        </h3>
+        <p className="text-[14px] text-neutral-200 group-hover:text-neutral-400 transition-colors duration-300">
+          {description}
+        </p>
+      </div>
+      <ArrowRight className="w-4 h-4 text-neutral-700 group-hover:text-neutral-400 group-hover:translate-x-0.5 transition-all duration-300 mt-1 shrink-0 ml-auto" />
+    </Link>
+  </FadeInItem>
+);
+
 /* ── Page ── */
 
 export default function Home() {
+  const { isLoaded, userId } = useAuth();
+  const { user } = useUser();
   const [iconIndex, setIconIndex] = useState(0);
 
   useEffect(() => {
@@ -299,244 +351,304 @@ export default function Home() {
   }, []);
 
   const current = fileIcons[iconIndex];
+  const isLoggedIn = isLoaded && !!userId;
+  const firstName = user?.firstName || "there";
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-300  selection:bg-emerald-500/30 relative">
-      {/* Hero */}
-      <main className="max-w-7xl mx-auto px-6 pt-32 pb-24 text-center">
-        <div className="max-w-3xl mx-auto space-y-8">
-          <FadeInItem delay={0}>
-            <div className="inline-flex items-center gap-2 px-8 py-2 rounded-full bg-zinc-900 border border-zinc-800 text-white text-lg font-medium mb-4">
-              <LockKeyhole className="w-4 h-4" />
-              <span>
-                Secured by{" "}
-                <span className="text-[#ff9100] font-bold font-mono">
-                  AWS Cloud Storage
+    <div className="min-h-screen bg-[#1e1e1e] text-neutral-300 selection:bg-blue-500/20 relative">
+      {/* ════════════════════════════════════════════════════════════════════
+          HERO — two completely different experiences
+          ════════════════════════════════════════════════════════════════════ */}
+      <main className="max-w-7xl mx-auto px-6 pt-28 pb-20">
+        {isLoggedIn ? (
+          /* ── Logged-in Hero ── */
+          <div className="max-w-2xl mx-auto space-y-10">
+            <FadeInItem delay={0}>
+              <div className="text-center space-y-3">
+                <p className="text-[13px] text-neutral-600 font-medium tracking-wide">
+                  {getGreeting()}
+                </p>
+                <h1 className="text-3xl md:text-5xl font-semibold text-white tracking-tight">
+                  Welcome back,{" "}
+                  <span className="text-[#ff9100]">{firstName}</span>
+                </h1>
+                <p className="text-[18px] text-neutral-100 max-w-md mx-auto">
+                  Pick up where you left off, or start something new.
+                </p>
+              </div>
+            </FadeInItem>
+
+            {/* Quick actions */}
+            <div className="space-y-3">
+              <QuickAction
+                icon={FolderOpen}
+                title="Open Dashboard"
+                description="View and manage all your files"
+                href="/dashboard"
+                delay={200}
+              />
+              <QuickAction
+                icon={Upload}
+                title="Upload Files"
+                description="Drag and drop or browse to upload"
+                href="/dashboard"
+                delay={300}
+              />
+            </div>
+
+            {/* Go to dashboard CTA */}
+            <FadeInItem delay={500}>
+              <div className="flex justify-center pt-2">
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center gap-2 bg-blue-800 text-white font-medium px-6 py-3 rounded-xl text-[17px] hover:bg-blue-700 active:scale-[0.97] transition-all duration-200 group"
+                >
+                  Go to Dashboard
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-200" />
+                </Link>
+              </div>
+            </FadeInItem>
+          </div>
+        ) : (
+          /* ── Logged-out Hero ── */
+          <div className="max-w-3xl mx-auto space-y-8 text-center">
+            <FadeInItem delay={0}>
+              <div className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-[13px] text-neutral-300 font-medium mb-4">
+                <LockKeyhole className="w-3.5 h-3.5" />
+                <span>
+                  Secured by{" "}
+                  <span className="text-white font-semibold">
+                    AWS Cloud Storage
+                  </span>
                 </span>
-              </span>
-            </div>
-          </FadeInItem>
+              </div>
+            </FadeInItem>
 
-          <FadeInItem delay={200}>
-            <h1 className="text-5xl md:text-7xl font-bold text-zinc-100 tracking-tight leading-tight inline-flex flex-wrap items-center justify-center gap-x-4">
-              <span>Your</span>
+            <FadeInItem delay={200}>
+              <h1 className="text-4xl md:text-6xl font-semibold text-white tracking-tight leading-[1.1] inline-flex flex-wrap items-center justify-center gap-x-3">
+                <span>Your</span>
+                <span className="relative inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 align-middle">
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={current.label}
+                      initial={{ opacity: 0, scale: 0.55, filter: "blur(6px)" }}
+                      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, scale: 0.55, filter: "blur(6px)" }}
+                      transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
+                      className="absolute inset-0"
+                    >
+                      {current.icon}
+                    </motion.span>
+                  </AnimatePresence>
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={current.label + "-glow"}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 0.3 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.45 }}
+                      className="absolute inset-0 rounded-full blur-2xl pointer-events-none"
+                      style={{ backgroundColor: current.color }}
+                    />
+                  </AnimatePresence>
+                </span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-white to-neutral-400">
+                  Only yours.
+                </span>
+              </h1>
+            </FadeInItem>
 
-              {/* Morphing icon */}
-              <span className="relative inline-flex items-center justify-center w-14 h-14 md:w-20 md:h-20 align-middle">
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={current.label}
-                    initial={{ opacity: 0, scale: 0.55, filter: "blur(6px)" }}
-                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, scale: 0.55, filter: "blur(6px)" }}
-                    transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
-                    className="absolute inset-0"
-                  >
-                    {current.icon}
-                  </motion.span>
-                </AnimatePresence>
+            <FadeInItem delay={400}>
+              <p className="text-[16px] md:text-lg text-neutral-500 leading-relaxed max-w-xl mx-auto">
+                A cloud storage platform stripped of the noise. No bloatware, no
+                complicated settings, and zero compromises on your privacy.
+              </p>
+            </FadeInItem>
 
-                {/* Glow */}
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={current.label + "-glow"}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.4 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.45 }}
-                    className="absolute inset-0 rounded-full blur-2xl pointer-events-none"
-                    style={{ backgroundColor: current.color }}
-                  />
-                </AnimatePresence>
-              </span>
-
-              {/* Static gradient text */}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-white via-yellow-200 to-red-600">
-                Only yours.
-              </span>
-            </h1>
-          </FadeInItem>
-
-          <FadeInItem delay={400}>
-            <p className="text-lg md:text-xl text-zinc-400 leading-relaxed max-w-2xl mx-auto">
-              A cloud storage platform stripped of the noise. No bloatware, no
-              complicated settings, and absolutely zero compromises on your
-              privacy. Just drop your files and go.
-            </p>
-          </FadeInItem>
-
-          <FadeInItem delay={600}>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
-              <Link
-                href="/verify-regis"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white border-blue-500 border-3  hover:shadow-blue-600 shadow-md cursor-pointer text-zinc-950 font-bold px-8 py-4 rounded-full text-lg transition-all duration-200 group"
-              >
-                Start for free
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                href="/supported-formats"
-                className="w-full sm:w-auto px-8 py-4 rounded-full text-lg font-medium border-2 cursor-pointer border-white hover:bg-zinc-900 transition-colors duration-200"
-              >
-                About Supported Formats
-              </Link>
-            </div>
-          </FadeInItem>
-        </div>
+            <FadeInItem delay={600}>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-6">
+                <Link
+                  href="/verify-regis"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white text-black font-medium px-7 py-3 rounded-xl text-[15px] hover:bg-neutral-200 active:scale-[0.97] transition-all duration-200 group"
+                >
+                  Start for free
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-200" />
+                </Link>
+                <Link
+                  href="/supported-formats"
+                  className="w-full sm:w-auto px-7 py-3 rounded-xl text-[15px] font-medium border border-white/[0.1] text-neutral-300 hover:bg-white/[0.04] hover:border-white/[0.15] transition-all duration-300"
+                >
+                  Supported Formats
+                </Link>
+              </div>
+            </FadeInItem>
+          </div>
+        )}
       </main>
 
-      {/* Features */}
+      {/* ════════════════════════════════════════════════════════════════════
+          FEATURES — shown to everyone
+          ════════════════════════════════════════════════════════════════════ */}
       <section
         id="features"
-        className="max-w-7xl mx-auto px-6 py-24 border-t border-zinc-900"
+        className="max-w-7xl mx-auto px-6 py-24 border-t border-white/[0.04]"
       >
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-zinc-100 mb-4">
+        <div className="text-center mb-14">
+          <h2 className="text-4xl md:text-5xl font-semibold text-white mb-3 tracking-tight">
             Brilliantly Simple.
           </h2>
-          <p className="text-zinc-400 text-lg">
+          <p className="text-neutral-200 text-[15px]">
             Everything you need. Nothing you don&apos;t.
           </p>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
           <FeatureCard
             icon={HardDrive}
-            title="40GB Free Forever"
-            description="Generous storage for everyone in our free tier. Drop your files without worrying about space limits right away."
+            title="5 GB Free Forever"
+            description="Generous storage for everyone. Drop your files without worrying about space."
             delay={0}
           />
           <FeatureCard
             icon={ShieldCheck}
             title="Absolute Privacy"
-            description="Zero-knowledge architecture. We can't see your files, we don't scan your data, and we don't sell your habits."
-            delay={150}
+            description="Zero-knowledge architecture. We can't see your files or sell your habits."
+            delay={120}
           />
           <FeatureCard
             icon={Layout}
             title="Zero Bloat"
-            description="No unnecessary features or complicated menus. A clean, intuitive interface designed to get out of your way."
-            delay={300}
+            description="No unnecessary features. A clean interface designed to get out of your way."
+            delay={240}
           />
           <FeatureCard
             icon={Zap}
             title="Lightning Fast"
-            description="Optimized for speed. Uploads and downloads happen in the blink of an eye, powered by edge networks."
-            delay={450}
+            description="Optimized for speed. Uploads and downloads in the blink of an eye."
+            delay={360}
           />
         </div>
       </section>
 
-      {/* Pricing Plans (Coming Soon) */}
-      <section className="max-w-7xl mx-auto px-6 py-24 border-t border-zinc-900">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-zinc-100 mb-4">
+      {/* ════════════════════════════════════════════════════════════════════
+          PRICING — shown to everyone, CTA adapts
+          ════════════════════════════════════════════════════════════════════ */}
+      <section className="max-w-7xl mx-auto px-6 py-24 border-t border-white/[0.04]">
+        <div className="text-center mb-14">
+          <h2 className="text-2xl md:text-3xl font-semibold text-white mb-3 tracking-tight">
             Future-Proof Pricing
           </h2>
-          <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
-            Honest, transparent tiers with the best prices on the market.
-            Scaling your storage shouldn&apos;t break the bank.
+          <p className="text-neutral-500 text-[15px] max-w-xl mx-auto">
+            Honest, transparent tiers. Scaling your storage shouldn&apos;t break
+            the bank.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {/* 2TB Plan */}
-          <div className="bg-zinc-900/10 backdrop-blur-xs border border-zinc-800 p-8 rounded-4xl relative overflow-hidden flex flex-col hover:border-blue-500/50 transition-colors">
-            <div className="absolute top-5 right-5 bg-blue-500/10 text-blue-400 text-xs font-bold px-3 py-1 rounded-full border border-blue-500/20">
+        <div className="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto">
+          {/* 2TB */}
+          <div className="bg-[#181818] border border-[#444444]  p-7 rounded-lg relative overflow-hidden flex flex-col transition-all duration-500">
+            <div className="absolute top-4 right-4 bg-blue-800 text-white text-[10px] font-semibold px-2.5 py-1 rounded-sm border border-blue-500/[0.15] tracking-wide">
               Coming Soon
             </div>
-            <div className="w-12 h-12 bg-black/70 rounded-2xl flex items-center justify-center mb-6">
-              <Cloud className="w-6 h-6 text-white" />
+            <div className="w-13 h-13 bg-blue-800 rounded-lg flex items-center justify-center mb-5">
+              <Cloud className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-2xl font-bold text-zinc-100 mb-2">2TB Plan</h3>
-            <div className="text-4xl font-bold text-white mb-6">
+            <h3 className="text-lg font-semibold text-white mb-1.5">
+              2TB Plan
+            </h3>
+            <div className="text-3xl font-semibold text-white mb-5">
               460₹
-              <span className="text-lg text-zinc-500 font-normal">/mo</span>
+              <span className="text-sm text-neutral-100 font-normal">/mo</span>
             </div>
-            <ul className="space-y-3 text-zinc-400 mb-8 flex-1">
-              <li className="flex gap-3 items-center">
-                <Check className="w-4 h-4 text-blue-400" /> Perfect for
+            <ul className="space-y-2.5 text-[13px] text-neutral-100 mb-7 flex-1">
+              <li className="flex gap-2.5 items-center">
+                <Check className="w-3.5 h-3.5 text-blue-400" /> Perfect for
                 professionals
               </li>
-              <li className="flex gap-3 items-center">
-                <Check className="w-4 h-4 text-blue-400" /> End-to-end
+              <li className="flex gap-2.5 items-center">
+                <Check className="w-3.5 h-3.5 text-blue-400" /> End-to-end
                 encryption
               </li>
-              <li className="flex gap-3 items-center">
-                <Check className="w-4 h-4 text-blue-400" /> Priority support
+              <li className="flex gap-2.5 items-center">
+                <Check className="w-3.5 h-3.5 text-blue-400" /> Priority support
               </li>
             </ul>
             <button
               disabled
-              className="w-full bg-zinc-800/50 text-zinc-500 font-bold py-3 rounded-xl cursor-not-allowed border border-zinc-800"
+              className="w-full bg-white/[0.04] text-neutral-600 w-max font-medium px-4 py-2.5 rounded-lg cursor-not-allowed border border-white/[0.06] text-[13px]"
             >
               Available Soon
             </button>
           </div>
 
-          {/* 8TB Plan */}
-          <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 border border-blue-500/30 p-8 rounded-4xl relative overflow-hidden flex flex-col shadow-lg shadow-blue-500/5">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50" />
-            <div className="absolute top-5 right-5 bg-blue-500/10 text-blue-400 text-xs font-bold px-3 py-1 rounded-full border border-blue-500/20">
+          {/* 8TB — highlighted */}
+          <div className="bg-white/[0.03] border border-[#444444] p-7 rounded-lg relative overflow-hidden flex flex-col ">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
+            <div className="absolute top-4 right-4 bg-blue-800 text-white text-[10px] font-semibold px-2.5 py-1 rounded-sm border border-blue-500/[0.15] tracking-wide">
               Coming Soon
             </div>
-            <div className="w-12 h-12 bg-black/70 rounded-2xl flex items-center justify-center mb-6">
-              <Layers className="w-6 h-6 text-blue-400" />
+            <div className="w-13 h-13 bg-blue-800 rounded-lg flex items-center justify-center mb-5">
+              <Layers className="w-7 h-7 text-white" />
             </div>
-            <h3 className="text-2xl font-bold text-zinc-100 mb-2">8TB Plan</h3>
-            <div className="text-4xl font-bold text-white mb-6">
+            <h3 className="text-lg font-semibold text-white mb-1.5">
+              8TB Plan
+            </h3>
+            <div className="text-3xl font-semibold text-white mb-5">
               1600₹
-              <span className="text-lg text-zinc-500 font-normal">/mo</span>
+              <span className="text-sm text-neutral-100 font-normal">/mo</span>
             </div>
-            <ul className="space-y-3 text-zinc-400 mb-8 flex-1">
-              <li className="flex gap-3 items-center">
-                <Check className="w-4 h-4 text-blue-400" /> Made for creators
+            <ul className="space-y-2.5 text-[13px] text-neutral-100 mb-7 flex-1">
+              <li className="flex gap-2.5 items-center">
+                <Check className="w-3.5 h-3.5 text-blue-400" /> Made for
+                creators
               </li>
-              <li className="flex gap-3 items-center">
-                <Check className="w-4 h-4 text-blue-400" /> Advanced sharing
+              <li className="flex gap-2.5 items-center">
+                <Check className="w-3.5 h-3.5 text-blue-400" /> Advanced sharing
                 controls
               </li>
-              <li className="flex gap-3 items-center">
-                <Check className="w-4 h-4 text-blue-400" /> Unlimited bandwidth
+              <li className="flex gap-2.5 items-center">
+                <Check className="w-3.5 h-3.5 text-blue-400" /> Unlimited
+                bandwidth
               </li>
             </ul>
             <button
               disabled
-              className="w-full bg-zinc-800/50 text-zinc-500 font-bold py-3 rounded-xl cursor-not-allowed border border-zinc-800"
+              className="w-full w-max px-4 bg-white/[0.04] text-neutral-600 font-medium py-2.5 rounded-xl cursor-not-allowed border border-white/[0.06] text-[13px]"
             >
               Available Soon
             </button>
           </div>
 
-          {/* 20TB Plan */}
-          <div className="bg-zinc-900/10 backdrop-blur-xs border border-zinc-800 p-8 rounded-4xl relative overflow-hidden flex flex-col hover:border-blue-500/50 transition-colors">
-            <div className="absolute top-5 right-5 bg-blue-500/10 text-blue-400 text-xs font-bold px-3 py-1 rounded-full border border-blue-500/20">
+          {/* 20TB */}
+          <div className="bg-[#181818]  p-7 rounded-lg border border-[#444444] relative overflow-hidden flex flex-col transition-all duration-500">
+            <div className="absolute top-4 right-4 bg-blue-800 text-white text-[10px] font-semibold px-2.5 py-1 rounded-sm border border-blue-500/[0.15] tracking-wide">
               Coming Soon
             </div>
-            <div className="w-12 h-12 bg-black/70 rounded-2xl flex items-center justify-center mb-6">
-              <Database className="w-6 h-6 text-white" />
+            <div className="w-13 h-13 bg-blue-800 rounded-lg flex items-center justify-center mb-5">
+              <Database className="w-7 h-7 text-white" />
             </div>
-            <h3 className="text-2xl font-bold text-zinc-100 mb-2">20TB Plan</h3>
-            <div className="text-4xl font-bold text-white mb-6">
-              3600₹
-              <span className="text-lg text-zinc-500 font-normal">/mo</span>
+            <h3 className="text-lg font-semibold text-white mb-1.5">
+              20TB Plan
+            </h3>
+            <div className="text-3xl font-semibold text-white mb-5">
+              3200₹
+              <span className="text-sm text-neutral-100 font-normal">/mo</span>
             </div>
-            <ul className="space-y-3 text-zinc-400 mb-8 flex-1">
-              <li className="flex gap-3 items-center">
-                <Check className="w-4 h-4 text-blue-400" /> Ultimate digital
-                vault
+            <ul className="space-y-2.5 text-[13px] text-neutral-100 mb-7 flex-1">
+              <li className="flex gap-2.5 items-center">
+                <Check className="w-3.5 h-3.5 text-blue-400" /> Perfect for
+                professionals
               </li>
-              <li className="flex gap-3 items-center">
-                <Check className="w-4 h-4 text-blue-400" /> Dedicated account
-                manager
+              <li className="flex gap-2.5 items-center">
+                <Check className="w-3.5 h-3.5 text-blue-400" /> End-to-end
+                encryption
               </li>
-              <li className="flex gap-3 items-center">
-                <Check className="w-4 h-4 text-blue-400" /> Custom branding
-                options
+              <li className="flex gap-2.5 items-center">
+                <Check className="w-3.5 h-3.5 text-blue-400" /> Priority support
               </li>
             </ul>
             <button
               disabled
-              className="w-full bg-zinc-800/50 text-zinc-500 font-bold py-3 rounded-xl cursor-not-allowed border border-zinc-800"
+              className="w-full w-max px-4 bg-white/[0.04] text-neutral-600 font-medium py-2.5 rounded-xl cursor-not-allowed border border-white/[0.06] text-[13px]"
             >
               Available Soon
             </button>
@@ -544,23 +656,47 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="max-w-4xl mx-auto px-6 py-24">
-        <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 border border-zinc-800 hover:border-blue-500 shadow-md hover:shadow-blue-600 rounded-3xl p-12 text-center relative overflow-hidden transition-all duration-500 ease-in-out">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[4px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50" />
-          <h2 className="text-3xl font-bold text-zinc-100 mb-6">
-            Ready to take back your data?
-          </h2>
-          <p className="text-zinc-400 mb-8 max-w-xl mx-auto">
-            Join thousands of users who have migrated to a simpler, more secure
-            way to store their digital life.
-          </p>
-          <Link
-            href="/verify-regis"
-            className="bg-white  text-zinc-950 font-bold px-6 py-2 cursor-pointer rounded-full text-lg transition-all duration-200"
-          >
-            Create Free Account
-          </Link>
+      {/* ════════════════════════════════════════════════════════════════════
+          CTA — adapts based on auth state
+          ════════════════════════════════════════════════════════════════════ */}
+      <section className="max-w-3xl mx-auto px-6 py-24">
+        <div className="bg-[#181818] border-2 border-blue-700  rounded-2xl p-10 md:p-14 text-center relative overflow-hidden transition-all duration-500">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-[4px] bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
+
+          {isLoggedIn ? (
+            <>
+              <h2 className="text-3xl font-semibold text-white mb-3 tracking-tight">
+                Your files are waiting
+              </h2>
+              <p className="text-neutral-200 text-[17px] mb-7 max-w-md mx-auto">
+                Jump back into your dashboard and keep your workflow going.
+              </p>
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center gap-2 bg-blue-800 text-white font-medium px-6 py-2.5 rounded-xl text-[16px] hover:bg-blue-700 active:scale-[0.97] transition-all duration-200 group"
+              >
+                View Dashboard
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-200" />
+              </Link>
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-semibold text-white mb-3 tracking-tight">
+                Ready to take back your data?
+              </h2>
+              <p className="text-neutral-500 text-[15px] mb-7 max-w-md mx-auto">
+                Join thousands who have migrated to a simpler, more secure way
+                to store their digital life.
+              </p>
+              <Link
+                href="/verify-regis"
+                className="inline-flex items-center gap-2 bg-white text-black font-medium px-6 py-2.5 rounded-xl text-[14px] hover:bg-neutral-200 active:scale-[0.97] transition-all duration-200 group"
+              >
+                Create Free Account
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-200" />
+              </Link>
+            </>
+          )}
         </div>
       </section>
     </div>

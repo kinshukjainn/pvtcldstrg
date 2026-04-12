@@ -68,13 +68,13 @@ export default function AboutUs() {
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex flex-col p-6 bg-zinc-900/40 border border-zinc-800 rounded-2xl hover:bg-zinc-800/50 hover:border-zinc-700 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-xl overflow-hidden"
+              className="group relative flex flex-col p-6 bg-zinc-900/40 border border-zinc-800 rounded-4xl hover:bg-zinc-800/50 hover:border-2 hover:border-blue-700 hover:shadow-md hover:shadow-blue-700 transition-all duration-300 overflow-hidden"
             >
               {/* Hover gradient effect inside card */}
               <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
               <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 bg-zinc-950 rounded-xl border border-zinc-800 group-hover:scale-110 transition-transform duration-300">
+                <div className="p-3 bg-zinc-950 rounded-full border border-zinc-800 group-hover:scale-110 transition-transform duration-300">
                   {link.icon}
                 </div>
                 <h2 className="text-xl font-semibold text-zinc-100 group-hover:text-white transition-colors">
@@ -85,7 +85,7 @@ export default function AboutUs() {
                 {link.description}
               </p>
 
-              <div className="mt-auto pt-6 flex items-center text-sm font-medium text-zinc-500 group-hover:text-emerald-400 transition-colors">
+              <div className="mt-auto pt-6 flex items-center text-sm font-medium text-zinc-500 group-hover:text-blue-400 transition-colors">
                 Visit Link
                 <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">
                   →
