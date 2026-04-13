@@ -3,6 +3,7 @@ import React, {
   useState,
   useEffect,
   useRef,
+  Suspense,
   type ReactNode,
   type RefObject,
 } from "react";
@@ -307,7 +308,7 @@ const getGreeting = (name?: string) => {
   } else if (hour >= 17 && hour < 21) {
     greeting = "Good evening";
   } else {
-    greeting = "Good evening"; // keeps UI consistent instead of "Good night"
+    greeting = "Good evening";
   }
 
   return name ? `${greeting}, ${name}` : greeting;
@@ -389,9 +390,17 @@ const useIsNewUser = () => {
   return searchParams.get("new") === "true";
 };
 
-/* ── Page ── */
-
+/* ── Default Export with Suspense Wrapper ── */
 export default function Home() {
+  return (
+    <Suspense fallback={null}>
+      <HomeContent />
+    </Suspense>
+  );
+}
+
+/* ── Page Content ── */
+function HomeContent() {
   const { isLoaded, userId } = useAuth();
   const { user } = useUser();
   const [iconIndex, setIconIndex] = useState(0);
