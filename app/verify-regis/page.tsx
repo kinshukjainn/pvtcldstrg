@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useSignIn, useSignUp } from "@clerk/nextjs";
+import { useSignIn, useSignUp, useClerk } from "@clerk/nextjs";
 import { FaSpinner } from "react-icons/fa";
 import { BsCloudRain } from "react-icons/bs";
 import Link from "next/link";
@@ -19,6 +19,7 @@ function getErrorMessage(error: unknown): string {
 export default function AuthPage() {
   const { signIn } = useSignIn();
   const { signUp } = useSignUp();
+  const { setActive } = useClerk();
 
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -43,13 +44,8 @@ export default function AuthPage() {
         setLoading(false);
         return;
       }
-      if (signIn.status === "complete") {
-        const { error: fErr } = await signIn.finalize();
-        if (fErr) {
-          setAuthError(getErrorMessage(fErr));
-          setLoading(false);
-          return;
-        }
+      if (signIn.status === "complete" && signIn.createdSessionId) {
+        await setActive({ session: signIn.createdSessionId });
         window.location.href = "/dashboard";
       } else {
         setAuthError("Additional verification is required.");
@@ -59,7 +55,7 @@ export default function AuthPage() {
       setAuthError(getErrorMessage(err));
       setLoading(false);
     }
-  }, [signIn, email, password]);
+  }, [signIn, setActive, email, password]);
 
   const handleSignUp = useCallback(async () => {
     if (!signUp) return;
@@ -104,13 +100,11 @@ export default function AuthPage() {
         setLoading(false);
         return;
       }
-      if (signUp.status === "complete" || signUp.createdSessionId) {
-        const { error: fErr } = await signUp.finalize();
-        if (fErr) {
-          setAuthError(getErrorMessage(fErr));
-          setLoading(false);
-          return;
-        }
+      if (
+        (signUp.status === "complete" || signUp.createdSessionId) &&
+        signUp.createdSessionId
+      ) {
+        await setActive({ session: signUp.createdSessionId });
         window.location.href = "/dashboard";
       } else {
         const missing = signUp.missingFields ?? [];
@@ -128,7 +122,7 @@ export default function AuthPage() {
       setAuthError(getErrorMessage(err));
       setLoading(false);
     }
-  }, [signUp, verificationCode]);
+  }, [signUp, setActive, verificationCode]);
 
   const handleSubmit = useCallback(() => {
     if (pendingVerification) return handleVerify();
