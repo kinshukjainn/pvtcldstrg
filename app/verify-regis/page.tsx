@@ -48,7 +48,8 @@ export default function AuthPage() {
         await setActive({ session: signIn.createdSessionId });
         window.location.href = "/dashboard";
       } else {
-        setAuthError("Additional verification is required.");
+        // Updated debugging message to show exact Clerk status
+        setAuthError(`Status: ${signIn.status} — requires additional steps.`);
         setLoading(false);
       }
     } catch (err) {
@@ -233,14 +234,13 @@ export default function AuthPage() {
                 className={inputClass}
               />
 
-              {isSignUp && (
-                <div
-                  id="clerk-captcha"
-                  data-cl-theme="dark"
-                  data-cl-size="flexible"
-                  className="pt-3"
-                />
-              )}
+              {/* CAPTCHA is now rendered for BOTH Sign Up and Sign In */}
+              <div
+                id="clerk-captcha"
+                data-cl-theme="dark"
+                data-cl-size="flexible"
+                className="pt-3"
+              />
 
               <div className="pt-6 space-y-3">
                 <button
