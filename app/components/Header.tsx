@@ -68,14 +68,15 @@ export default function Header() {
           >
             <FaGithub className="w-7 h-7" />
           </a>
-          {isLoaded && !userId && (
-            <Link
-              href="/verify-regis"
-              className="inline-flex items-center justify-center text-[15px] font-medium text-white px-4 py-2 rounded-xl bg-blue-800  active:scale-[0.97] transition-all duration-200"
-            >
-              Sign in / Up
-            </Link>
-          )}
+          {isLoaded ||
+            (!userId && (
+              <Link
+                href="/verify-regis"
+                className="inline-flex items-center justify-center text-[15px] font-medium text-white px-4 py-2 rounded-xl bg-blue-800  active:scale-[0.97] transition-all duration-200"
+              >
+                Sign in / Up
+              </Link>
+            ))}
           {isLoaded && userId && <UserProfileDropdown variant="desktop" />}
         </div>
 
