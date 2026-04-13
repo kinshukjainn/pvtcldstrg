@@ -344,25 +344,22 @@ export default function DriveManager() {
     getFileName(file.key).toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const storagePercent =
-    storageLimit > 0 ? Math.min((storageUsed / storageLimit) * 100, 100) : 0;
-
   return (
-    <div className="w-full min-h-screen bg-[#1e1e1e] text-neutral-200 flex flex-col relative font-sans">
+    <div className="w-full min-h-screen bg-[#1e1e1e] text-neutral-200 flex flex-col relative ">
       {/* --- Top Control Panel --- */}
       <div className=" top-0 z-40">
         <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-4 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           {/* Storage & Stats */}
           <div className="flex flex-wrap items-center gap-3 text-neutral-100">
-            <span className="text-sm md:text-md flex gap-2.5 items-center font-medium shadow-sm">
+            <span className="text-sm md:text-md flex gap-2.5 items-center font-medium">
               <span>
                 <Folder />
               </span>
               {totalFiles} files
             </span>
             <span className="text-neutral-400 text-lg">{"|"}</span>
-            <span className="text-sm md:text-md  flex gap-2.5 items-center font-medium shadow-sm">
-              <span className="text-sm md:text-md  flex gap-2.5 items-center font-medium shadow-sm">
+            <span className="text-sm md:text-md  flex gap-2.5 items-center font-medium ">
+              <span className="text-sm md:text-md  flex gap-2.5 items-center font-medium ">
                 <span>
                   <Container />
                 </span>
@@ -374,7 +371,7 @@ export default function DriveManager() {
           {/* Controls */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
             {/* Search */}
-            <div className="group flex items-center bg-[#18181b] border border-white/10 rounded-xl px-4 py-2 flex-1 sm:flex-none transition-all duration-300 focus-within:border-blue-500/50 focus-within:shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+            <div className="group flex items-center bg-[#18181b] border border-white/10 rounded-xl px-4 py-2 flex-1 sm:flex-none transition-all duration-300 ">
               <FaSearch
                 className="text-neutral-500 group-focus-within:text-blue-400 mr-3 transition-colors"
                 size={14}
@@ -384,7 +381,7 @@ export default function DriveManager() {
                 placeholder="Search your files..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full sm:w-56 outline-none text-[13px] bg-transparent placeholder-neutral-500 text-neutral-100"
+                className="w-full sm:w-56 outline-none text-[15px] bg-transparent placeholder-neutral-500 text-white"
               />
             </div>
 
@@ -428,7 +425,7 @@ export default function DriveManager() {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading}
-                className="group flex-1 sm:flex-none flex items-center justify-center gap-2.5 bg-blue-500 hover:bg-blue-400 text-white px-5 py-2 rounded-xl font-medium text-[14px] shadow-[0_4px_14px_rgba(59,130,246,0.3)] hover:shadow-[0_6px_20px_rgba(59,130,246,0.4)] transition-all duration-200 active:scale-[0.96]"
+                className="group flex-1 cursor-pointer sm:flex-none flex items-center justify-center gap-2.5 bg-blue-800 hover:bg-blue-700 text-white px-5 py-2 rounded-xl font-medium text-[14px] "
               >
                 {isUploading ? (
                   <FaSpinner className="animate-spin" size={14} />

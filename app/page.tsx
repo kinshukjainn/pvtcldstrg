@@ -26,6 +26,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { FaInfoCircle } from "react-icons/fa";
 
 /* ── File Icons ── */
 const fileIcons = [
@@ -293,14 +294,24 @@ const FeatureCard = ({
   );
 };
 
-/* ── Greeting helper ── */
-const getGreeting = () => {
-  const h = new Date().getHours();
-  if (h < 12) return "Good morning";
-  if (h < 17) return "Good afternoon";
-  return "Good evening";
-};
+/* ── Advanced Greeting helper (English only) ── */
+const getGreeting = (name?: string) => {
+  const hour = new Date().getHours();
 
+  let greeting: string;
+
+  if (hour >= 5 && hour < 12) {
+    greeting = "Good morning";
+  } else if (hour >= 12 && hour < 17) {
+    greeting = "Good afternoon";
+  } else if (hour >= 17 && hour < 21) {
+    greeting = "Good evening";
+  } else {
+    greeting = "Good evening"; // keeps UI consistent instead of "Good night"
+  }
+
+  return name ? `${greeting}, ${name}` : greeting;
+};
 /* ── Quick Action Card (logged-in hero) ── */
 interface QuickActionProps {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -497,11 +508,8 @@ export default function Home() {
           <div className="max-w-2xl mx-auto space-y-10">
             <FadeInItem delay={0}>
               <div className="text-center space-y-3">
-                <p className="text-[13px] text-neutral-600 font-medium tracking-wide">
-                  {getGreeting()}
-                </p>
                 <h1 className="text-3xl md:text-5xl font-semibold text-white tracking-tight">
-                  Welcome back,{" "}
+                  {getGreeting()},{" "}
                   <span className="text-[#ff9100]">{firstName}</span>
                 </h1>
                 <p className="text-[18px] text-neutral-100 max-w-md mx-auto">
@@ -674,7 +682,6 @@ export default function Home() {
             the bank.
           </p>
         </div>
-
         <div className="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto">
           {/* 2TB */}
           <div className="bg-[#181818] border border-[#444444]  p-7 rounded-lg relative overflow-hidden flex flex-col transition-all duration-500">
@@ -784,6 +791,38 @@ export default function Home() {
             >
               Available Soon
             </button>
+          </div>
+        </div>
+
+        <div className="w-full max-w-3xl mx-auto mt-12 px-4">
+          <div className="relative overflow-hidden rounded-2xl bg-[#18181b]/50 border border-white/10 p-5 sm:p-6 backdrop-blur-xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/20 hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)] group">
+            {/* Left glowing accent line */}
+            <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-blue-500 to-emerald-400 opacity-80 rounded-l-2xl"></div>
+
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+              {/* Icon */}
+              <div className="flex-shrink-0 p-2.5 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-400 shadow-inner mt-1 sm:mt-0 group-hover:scale-110 transition-transform duration-300">
+                <FaInfoCircle size={18} />
+              </div>
+
+              {/* Text Content */}
+              <div className="text-center sm:text-left flex-1">
+                <h4 className="text-[14px] font-semibold text-white mb-1.5 tracking-wide">
+                  Early Access & Prototype Pricing
+                </h4>
+                <p className="text-[13px] sm:text-[14px] leading-relaxed text-neutral-400 ">
+                  The pricing you currently see is strictly for{" "}
+                  <span className="text-neutral-200 font-medium">
+                    prototype testing
+                  </span>
+                  . Final prices may vary at launch, but we are committed to
+                  keeping them affordable and transparent.
+                  <span className="block mt-2 text-[12px] sm:text-[13px] font-semibold text-emerald-400 tracking-wider uppercase">
+                    No hidden fees. No surprises.
+                  </span>
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>

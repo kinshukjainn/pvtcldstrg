@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Supermercado_One } from "next/font/google";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { Geist, Geist_Mono, Ubuntu, Roboto, Inter } from "next/font/google";
 import localFont from "next/font/local";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
@@ -12,6 +12,12 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["100", "300", "400", "500", "700", "900"],
+  variable: "--font-roboto",
+  display: "swap",
+});
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -21,6 +27,13 @@ export const lucideSans = localFont({
   src: "../public/fonts/myfont.woff2",
   variable: "--font-lucida",
   weight: "400",
+  display: "swap",
+});
+
+const ubuntu = Ubuntu({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "700"],
+  variable: "--font-ubuntu",
   display: "swap",
 });
 
@@ -72,7 +85,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" data-google-analytics-opt-out="">
         <body
-          className={`${geistSans.variable} ${segoeui.variable} ${geistMono.variable} ${inter.variable} ${lucideSans.variable} ${googleSans.variable} ${supermercado.variable}  antialiased`}
+          className={`${geistSans.variable} ${ubuntu.variable} ${roboto.variable} ${segoeui.variable} ${geistMono.variable} ${inter.variable} ${lucideSans.variable} ${googleSans.variable} ${supermercado.variable}  antialiased`}
         >
           <Header />
           <main>{children}</main>

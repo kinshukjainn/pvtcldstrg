@@ -1,5 +1,6 @@
-// Storage defaults — change these in one place, not scattered across SQL strings
-export const DEFAULT_STORAGE_LIMIT_BYTES =
-  Number(process.env.DEFAULT_STORAGE_LIMIT_BYTES) || 5 * 1024 * 1024 * 1024; // 5 GB
+// Storage defaults
+// Storage limits are now managed by the `plans` table in NeonDB.
+// No more hardcoded byte limits here — change them via SQL:
+//   UPDATE plans SET storage_limit = ... WHERE id = 'free';
 
-export const FILE_LIST_PAGE_SIZE = 50;
+export const FILE_LIST_PAGE_SIZE = 30;

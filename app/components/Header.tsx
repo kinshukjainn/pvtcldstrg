@@ -24,9 +24,12 @@ export default function Header() {
           className="flex items-center gap-2 hover:opacity-80 transition-opacity duration-300 z-50"
           onClick={closeMenu}
         >
-          <BsCloudRain className="w-8 h-8 text-emerald-400" />
-          <span className="text-white special-font font-semibold text-[24px] tracking-tight">
+          <BsCloudRain className="w-8 h-8 text-[#ff9100]" />
+          <span className="text-white special-font font-semibold text-[24px] tracking-tight flex items-center gap-2">
             Kosha
+            <span className="px-2 py-[3px] text-[13px] font-semibold rounded-full bg-blue-800  font-mono  text-white">
+              Beta version
+            </span>
           </span>
         </Link>
 

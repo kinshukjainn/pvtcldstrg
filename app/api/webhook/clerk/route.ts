@@ -3,7 +3,55 @@ import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/db";
-import { DEFAULT_STORAGE_LIMIT_BYTES } from "@/actions/constants"; // FIX: no more magic number in SQL
+import { s3Client } from "@/lib/s3";
+import { DeleteObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
+
+const getBucketName = () => {
+  const bucket = process.env.BUCKET_NAME;
+  if (!bucket)
+    throw new Error("Server configuration error: BUCKET_NAME missing.");
+  return bucket;
+};
+
+/**
+ * Deletes ALL S3 objects under a user's upload prefix.
+ * This prevents orphaned files when a user is removed from the DB.
+ */
+async function deleteAllUserS3Files(clerkId: string) {
+  const bucket = getBucketName();
+  const prefix = `uploads/${clerkId}/`;
+
+  let continuationToken: string | undefined;
+
+  do {
+    const listResponse = await s3Client.send(
+      new ListObjectsV2Command({
+        Bucket: bucket,
+        Prefix: prefix,
+        ContinuationToken: continuationToken,
+      }),
+    );
+
+    const objects = listResponse.Contents ?? [];
+
+    // Delete in parallel batches of 25 to avoid overwhelming S3
+    const BATCH_SIZE = 25;
+    for (let i = 0; i < objects.length; i += BATCH_SIZE) {
+      const batch = objects.slice(i, i + BATCH_SIZE);
+      await Promise.all(
+        batch.map((obj) =>
+          s3Client.send(
+            new DeleteObjectCommand({ Bucket: bucket, Key: obj.Key! }),
+          ),
+        ),
+      );
+    }
+
+    continuationToken = listResponse.IsTruncated
+      ? listResponse.NextContinuationToken
+      : undefined;
+  } while (continuationToken);
+}
 
 export async function POST(req: Request) {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
@@ -62,15 +110,15 @@ export async function POST(req: Request) {
     const name = [first_name, last_name].filter(Boolean).join(" ") || null;
 
     try {
+      // plan_id defaults to 'free' via the DB column default,
+      // which links to the plans table for storage_limit & file_count_limit.
       await sql`
-        INSERT INTO users (clerk_id, email, name, avatar_url, storage_used, storage_limit)
+        INSERT INTO users (clerk_id, email, name, avatar_url)
         VALUES (
           ${id},
           ${primaryEmail},
           ${name},
-          ${image_url ?? null},
-          0,
-          ${DEFAULT_STORAGE_LIMIT_BYTES}
+          ${image_url ?? null}
         )
         ON CONFLICT (clerk_id) DO NOTHING
       `;
@@ -124,12 +172,17 @@ export async function POST(req: Request) {
     }
 
     try {
-      // CASCADE on files table will handle file records
+      // 1. Purge all of the user's files from S3 BEFORE the DB cascade
+      //    wipes the file_key references we'd need to find them.
+      await deleteAllUserS3Files(id);
+
+      // 2. Now delete the user row — CASCADE will clean up the files table.
       await sql`DELETE FROM users WHERE clerk_id = ${id}`;
+
       return NextResponse.json({ message: "User deleted" }, { status: 200 });
     } catch (error) {
-      console.error("Database deletion error:", error);
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
+      console.error("User deletion error:", error);
+      return NextResponse.json({ error: "Deletion error" }, { status: 500 });
     }
   }
 

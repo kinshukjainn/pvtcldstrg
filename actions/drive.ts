@@ -9,8 +9,9 @@ import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3Client } from "@/lib/s3";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { sql } from "@/lib/db";
-import { DEFAULT_STORAGE_LIMIT_BYTES, FILE_LIST_PAGE_SIZE } from "./constants";
+import { sql } from "@/lib/db"; // NeonDB
+
+const FILE_LIST_PAGE_SIZE = 30;
 
 const getBucketName = () => {
   const bucket = process.env.BUCKET_NAME;
@@ -18,64 +19,59 @@ const getBucketName = () => {
   return bucket;
 };
 
-// ── Helper: get internal user from clerk_id, auto-provision if webhook hasn't fired yet ──
+// ── Helper: Get user and their plan limits via SQL JOIN ──
 async function getDbUser(clerkId: string) {
-  const rows = await sql`
-    SELECT id, storage_used, storage_limit FROM users WHERE clerk_id = ${clerkId}
+  // We use a JOIN to get the user's data AND their plan limits instantly
+  const query = sql`
+    SELECT 
+      u.id, 
+      u.storage_used, 
+      u.plan_id,
+      p.storage_limit AS plan_storage_limit, 
+      p.file_count_limit AS plan_file_count_limit
+    FROM users u
+    JOIN plans p ON u.plan_id = p.id
+    WHERE u.clerk_id = ${clerkId}
   `;
+
+  const rows = await query;
 
   if (rows.length > 0) {
     return rows[0] as {
       id: string;
       storage_used: number;
-      storage_limit: number;
+      plan_id: string;
+      plan_storage_limit: number;
+      plan_file_count_limit: number;
     };
   }
 
-  // Webhook hasn't arrived yet — provision the row from Clerk's server API
+  // Provision new user from Clerk (NeonDB automatically assigns plan_id = 'free')
   const clerkUser = await currentUser();
   if (!clerkUser) throw new Error("Unauthorized");
 
-  const email =
-    clerkUser.emailAddresses.find(
-      (e) => e.id === clerkUser.primaryEmailAddressId,
-    )?.emailAddress ?? clerkUser.emailAddresses[0]?.emailAddress;
-
+  const email = clerkUser.emailAddresses[0]?.emailAddress;
   if (!email) throw new Error("No email found on Clerk user");
 
   const name =
     [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ") || null;
 
-  const inserted = await sql`
-    INSERT INTO users (clerk_id, email, name, avatar_url, storage_used, storage_limit)
-    VALUES (
-      ${clerkId},
-      ${email},
-      ${name},
-      ${clerkUser.imageUrl ?? null},
-      0,
-      ${DEFAULT_STORAGE_LIMIT_BYTES}
-    )
+  await sql`
+    INSERT INTO users (clerk_id, email, name, avatar_url)
+    VALUES (${clerkId}, ${email}, ${name}, ${clerkUser.imageUrl ?? null})
     ON CONFLICT (clerk_id) DO NOTHING
-    RETURNING id, storage_used, storage_limit
   `;
 
-  if (inserted.length > 0) {
-    return inserted[0] as {
-      id: string;
-      storage_used: number;
-      storage_limit: number;
-    };
-  }
+  // Fetch again to get the auto-assigned plan defaults
+  const retry = await query;
+  if (retry.length === 0) throw new Error("User provision failed");
 
-  const retry = await sql`
-    SELECT id, storage_used, storage_limit FROM users WHERE clerk_id = ${clerkId}
-  `;
-  if (retry.length === 0) throw new Error("User not found in DB");
   return retry[0] as {
     id: string;
     storage_used: number;
-    storage_limit: number;
+    plan_id: string;
+    plan_storage_limit: number;
+    plan_file_count_limit: number;
   };
 }
 
@@ -92,8 +88,25 @@ export async function getUploadUrl(
 
   const user = await getDbUser(userId);
 
-  if (Number(user.storage_used) + fileSize > Number(user.storage_limit)) {
-    throw new Error("Storage limit exceeded (5 GB max).");
+  // 1. Check File Count Limit against the Plan
+  const countResult =
+    await sql`SELECT COUNT(*)::int AS total FROM files WHERE user_id = ${user.id}`;
+  const currentFileCount = countResult[0]?.total ?? 0;
+
+  if (currentFileCount >= Number(user.plan_file_count_limit)) {
+    throw new Error(
+      `Upload blocked. Your ${user.plan_id} plan is limited to ${user.plan_file_count_limit} files.`,
+    );
+  }
+
+  // 2. Check Storage Capacity Limit against the Plan
+  if (Number(user.storage_used) + fileSize > Number(user.plan_storage_limit)) {
+    const limitInGb = Math.round(
+      Number(user.plan_storage_limit) / (1024 * 1024 * 1024),
+    );
+    throw new Error(
+      `Storage limit exceeded. Your ${user.plan_id} plan allows ${limitInGb} GB max.`,
+    );
   }
 
   const sanitized = fileName.replace(/\s+/g, "-");
@@ -141,7 +154,10 @@ export async function confirmUploadDB(
 
   const user = await getDbUser(userId);
 
-  if (Number(user.storage_used) + actualSize > Number(user.storage_limit)) {
+  if (
+    Number(user.storage_used) + actualSize >
+    Number(user.plan_storage_limit)
+  ) {
     await s3Client.send(
       new DeleteObjectCommand({ Bucket: getBucketName(), Key: key }),
     );
@@ -212,7 +228,9 @@ export async function listPhotos(page = 0) {
   };
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
 // 4. Delete File (S3 + DB)
+// ─────────────────────────────────────────────────────────────────────────────
 export async function deletePhoto(key: string, fileSize: number) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
@@ -237,7 +255,9 @@ export async function deletePhoto(key: string, fileSize: number) {
   return { success: true };
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
 // 5. Get Download URL
+// ─────────────────────────────────────────────────────────────────────────────
 export async function getDownloadUrl(key: string) {
   const { userId } = await auth();
   if (!userId || !key.startsWith(`uploads/${userId}/`))
@@ -252,14 +272,23 @@ export async function getDownloadUrl(key: string) {
   return await getSignedUrl(s3Client, command, { expiresIn: 60 });
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
 // 6. Get user storage info
+// ─────────────────────────────────────────────────────────────────────────────
 export async function getStorageInfo() {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
   const user = await getDbUser(userId);
+
+  const countResult =
+    await sql`SELECT COUNT(*)::int AS total FROM files WHERE user_id = ${user.id}`;
+
   return {
-    used: Number(user.storage_used),
-    limit: Number(user.storage_limit),
+    used: Number(user.storage_used) || 0,
+    limit: Number(user.plan_storage_limit),
+    fileCountLimit: Number(user.plan_file_count_limit),
+    currentFileCount: countResult[0]?.total ?? 0,
+    planId: user.plan_id,
   };
 }
