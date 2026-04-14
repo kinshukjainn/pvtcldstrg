@@ -33,6 +33,9 @@ export default function AuthPage() {
   const [pendingVerification, setPendingVerification] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
 
+  const [pendingMfa, setPendingMfa] = useState(false);
+  const [mfaCode, setMfaCode] = useState("");
+
   const handleSignIn = useCallback(async () => {
     if (!signIn) return;
     setLoading(true);
@@ -44,11 +47,39 @@ export default function AuthPage() {
         setLoading(false);
         return;
       }
+
       if (signIn.status === "complete" && signIn.createdSessionId) {
         await setActive({ session: signIn.createdSessionId });
         window.location.href = "/dashboard";
+      }
+      // Catch both "needs_second_factor" and "needs_client_trust"
+      else if (
+        signIn.status === "needs_second_factor" ||
+        signIn.status === "needs_client_trust"
+      ) {
+        // Removed the "as any" cast to fix the ESLint error
+        const emailFactor = signIn.supportedSecondFactors?.find(
+          (f) => f.strategy === "email_code",
+        );
+
+        if (emailFactor) {
+          // Uses the new SignInFutureResource method instead of prepareSecondFactor
+          const { error: sendError } = await signIn.emailCode.sendCode();
+          if (sendError) {
+            setAuthError(getErrorMessage(sendError));
+            setLoading(false);
+            return;
+          }
+
+          setPendingMfa(true);
+          setLoading(false);
+        } else {
+          setAuthError(
+            "Device verification required, but no email factor was found.",
+          );
+          setLoading(false);
+        }
       } else {
-        // Updated debugging message to show exact Clerk status
         setAuthError(`Status: ${signIn.status} — requires additional steps.`);
         setLoading(false);
       }
@@ -57,6 +88,33 @@ export default function AuthPage() {
       setLoading(false);
     }
   }, [signIn, setActive, email, password]);
+
+  const handleVerifyMfa = useCallback(async () => {
+    if (!signIn) return;
+    setLoading(true);
+    setAuthError(null);
+    try {
+      // Uses the new SignInFutureResource method instead of attemptSecondFactor
+      const { error } = await signIn.emailCode.verifyCode({ code: mfaCode });
+
+      if (error) {
+        setAuthError(getErrorMessage(error));
+        setLoading(false);
+        return;
+      }
+
+      if (signIn.status === "complete" && signIn.createdSessionId) {
+        await setActive({ session: signIn.createdSessionId });
+        window.location.href = "/dashboard";
+      } else {
+        setAuthError(`Verification incomplete. Status: ${signIn.status}`);
+        setLoading(false);
+      }
+    } catch (err) {
+      setAuthError(getErrorMessage(err));
+      setLoading(false);
+    }
+  }, [signIn, setActive, mfaCode]);
 
   const handleSignUp = useCallback(async () => {
     if (!signUp) return;
@@ -88,7 +146,7 @@ export default function AuthPage() {
     }
   }, [signUp, email, password, firstName, lastName]);
 
-  const handleVerify = useCallback(async () => {
+  const handleVerifySignUp = useCallback(async () => {
     if (!signUp) return;
     setLoading(true);
     setAuthError(null);
@@ -126,46 +184,61 @@ export default function AuthPage() {
   }, [signUp, setActive, verificationCode]);
 
   const handleSubmit = useCallback(() => {
-    if (pendingVerification) return handleVerify();
+    if (pendingMfa) return handleVerifyMfa();
+    if (pendingVerification) return handleVerifySignUp();
     if (isSignUp) return handleSignUp();
     return handleSignIn();
-  }, [pendingVerification, isSignUp, handleVerify, handleSignUp, handleSignIn]);
+  }, [
+    pendingMfa,
+    pendingVerification,
+    isSignUp,
+    handleVerifyMfa,
+    handleVerifySignUp,
+    handleSignUp,
+    handleSignIn,
+  ]);
 
   const toggleMode = useCallback(() => {
     setIsSignUp((prev) => !prev);
     setAuthError(null);
     setPendingVerification(false);
+    setPendingMfa(false);
     setVerificationCode("");
+    setMfaCode("");
   }, []);
 
-  const heading = pendingVerification
-    ? "Verify your email"
-    : isSignUp
-      ? "Sign up for an account"
-      : "Login to your account";
+  const heading = pendingMfa
+    ? "Device Verification"
+    : pendingVerification
+      ? "Verify your email"
+      : isSignUp
+        ? "Sign up for an account"
+        : "Login to your account";
 
-  const subtext = pendingVerification
-    ? `We sent a 6-digit code to ${email}`
-    : isSignUp
-      ? "Fill in your details to get started"
-      : "Sign in to your account";
+  const subtext = pendingMfa
+    ? "We sent a security code to your email"
+    : pendingVerification
+      ? `We sent a 6-digit code to ${email}`
+      : isSignUp
+        ? "Fill in your details to get started"
+        : "Sign in to your account";
 
-  const canSubmit = pendingVerification
-    ? verificationCode.length === 6
-    : isSignUp
-      ? !!(email && password && firstName && lastName)
-      : !!(email && password);
+  const canSubmit = pendingMfa
+    ? mfaCode.length === 6
+    : pendingVerification
+      ? verificationCode.length === 6
+      : isSignUp
+        ? !!(email && password && firstName && lastName)
+        : !!(email && password);
 
   const inputClass =
-    "w-full px-4 py-2 bg-[#181818] rounded-xl border border-[#444444] text-[17px] text-white placeholder:text-neutral-500 focus:outline-none  transition-all duration-500 ";
+    "w-full px-4 py-2 bg-[#181818] rounded-xl border border-[#444444] text-[17px] text-white placeholder:text-neutral-500 focus:outline-none transition-all duration-500 ";
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[#1e1e1e] text-neutral-200">
       <div className="w-full max-w-sm p-2 space-y-8 relative">
-        {/* Subtle glow */}
         <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-64 h-64 pointer-events-none" />
 
-        {/* Header */}
         <div className="flex flex-col items-center space-y-4 text-center relative z-10">
           <div className="p-3.5">
             <BsCloudRain size={65} className="text-5xl text-[#ff9100]" />
@@ -183,16 +256,59 @@ export default function AuthPage() {
           </div>
         </div>
 
-        {/* Error */}
         {authError && (
           <div className="p-3 text-[13px] text-red-400 bg-red-500/[0.06] border border-red-500/[0.1] rounded-xl text-center relative z-10 animate-[fadeIn_0.3s_ease-out]">
             {authError}
           </div>
         )}
 
-        {/* Form */}
         <div className="space-y-1 relative z-10">
-          {!pendingVerification ? (
+          {pendingMfa || pendingVerification ? (
+            <>
+              <input
+                type="text"
+                inputMode="numeric"
+                placeholder="000000"
+                value={pendingMfa ? mfaCode : verificationCode}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 6);
+                  if (pendingMfa) setMfaCode(val);
+                  else setVerificationCode(val);
+                }}
+                onKeyDown={(e) =>
+                  e.key === "Enter" && canSubmit && handleSubmit()
+                }
+                className="w-full px-4 py-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white text-center text-xl tracking-[0.4em] placeholder:text-neutral-700 placeholder:tracking-[0.4em] focus:outline-none focus:border-white/[0.2] transition-all duration-500"
+              />
+
+              <div className="pt-5 space-y-3">
+                <button
+                  onClick={handleSubmit}
+                  disabled={loading || !canSubmit}
+                  className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium text-[14px] bg-white text-black hover:bg-neutral-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 active:scale-[0.97]"
+                >
+                  {loading ? (
+                    <FaSpinner className="animate-spin" />
+                  ) : (
+                    "Verify & Continue"
+                  )}
+                </button>
+
+                <button
+                  onClick={() => {
+                    setPendingMfa(false);
+                    setPendingVerification(false);
+                    setVerificationCode("");
+                    setMfaCode("");
+                    setAuthError(null);
+                  }}
+                  className="w-full text-center text-[13px] text-neutral-500 hover:text-white transition-colors duration-300 py-1"
+                >
+                  Go back
+                </button>
+              </div>
+            </>
+          ) : (
             <>
               {isSignUp && (
                 <div className="grid grid-cols-2 gap-4">
@@ -234,7 +350,6 @@ export default function AuthPage() {
                 className={inputClass}
               />
 
-              {/* CAPTCHA is now rendered for BOTH Sign Up and Sign In */}
               <div
                 id="clerk-captcha"
                 data-cl-theme="dark"
@@ -246,7 +361,7 @@ export default function AuthPage() {
                 <button
                   onClick={handleSubmit}
                   disabled={loading || !canSubmit}
-                  className="w-full flex items-center justify-center  gap-2 py-3 px-4 rounded-xl font-medium text-[17px] bg-blue-800 text-white cursor-pointer hover:bg-blue-700  transition-all duration-200 "
+                  className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium text-[17px] bg-blue-800 text-white cursor-pointer hover:bg-blue-700 transition-all duration-200"
                 >
                   {loading ? (
                     <FaSpinner className="animate-spin" />
@@ -263,50 +378,7 @@ export default function AuthPage() {
                 >
                   {isSignUp
                     ? "Already have an account? Sign in"
-                    : "Don\u2019t have an account? Sign up"}
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <input
-                type="text"
-                inputMode="numeric"
-                placeholder="000000"
-                value={verificationCode}
-                onChange={(e) =>
-                  setVerificationCode(
-                    e.target.value.replace(/\D/g, "").slice(0, 6),
-                  )
-                }
-                onKeyDown={(e) =>
-                  e.key === "Enter" && canSubmit && handleSubmit()
-                }
-                className="w-full px-4 py-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white text-center text-xl tracking-[0.4em] placeholder:text-neutral-700 placeholder:tracking-[0.4em] focus:outline-none focus:border-white/[0.2] transition-all duration-500"
-              />
-
-              <div className="pt-5 space-y-3">
-                <button
-                  onClick={handleSubmit}
-                  disabled={loading || !canSubmit}
-                  className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium text-[14px] bg-white text-black hover:bg-neutral-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 active:scale-[0.97]"
-                >
-                  {loading ? (
-                    <FaSpinner className="animate-spin" />
-                  ) : (
-                    "Verify & Continue"
-                  )}
-                </button>
-
-                <button
-                  onClick={() => {
-                    setPendingVerification(false);
-                    setVerificationCode("");
-                    setAuthError(null);
-                  }}
-                  className="w-full text-center text-[13px] text-neutral-500 hover:text-white transition-colors duration-300 py-1"
-                >
-                  Go back
+                    : "Don’t have an account? Sign up"}
                 </button>
               </div>
             </>
