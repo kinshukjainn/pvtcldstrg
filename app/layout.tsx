@@ -57,7 +57,7 @@ export const googleSans = localFont({
   display: "swap",
 });
 export const verdana = localFont({
-  src: "../public/fonts/verdana.woff2",
+  src: "../public/fonts/Verdana.woff2",
   variable: "--font-verdana",
   weight: "400",
   style: "normal",
