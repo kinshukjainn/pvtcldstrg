@@ -313,7 +313,7 @@ function HomeContent() {
   const firstName = user?.firstName || "there";
 
   return (
-    <div className="min-h-screen bg-[#111111] text-[#dddddd] font-sans selection:bg-[#ff9900] selection:text-black">
+    <div className="min-h-screen bg-[#111111] text-[#dddddd]  selection:bg-[#ff9900] selection:text-black">
       {/* ════════════════════════════════════════════════════════════════════
           HERO — three different experiences
           ════════════════════════════════════════════════════════════════════ */}

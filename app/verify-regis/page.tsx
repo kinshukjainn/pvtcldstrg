@@ -255,7 +255,7 @@ export default function AuthPage() {
     "w-full flex items-center justify-center gap-2 py-2 px-4 font-bold text-[15px] bg-[#dddddd] text-black border-2 border-t-[#ffffff] border-l-[#ffffff] border-r-[#888888] border-b-[#888888] active:border-t-[#888888] active:border-l-[#888888] active:border-b-[#ffffff] active:border-r-[#ffffff] hover:bg-[#ffffff] rounded-none";
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#111111] text-[#dddddd] font-sans selection:bg-[#0055cc] selection:text-white">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[#111111] text-[#dddddd]  selection:bg-[#0055cc] selection:text-white">
       <div className="w-full max-w-md bg-[#1e1e1e] border border-[#444444] p-6 shadow-[6px_6px_0px_#000000]">
         {/* Header Section */}
         <div className="flex flex-col items-center text-center mb-6">

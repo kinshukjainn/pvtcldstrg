@@ -75,7 +75,7 @@ function SystemNotice({ children }: { children: ReactNode }) {
 
 export default function SupportedFormatsPage() {
   return (
-    <div className="min-h-screen text-[#dddddd] pb-24 bg-[#111111] font-sans selection:bg-[#ff9900] selection:text-black">
+    <div className="min-h-screen text-[#dddddd] pb-24 bg-[#111111]  selection:bg-[#ff9900] selection:text-black">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b-4 border-[#000000] bg-[#1e1e1e]">
         <div className="max-w-5xl mx-auto flex justify-between items-center px-6 py-4">

@@ -207,7 +207,7 @@ export default function ChangelogTracker() {
       : "N/A";
 
   return (
-    <div className="min-h-screen bg-black text-[#cccccc] font-sans text-[14px] sm:text-[15px] p-2 sm:p-4 selection:bg-[#ffff00] selection:text-black">
+    <div className="min-h-screen bg-black text-[#cccccc]  text-[14px] sm:text-[15px] p-2 sm:p-4 selection:bg-[#ffff00] selection:text-black">
       <div className="max-w-7xl mx-auto">
         {/* ── TOP HEADER (Breadcrumbs & Links) ── */}
         <div className="mb-1 border-b-2 border-[#444444] pb-2">

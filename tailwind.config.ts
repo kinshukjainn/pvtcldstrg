@@ -20,6 +20,7 @@ const config: Config = {
         ubuntu: "var(--font-ubuntu) , sans-serif",
         notoSerif: "var(--font-noto-serif) , serif",
         supermercado: "var(--font-supermercado) , sans-serif",
+        verdana: "var(--font-verdana) , sans-serif",
       },
     },
   },

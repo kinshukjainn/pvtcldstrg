@@ -56,6 +56,13 @@ export const googleSans = localFont({
   style: "normal",
   display: "swap",
 });
+export const verdana = localFont({
+  src: "../public/fonts/verdana.woff2",
+  variable: "--font-verdana",
+  weight: "400",
+  style: "normal",
+  display: "swap",
+});
 
 export const notoSerif = Noto_Serif({
   subsets: ["latin"],
@@ -92,7 +99,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" data-google-analytics-opt-out="">
         <body
-          className={`${geistSans.variable} ${ubuntu.variable} ${notoSerif.variable} ${roboto.variable} ${segoeui.variable} ${geistMono.variable} ${inter.variable} ${lucideSans.variable} ${googleSans.variable} ${supermercado.variable}  antialiased`}
+          className={`${geistSans.variable} ${ubuntu.variable} ${notoSerif.variable} ${roboto.variable} ${verdana.variable} ${segoeui.variable} ${geistMono.variable} ${inter.variable} ${lucideSans.variable} ${googleSans.variable} ${supermercado.variable}  antialiased`}
         >
           <Header />
           <main>{children}</main>

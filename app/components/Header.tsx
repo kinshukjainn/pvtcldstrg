@@ -17,7 +17,7 @@ export default function Header() {
 
   // Reusable sharp button class for consistency
   const solidButtonClass =
-    "inline-flex items-center justify-center font-bold px-4 py-2 border-2 border-[#000000] shadow-[4px_4px_0px_#000000] active:translate-y-[4px] active:translate-x-[4px] active:shadow-none transition-all duration-150 uppercase text-[14px]";
+    "inline-flex items-center justify-center font-bold px-4 py-2 border-2 border-[#000000] shadow-[4px_4px_0px_#000000] active:translate-y-[4px] active:translate-x-[4px] active:shadow-none transition-all duration-150  text-[14px]";
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#1e1e1e] border-b-4 border-[#000000]">
@@ -31,16 +31,16 @@ export default function Header() {
           <div className="w-10 h-10 bg-[#000000] flex items-center justify-center border-2 border-[#444444]">
             <BsCloudRain className="w-6 h-6 text-[#ff9900]" />
           </div>
-          <span className="text-white font-bold text-[22px] tracking-tight uppercase flex items-center gap-3">
+          <span className="text-white font-bold text-[22px] tracking-tight  flex items-center gap-3">
             Kosha
-            <span className="px-2 py-0.5 text-[11px] font-bold bg-[#ff9900] text-black border-2 border-[#000000] uppercase tracking-wider">
+            <span className="px-2 py-0.5 text-[11px] font-bold bg-[#ff9900] text-black border-2 border-[#000000]  tracking-wider">
               Beta
             </span>
           </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6 text-[14px] font-bold uppercase tracking-wide absolute left-1/2 -translate-x-1/2">
+        <nav className="hidden md:flex items-center gap-6 text-[14px] font-bold  tracking-wide absolute left-1/2 -translate-x-1/2">
           {isLoaded && userId && (
             <Link
               href="/dashboard"
@@ -124,7 +124,7 @@ export default function Header() {
       {/* Mobile Navigation */}
       {isMobileMenuOpen && (
         <div className="absolute top-[80px] left-0 w-full bg-[#111111] border-b-4 border-[#000000] md:hidden flex flex-col p-6 shadow-[0px_8px_0px_rgba(0,0,0,1)] z-40">
-          <nav className="flex flex-col gap-2 text-[16px] font-bold uppercase tracking-wide">
+          <nav className="flex flex-col gap-2 text-[16px] font-bold  tracking-wide">
             {isLoaded && userId && (
               <Link
                 href="/dashboard"
@@ -178,7 +178,7 @@ export default function Header() {
               href="https://github.com/kinshukjainn/pvtcldstrg"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-4 text-[#dddddd] hover:text-[#ff9900] bg-[#1e1e1e] border-2 border-[#444444] p-3 transition-colors duration-150 font-bold uppercase"
+              className="flex items-center gap-4 text-[#dddddd] hover:text-[#ff9900] bg-[#1e1e1e] border-2 border-[#444444] p-3 transition-colors duration-150 font-bold "
             >
               <FaGithub className="w-6 h-6" />
               <span>Open Source</span>
