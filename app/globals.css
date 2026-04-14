@@ -1,12 +1,16 @@
 @import "tailwindcss";
 
 body {
-  background-color: black;
-  font-family: var(--font-ubuntu), sans-serif;
+  background-color: #1e1e1e;
+  font-family: var(--font-segoeui), sans-serif;
 }
 
 .special-font {
   font-family: var(--font-supermercado), sans-serif;
+}
+
+.title-font {
+  font-family: var(--font-noto-serif), serif;
 }
 
 @keyframes fadeIn {

@@ -4,6 +4,9 @@ const isPublicRoute = createRouteMatcher([
   "/",
   "/supported-formats(.*)",
   "/about-us(.*)",
+  "/git-track(.*)",
+  "/pricing(.*)",
+  "/openned-tickets(.*)",
   "/terms-of-service(.*)",
   "/privacy-policy(.*)",
   "/verify-regis(.*)", // <-- This is the magic fix!

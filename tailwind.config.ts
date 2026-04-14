@@ -18,6 +18,7 @@ const config: Config = {
         geist: "var(--font-geist-mono) , monospaced",
         roboto: "var(--font-roboto) , sans-serif",
         ubuntu: "var(--font-ubuntu) , sans-serif",
+        notoSerif: "var(--font-noto-serif) , serif",
         supermercado: "var(--font-supermercado) , sans-serif",
       },
     },

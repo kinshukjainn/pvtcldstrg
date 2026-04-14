@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useSignIn, useSignUp, useClerk } from "@clerk/nextjs";
+import { motion, AnimatePresence } from "framer-motion";
 import { FaSpinner } from "react-icons/fa";
 import { BsCloudRain } from "react-icons/bs";
 import Link from "next/link";
+import { LockKeyhole } from "lucide-react";
 
 function getErrorMessage(error: unknown): string {
   if (!error) return "An unexpected error occurred.";
@@ -36,6 +38,17 @@ export default function AuthPage() {
   const [pendingMfa, setPendingMfa] = useState(false);
   const [mfaCode, setMfaCode] = useState("");
 
+  const providers = ["AWS", "Clerk"];
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    // Cycle through the providers every 2.5 seconds
+    const interval = setInterval(() => {
+      setIndex((prevIndex) => (prevIndex + 1) % providers.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [providers.length]);
+
   const handleSignIn = useCallback(async () => {
     if (!signIn) return;
     setLoading(true);
@@ -57,7 +70,6 @@ export default function AuthPage() {
         signIn.status === "needs_second_factor" ||
         signIn.status === "needs_client_trust"
       ) {
-        // Removed the "as any" cast to fix the ESLint error
         const emailFactor = signIn.supportedSecondFactors?.find(
           (f) => f.strategy === "email_code",
         );
@@ -210,18 +222,18 @@ export default function AuthPage() {
   const heading = pendingMfa
     ? "Device Verification"
     : pendingVerification
-      ? "Verify your email"
+      ? "Verify Email"
       : isSignUp
-        ? "Sign up for an account"
-        : "Login to your account";
+        ? "Create Account"
+        : "System Login";
 
   const subtext = pendingMfa
-    ? "We sent a security code to your email"
+    ? "A security code has been sent to your email."
     : pendingVerification
-      ? `We sent a 6-digit code to ${email}`
+      ? `A 6-digit code has been sent to ${email}.`
       : isSignUp
-        ? "Fill in your details to get started"
-        : "Sign in to your account";
+        ? "Provide credentials to register a new user."
+        : "Enter your credentials to access the system.";
 
   const canSubmit = pendingMfa
     ? mfaCode.length === 6
@@ -231,61 +243,96 @@ export default function AuthPage() {
         ? !!(email && password && firstName && lastName)
         : !!(email && password);
 
+  // Flat, sharp, high-contrast input styling
   const inputClass =
-    "w-full px-4 py-2 bg-[#181818] rounded-xl border border-[#444444] text-[17px] text-white placeholder:text-neutral-500 focus:outline-none transition-all duration-500 ";
+    "w-full px-3 py-2 bg-[#000000] border-2 border-[#555555] text-[15px] text-white placeholder:text-[#777777] focus:outline-none focus:border-[#aaaaaa] rounded-none";
+
+  // Classic raised 3D button effect
+  const primaryButtonClass =
+    "w-full flex items-center justify-center gap-2 py-2 px-4 font-bold text-[15px] bg-[#0055cc] text-white border-2 border-t-[#3388ff] border-l-[#3388ff] border-r-[#002266] border-b-[#002266] active:border-t-[#002266] active:border-l-[#002266] active:border-b-[#3388ff] active:border-r-[#3388ff] hover:bg-[#0066ee] disabled:opacity-50 disabled:cursor-not-allowed rounded-none";
+
+  const secondaryButtonClass =
+    "w-full flex items-center justify-center gap-2 py-2 px-4 font-bold text-[15px] bg-[#dddddd] text-black border-2 border-t-[#ffffff] border-l-[#ffffff] border-r-[#888888] border-b-[#888888] active:border-t-[#888888] active:border-l-[#888888] active:border-b-[#ffffff] active:border-r-[#ffffff] hover:bg-[#ffffff] rounded-none";
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#1e1e1e] text-neutral-200">
-      <div className="w-full max-w-sm p-2 space-y-8 relative">
-        <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-64 h-64 pointer-events-none" />
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[#111111] text-[#dddddd] font-sans selection:bg-[#0055cc] selection:text-white">
+      <div className="w-full max-w-md bg-[#1e1e1e] border border-[#444444] p-6 shadow-[6px_6px_0px_#000000]">
+        {/* Header Section */}
+        <div className="flex flex-col items-center text-center mb-6">
+          <div className="mb-4 bg-[#000000] border border-[#444444] p-3">
+            <BsCloudRain size={40} className="text-[#dd7700]" />
+          </div>
+          <h1 className="text-[22px] font-bold text-white mb-1 uppercase tracking-tight">
+            Kosha Authentication
+          </h1>
 
-        <div className="flex flex-col items-center space-y-4 text-center relative z-10">
-          <div className="p-3.5">
-            <BsCloudRain size={65} className="text-5xl text-[#ff9100]" />
-          </div>
-          <div className="space-y-1.5">
-            <h1 className="text-[28px] special-font font-bold text-white">
-              <span className="text-white">Welcome to </span> Kosha
-            </h1>
-          </div>
-          <div className="space-y-1.5">
-            <h1 className="text-[22px] font-semibold text-white tracking-tight">
-              {heading}
-            </h1>
-            <p className="text-[14px] text-neutral-500">{subtext}</p>
+          <div className="border-t border-[#444444] w-full my-3"></div>
+
+          <h2 className="text-[18px] font-bold text-white uppercase tracking-tight">
+            {heading}
+          </h2>
+          <p className="text-[13px] text-[#aaaaaa] mt-1 font-bold">{subtext}</p>
+        </div>
+
+        {/* Security Badge */}
+        <div className="flex justify-center mb-6">
+          <div className="flex items-center gap-2 px-3 py-1 bg-[#111111] border border-[#444444] text-[12px] font-bold text-[#aaaaaa] uppercase tracking-wide">
+            <LockKeyhole className="w-3.5 h-3.5 text-[#dd7700]" />
+            <span>Secured by</span>
+            <div className="relative flex items-center justify-start w-[50px] h-[16px] overflow-hidden">
+              <AnimatePresence mode="popLayout">
+                <motion.span
+                  key={providers[index]}
+                  initial={{ y: 15, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -15, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="text-[#dd7700] absolute left-0"
+                >
+                  {providers[index]}
+                </motion.span>
+              </AnimatePresence>
+            </div>
           </div>
         </div>
 
+        {/* Error Banner */}
         {authError && (
-          <div className="p-3 text-[13px] text-red-400 bg-red-500/[0.06] border border-red-500/[0.1] rounded-xl text-center relative z-10 animate-[fadeIn_0.3s_ease-out]">
-            {authError}
+          <div className="mb-5 p-2 bg-[#440000] border border-[#ff0000] text-[#ffaaaa] text-[13px] font-bold text-center">
+            Error: {authError}
           </div>
         )}
 
-        <div className="space-y-1 relative z-10">
+        {/* Main Form */}
+        <div className="space-y-4">
           {pendingMfa || pendingVerification ? (
             <>
-              <input
-                type="text"
-                inputMode="numeric"
-                placeholder="000000"
-                value={pendingMfa ? mfaCode : verificationCode}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, "").slice(0, 6);
-                  if (pendingMfa) setMfaCode(val);
-                  else setVerificationCode(val);
-                }}
-                onKeyDown={(e) =>
-                  e.key === "Enter" && canSubmit && handleSubmit()
-                }
-                className="w-full px-4 py-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white text-center text-xl tracking-[0.4em] placeholder:text-neutral-700 placeholder:tracking-[0.4em] focus:outline-none focus:border-white/[0.2] transition-all duration-500"
-              />
+              <div className="flex flex-col gap-1">
+                <label className="text-[12px] font-bold text-[#aaaaaa] uppercase tracking-wide">
+                  Security Code
+                </label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="000000"
+                  value={pendingMfa ? mfaCode : verificationCode}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, "").slice(0, 6);
+                    if (pendingMfa) setMfaCode(val);
+                    else setVerificationCode(val);
+                  }}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && canSubmit && handleSubmit()
+                  }
+                  className={`${inputClass} text-center text-xl tracking-[0.2em]`}
+                />
+              </div>
 
-              <div className="pt-5 space-y-3">
+              <div className="pt-2 space-y-3">
                 <button
                   onClick={handleSubmit}
                   disabled={loading || !canSubmit}
-                  className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium text-[14px] bg-white text-black hover:bg-neutral-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 active:scale-[0.97]"
+                  className={primaryButtonClass}
                 >
                   {loading ? (
                     <FaSpinner className="animate-spin" />
@@ -302,9 +349,9 @@ export default function AuthPage() {
                     setMfaCode("");
                     setAuthError(null);
                   }}
-                  className="w-full text-center text-[13px] text-neutral-500 hover:text-white transition-colors duration-300 py-1"
+                  className="w-full text-center text-[13px] text-[#0088ff] font-bold uppercase hover:text-white underline hover:bg-[#0055cc] py-1 cursor-pointer"
                 >
-                  Go back
+                  Cancel and go back
                 </button>
               </div>
             </>
@@ -312,44 +359,61 @@ export default function AuthPage() {
             <>
               {isSignUp && (
                 <div className="grid grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    placeholder="First name"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    className={inputClass}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Last name"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    className={inputClass}
-                  />
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[12px] font-bold text-[#aaaaaa] uppercase">
+                      First Name
+                    </label>
+                    <input
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[12px] font-bold text-[#aaaaaa] uppercase">
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
                 </div>
               )}
 
-              <input
-                type="email"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-                className={inputClass}
-              />
+              <div className="flex flex-col gap-1">
+                <label className="text-[12px] font-bold text-[#aaaaaa] uppercase">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
+                  className={inputClass}
+                />
+              </div>
 
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete={isSignUp ? "new-password" : "current-password"}
-                onKeyDown={(e) =>
-                  e.key === "Enter" && canSubmit && handleSubmit()
-                }
-                className={inputClass}
-              />
+              <div className="flex flex-col gap-1">
+                <label className="text-[12px] font-bold text-[#aaaaaa] uppercase">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete={isSignUp ? "new-password" : "current-password"}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && canSubmit && handleSubmit()
+                  }
+                  className={inputClass}
+                />
+              </div>
 
+              {/* CLERK CAPTCHA RESTORED EXACTLY */}
               <div
                 id="clerk-captcha"
                 data-cl-theme="dark"
@@ -357,11 +421,11 @@ export default function AuthPage() {
                 className="pt-3"
               />
 
-              <div className="pt-6 space-y-3">
+              <div className="pt-4 space-y-3">
                 <button
                   onClick={handleSubmit}
                   disabled={loading || !canSubmit}
-                  className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium text-[17px] bg-blue-800 text-white cursor-pointer hover:bg-blue-700 transition-all duration-200"
+                  className={primaryButtonClass}
                 >
                   {loading ? (
                     <FaSpinner className="animate-spin" />
@@ -372,50 +436,35 @@ export default function AuthPage() {
                   )}
                 </button>
 
-                <button
-                  onClick={toggleMode}
-                  className="w-full text-center text-[13px] text-neutral-500 cursor-pointer font-medium hover:text-white transition-colors duration-300 py-1"
-                >
-                  {isSignUp
-                    ? "Already have an account? Sign in"
-                    : "Don’t have an account? Sign up"}
+                <div className="border-t border-[#444444] w-full my-2"></div>
+
+                <button onClick={toggleMode} className={secondaryButtonClass}>
+                  {isSignUp ? "Switch to Login" : "Create New Account"}
                 </button>
               </div>
             </>
           )}
         </div>
 
-        <p className="text-center text-[11px] text-neutral-600 relative z-10 pt-2">
+        {/* Footer */}
+        <div className="mt-6 text-center text-[11px] font-bold text-[#888888] uppercase bg-[#111111] p-2 border border-[#333333]">
           By continuing, you agree to our{" "}
           <Link
             href="/terms"
-            className="text-neutral-400 hover:text-white transition-colors duration-200"
+            className="text-[#0088ff] underline hover:bg-[#0055cc] hover:text-white px-1"
           >
             Terms
           </Link>{" "}
           and{" "}
           <Link
             href="/privacy"
-            className="text-neutral-400 hover:text-white transition-colors duration-200"
+            className="text-[#0088ff] underline hover:bg-[#0055cc] hover:text-white px-1"
           >
             Privacy Policy
           </Link>
           .
-        </p>
+        </div>
       </div>
-
-      <style jsx global>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(-4px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </div>
   );
 }

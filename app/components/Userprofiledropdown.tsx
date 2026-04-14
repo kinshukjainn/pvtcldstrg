@@ -18,6 +18,10 @@ export default function UserProfileDropdown({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Reusable sharp button classes
+  const actionButtonClass =
+    "w-full flex items-center gap-3 px-4 py-3 border-2 border-[#000000] shadow-[4px_4px_0px_#000000] active:translate-y-[4px] active:translate-x-[4px] active:shadow-none transition-all duration-150 uppercase font-bold text-[14px] cursor-pointer rounded-none";
+
   useEffect(() => {
     if (variant !== "desktop") return;
     const handleClickOutside = (e: MouseEvent) => {
@@ -43,7 +47,7 @@ export default function UserProfileDropdown({
   if (!user) return null;
 
   const displayName =
-    user.fullName || user.firstName || user.username || "User";
+    user.fullName || user.firstName || user.username || "USER";
   const email = user.primaryEmailAddress?.emailAddress || "";
   const avatarUrl = user.imageUrl;
   const initials = displayName
@@ -65,6 +69,7 @@ export default function UserProfileDropdown({
     signOut();
   };
 
+  // Sharp, square avatar rendering
   const renderAvatar = (size: number) =>
     avatarUrl ? (
       <Image
@@ -73,16 +78,16 @@ export default function UserProfileDropdown({
         width={size}
         height={size}
         unoptimized
-        className="rounded-lg object-cover ring-1 ring-white/10 shrink-0"
+        className="object-cover shrink-0 border-2 border-[#000000] rounded-none bg-[#000000]"
         referrerPolicy="no-referrer"
       />
     ) : (
       <span
-        className="rounded-full bg-emerald-500/20 text-emerald-400 font-semibold flex items-center justify-center shrink-0 ring-1 ring-emerald-400/20"
+        className="bg-[#ff9900] text-black font-bold flex items-center justify-center shrink-0 border-2 border-[#000000] rounded-none"
         style={{
           width: size,
           height: size,
-          fontSize: size < 32 ? 11 : 14,
+          fontSize: size < 32 ? 12 : 16,
         }}
       >
         {initials}
@@ -95,46 +100,46 @@ export default function UserProfileDropdown({
       <div className="w-full" ref={dropdownRef}>
         <button
           onClick={() => setIsOpen((prev) => !prev)}
-          className="w-full flex items-center gap-3 p-3 rounded-xl border border-white/[0.06] bg-white/[0.03] hover:bg-white/[0.06] active:scale-[0.99] transition-all duration-200 cursor-pointer"
+          className="w-full flex items-center gap-4 p-3 bg-[#1e1e1e] border-2 border-[#444444] shadow-[4px_4px_0px_#000000] hover:border-[#ff9900] active:translate-y-[4px] active:translate-x-[4px] active:shadow-none transition-all duration-150 cursor-pointer rounded-none outline-none"
           aria-expanded={isOpen}
           aria-haspopup="true"
         >
-          {renderAvatar(36)}
+          {renderAvatar(40)}
           <div className="min-w-0 flex-1 text-left">
-            <p className="text-[17px] font-bold text-white truncate leading-tight">
+            <p className="text-[16px] font-bold text-white uppercase truncate">
               {displayName}
             </p>
             {email && (
-              <p className="text-[14px] text-green-500 truncate mt-0.5">
+              <p className="text-[12px] font-bold text-[#00cc44] truncate mt-0.5 uppercase">
                 {email}
               </p>
             )}
           </div>
-          <div className="flex items-center gap-1 p-2 rounded-full bg-blue-800  transition-colors duration-150">
+          <div className="w-8 h-8 flex items-center justify-center bg-[#000000] border-2 border-[#444444] transition-colors duration-150 shrink-0">
             <FiChevronDown
-              className={`w-4 h-4 text-neutral-100 transition-transform duration-200 shrink-0 ${
-                isOpen ? "rotate-180" : ""
+              className={`w-5 h-5 text-white transition-transform duration-200 ${
+                isOpen ? "rotate-180 text-[#ff9900]" : ""
               }`}
             />
           </div>
         </button>
 
         {isOpen && (
-          <div className="mt-2 flex flex-col gap-2 animate-[fadeIn_0.15s_ease-out]">
+          <div className="mt-4 flex flex-col gap-3 p-2 bg-[#111111] border-2 border-[#444444]">
             <button
               onClick={handleManage}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-300 hover:text-white bg-white/[0.02] hover:bg-white/[0.06] active:bg-white/[0.03] border border-[#313131] transition-colors duration-150 cursor-pointer"
+              className={`${actionButtonClass} bg-[#ffffff] text-black`}
             >
-              <FiSettings className="w-4 h-4 text-neutral-500 shrink-0" />
-              <span className="text-[16px] font-medium">Manage account</span>
+              <FiSettings className="w-5 h-5 shrink-0" />
+              <span>Manage Account</span>
             </button>
 
             <button
               onClick={handleSignOut}
-              className="w-full flex items-center gap-3 px-4 py-3 w-max rounded-xl text-white  bg-red-500 transition-colors duration-150 cursor-pointer"
+              className={`${actionButtonClass} bg-[#ff3333] text-white`}
             >
-              <FiLogOut className="w-4 h-4 text-white shrink-0" />
-              <span className="text-[16px] font-medium">Sign out</span>
+              <FiLogOut className="w-5 h-5 shrink-0" />
+              <span>Sign Out</span>
             </button>
           </div>
         )}
@@ -145,51 +150,55 @@ export default function UserProfileDropdown({
   /* ─── DESKTOP: floating dropdown ─── */
   return (
     <div className="relative" ref={dropdownRef}>
+      {/* Desktop Trigger */}
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex items-center gap-2 rounded-lg p-0.5 pr-2 border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.08] active:scale-[0.97] transition-all duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50"
+        className="flex items-center gap-2 p-1 pr-2 bg-[#1e1e1e] border-2 border-[#000000] shadow-[2px_2px_0px_#000000] hover:border-[#ff9900] active:translate-y-[2px] active:translate-x-[2px] active:shadow-none transition-all duration-150 cursor-pointer outline-none rounded-none"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        {renderAvatar(28)}
+        {renderAvatar(30)}
         <FiChevronDown
-          className={`w-3.5 h-3.5 text-neutral-500 transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
+          className={`w-4 h-4 text-[#aaaaaa] transition-transform duration-200 ${
+            isOpen ? "rotate-180 text-[#ff9900]" : ""
           }`}
         />
       </button>
 
+      {/* Desktop Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 top-[calc(100%+8px)] w-[280px] sm:w-[300px] rounded-xl border border-white/[0.08] bg-[#111113] shadow-2xl shadow-black/60 overflow-hidden animate-[dropdownIn_0.18s_ease-out]">
-          <div className="flex items-center gap-3 px-4 py-4 border-b border-white/[0.06]">
-            {renderAvatar(40)}
+        <div className="absolute right-0 top-[calc(100%+12px)] w-[280px] sm:w-[320px] bg-[#1e1e1e] border-4 border-[#000000] shadow-[8px_8px_0px_#000000] z-50 rounded-none">
+          {/* User Info Header */}
+          <div className="flex items-center gap-4 px-4 py-4 border-b-4 border-[#000000] bg-[#111111]">
+            {renderAvatar(44)}
             <div className="min-w-0 flex-1">
-              <p className="text-[17px] font-semibold text-white truncate leading-tight">
+              <p className="text-[16px] font-bold text-white uppercase truncate">
                 {displayName}
               </p>
               {email && (
-                <p className="text-[14px] text-green-500 truncate mt-0.5">
+                <p className="text-[12px] font-bold text-[#00cc44] uppercase truncate mt-0.5">
                   {email}
                 </p>
               )}
             </div>
           </div>
 
-          <div className="p-1.5 gap-2 flex flex-col">
+          {/* Action Buttons */}
+          <div className="p-4 flex flex-col gap-3">
             <button
               onClick={handleManage}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-300 hover:text-white hover:bg-white/[0.06] active:bg-white/[0.03] transition-colors duration-150 cursor-pointer"
+              className={`${actionButtonClass} bg-[#ffffff] text-black`}
             >
-              <FiSettings className="w-4 h-4 text-white" />
-              <span className="text-[17px] font-medium">Manage account</span>
+              <FiSettings className="w-5 h-5 shrink-0" />
+              <span>Manage Account</span>
             </button>
 
             <button
               onClick={handleSignOut}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white bg-red-500 transition-colors duration-150 cursor-pointer"
+              className={`${actionButtonClass} bg-[#ff3333] text-white`}
             >
-              <FiLogOut className="w-4 h-4 text-white" />
-              <span className="text-[17px] font-medium">Sign out</span>
+              <FiLogOut className="w-5 h-5 shrink-0" />
+              <span>Sign Out</span>
             </button>
           </div>
         </div>

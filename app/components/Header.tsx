@@ -15,93 +15,120 @@ export default function Header() {
   const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMenu = () => setIsMobileMenuOpen(false);
 
+  // Reusable sharp button class for consistency
+  const solidButtonClass =
+    "inline-flex items-center justify-center font-bold px-4 py-2 border-2 border-[#000000] shadow-[4px_4px_0px_#000000] active:translate-y-[4px] active:translate-x-[4px] active:shadow-none transition-all duration-150 uppercase text-[14px]";
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/[0.06] bg-[#0a0a0c]/80 backdrop-blur-2xl backdrop-saturate-150">
-      <div className="max-w-7xl mx-auto px-6 h-18 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full bg-[#1e1e1e] border-b-4 border-[#000000]">
+      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 hover:opacity-80 transition-opacity duration-300 z-50"
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity duration-150 z-50"
           onClick={closeMenu}
         >
-          <BsCloudRain className="w-8 h-8 text-[#ff9100]" />
-          <span className="text-white special-font font-semibold text-[24px] tracking-tight flex items-center gap-2">
+          <div className="w-10 h-10 bg-[#000000] flex items-center justify-center border-2 border-[#444444]">
+            <BsCloudRain className="w-6 h-6 text-[#ff9900]" />
+          </div>
+          <span className="text-white font-bold text-[22px] tracking-tight uppercase flex items-center gap-3">
             Kosha
-            <span className="px-2 py-[3px] text-[13px] font-semibold rounded-full bg-blue-800  font-mono  text-white">
-              Beta version
+            <span className="px-2 py-0.5 text-[11px] font-bold bg-[#ff9900] text-black border-2 border-[#000000] uppercase tracking-wider">
+              Beta
             </span>
           </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-7 text-[16px] font-medium absolute left-1/2 -translate-x-1/2">
+        <nav className="hidden md:flex items-center gap-6 text-[14px] font-bold uppercase tracking-wide absolute left-1/2 -translate-x-1/2">
           {isLoaded && userId && (
             <Link
               href="/dashboard"
-              className="text-neutral-400 hover:text-white transition-colors duration-300"
+              className="text-[#aaaaaa] hover:text-[#ff9900] transition-colors duration-150"
             >
               Dashboard
             </Link>
           )}
           <Link
             href="/supported-formats"
-            className="text-neutral-400 hover:text-white transition-colors duration-300"
+            className="text-[#aaaaaa] hover:text-[#ff9900] transition-colors duration-150"
           >
             Supported Formats
           </Link>
           <Link
             href="/about-us"
-            className="text-neutral-400 hover:text-white transition-colors duration-300"
+            className="text-[#aaaaaa] hover:text-[#ff9900] transition-colors duration-150"
           >
             About Us
+          </Link>
+          <Link
+            href="/git-track"
+            className="text-[#aaaaaa] hover:text-[#ff9900] transition-colors duration-150"
+          >
+            Project Logs
+          </Link>
+          <Link
+            href="/openned-tickets"
+            className="text-[#aaaaaa] hover:text-[#ff9900] transition-colors duration-150"
+          >
+            Tickets
+          </Link>
+          <Link
+            href="/pricing"
+            className="text-[#0088ff] hover:text-white transition-colors duration-150"
+          >
+            Pricing
           </Link>
         </nav>
 
         {/* Desktop Actions */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-5">
           <a
             href="https://github.com/kinshukjainn/pvtcldstrg"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-white  transition-colors duration-300"
+            className="w-10 h-10 flex items-center justify-center bg-[#000000] border-2 border-[#444444] text-white hover:border-[#ff9900] hover:text-[#ff9900] transition-colors duration-150"
             aria-label="GitHub Repository"
           >
-            <FaGithub className="w-7 h-7" />
+            <FaGithub className="w-5 h-5" />
           </a>
-          {isLoaded ||
-            (!userId && (
-              <Link
-                href="/verify-regis"
-                className="inline-flex items-center justify-center text-[15px] font-medium text-white px-4 py-2 rounded-xl bg-blue-800  active:scale-[0.97] transition-all duration-200"
-              >
-                Sign in / Up
-              </Link>
-            ))}
-          {isLoaded && userId && <UserProfileDropdown variant="desktop" />}
+          {isLoaded && !userId && (
+            <Link
+              href="/verify-regis"
+              className={`${solidButtonClass} bg-[#0055cc] text-white`}
+            >
+              Sign In / Up
+            </Link>
+          )}
+          {isLoaded && userId && (
+            <div className="border-2 border-[#000000] shadow-[4px_4px_0px_#000000] bg-[#111111]">
+              <UserProfileDropdown variant="desktop" />
+            </div>
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden cursor-pointer text-neutral-200 bg-blue-800 rounded-md hover:text-white z-50 p-2 -mr-2 transition-colors duration-200"
+          className="md:hidden flex items-center justify-center w-12 h-12 bg-[#000000] border-2 border-[#444444] text-white hover:border-[#ff9900] hover:text-[#ff9900] z-50 transition-colors duration-150 cursor-pointer"
           onClick={toggleMenu}
           aria-label="Toggle mobile menu"
         >
           {isMobileMenuOpen ? (
-            <PanelBottomOpen className="w-5 h-5" />
+            <PanelBottomOpen className="w-6 h-6" />
           ) : (
-            <PanelBottomClose className="w-5 h-5" />
+            <PanelBottomClose className="w-6 h-6" />
           )}
         </button>
       </div>
 
       {/* Mobile Navigation */}
       {isMobileMenuOpen && (
-        <div className="absolute top-14 left-0 w-full rounded-b-2xl h-max bg-[#121212] border-b border-white/[0.06] md:hidden flex flex-col py-6 px-6 gap-5 h-[calc(100vh-3.5rem)] animate-[fadeIn_0.2s_ease-out]">
-          <nav className="flex flex-col gap-1 text-[17px] font-medium">
+        <div className="absolute top-[80px] left-0 w-full bg-[#111111] border-b-4 border-[#000000] md:hidden flex flex-col p-6 shadow-[0px_8px_0px_rgba(0,0,0,1)] z-40">
+          <nav className="flex flex-col gap-2 text-[16px] font-bold uppercase tracking-wide">
             {isLoaded && userId && (
               <Link
                 href="/dashboard"
-                className="text-neutral-300 hover:text-white  p-2 hover:bg-[#202020] rounded-lg transition-colors duration-200 py-2"
+                className="text-[#dddddd] hover:text-[#ff9900] bg-[#1e1e1e] border-2 border-[#444444] p-3 hover:border-[#ff9900] transition-colors duration-150"
                 onClick={closeMenu}
               >
                 Dashboard
@@ -109,44 +136,67 @@ export default function Header() {
             )}
             <Link
               href="/supported-formats"
-              className="text-neutral-300 hover:text-white p-2 hover:bg-[#202020] rounded-lg transition-colors duration-200 py-2"
+              className="text-[#dddddd] hover:text-[#ff9900] bg-[#1e1e1e] border-2 border-[#444444] p-3 hover:border-[#ff9900] transition-colors duration-150"
               onClick={closeMenu}
             >
               Supported Formats
             </Link>
             <Link
               href="/about-us"
-              className="text-neutral-300 hover:text-white p-2 hover:bg-[#202020] rounded-lg transition-colors duration-200 py-2"
+              className="text-[#dddddd] hover:text-[#ff9900] bg-[#1e1e1e] border-2 border-[#444444] p-3 hover:border-[#ff9900] transition-colors duration-150"
               onClick={closeMenu}
             >
               About Us
             </Link>
+            <Link
+              href="/git-track"
+              className="text-[#dddddd] hover:text-[#ff9900] bg-[#1e1e1e] border-2 border-[#444444] p-3 hover:border-[#ff9900] transition-colors duration-150"
+              onClick={closeMenu}
+            >
+              Project Logs
+            </Link>
+            <Link
+              href="/opened-tickets"
+              className="text-[#dddddd] hover:text-[#ff9900] bg-[#1e1e1e] border-2 border-[#444444] p-3 hover:border-[#ff9900] transition-colors duration-150"
+              onClick={closeMenu}
+            >
+              Opened Tickets
+            </Link>
+            <Link
+              href="/pricing"
+              className="text-[#0088ff] hover:text-white bg-[#1e1e1e] border-2 border-[#444444] p-3 transition-colors duration-150"
+              onClick={closeMenu}
+            >
+              Pricing
+            </Link>
           </nav>
 
-          <div className="w-full h-px bg-white/[0.06]" />
+          <div className="w-full h-1 bg-[#333333] my-6" />
 
           <div className="flex flex-col gap-4">
             <a
               href="https://github.com/kinshukjainn/pvtcldstrg"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 text-neutral-200 hover:text-white transition-colors duration-200"
+              className="flex items-center gap-4 text-[#dddddd] hover:text-[#ff9900] bg-[#1e1e1e] border-2 border-[#444444] p-3 transition-colors duration-150 font-bold uppercase"
             >
-              <FaGithub className="w-5 h-5" />
-              <span className="text-[16px]">Open Source</span>
+              <FaGithub className="w-6 h-6" />
+              <span>Open Source</span>
             </a>
 
             {isLoaded && !userId && (
               <Link
                 href="/verify-regis"
-                className="inline-flex items-center justify-center text-[18px] font-medium text-white px-4 py-3 rounded-xl bg-blue-800  active:scale-[0.97] transition-all duration-200"
+                className={`${solidButtonClass} bg-[#0055cc] text-white w-full py-4 text-[16px] mt-2`}
                 onClick={closeMenu}
               >
-                Sign in / Up
+                Sign In / Up
               </Link>
             )}
             {isLoaded && userId && (
-              <UserProfileDropdown variant="mobile" onAction={closeMenu} />
+              <div className="mt-2 border-2 border-[#000000] bg-[#1e1e1e] p-2">
+                <UserProfileDropdown variant="mobile" onAction={closeMenu} />
+              </div>
             )}
           </div>
         </div>

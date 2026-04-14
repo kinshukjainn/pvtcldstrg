@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Supermercado_One } from "next/font/google";
+import { Noto_Serif, Supermercado_One } from "next/font/google";
 import { Geist, Geist_Mono, Ubuntu, Roboto, Inter } from "next/font/google";
 import localFont from "next/font/local";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -57,6 +57,13 @@ export const googleSans = localFont({
   display: "swap",
 });
 
+export const notoSerif = Noto_Serif({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"], // adjust as needed
+  variable: "--font-noto-serif",
+  display: "swap",
+});
+
 const supermercado = Supermercado_One({
   subsets: ["latin"],
   weight: "400", // only available weight
@@ -85,7 +92,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" data-google-analytics-opt-out="">
         <body
-          className={`${geistSans.variable} ${ubuntu.variable} ${roboto.variable} ${segoeui.variable} ${geistMono.variable} ${inter.variable} ${lucideSans.variable} ${googleSans.variable} ${supermercado.variable}  antialiased`}
+          className={`${geistSans.variable} ${ubuntu.variable} ${notoSerif.variable} ${roboto.variable} ${segoeui.variable} ${geistMono.variable} ${inter.variable} ${lucideSans.variable} ${googleSans.variable} ${supermercado.variable}  antialiased`}
         >
           <Header />
           <main>{children}</main>
