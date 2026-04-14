@@ -156,7 +156,7 @@ export default function Header() {
               Project Logs
             </Link>
             <Link
-              href="/opened-tickets"
+              href="/openned-tickets"
               className="text-[#dddddd] hover:text-[#ff9900] bg-[#1e1e1e] border-2 border-[#444444] p-3 hover:border-[#ff9900] transition-colors duration-150"
               onClick={closeMenu}
             >
