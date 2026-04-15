@@ -55,13 +55,13 @@ const formatBytes = (bytes: number, decimals = 2) => {
 /* AuthPage Match Themes & Classes                                    */
 /* ------------------------------------------------------------------ */
 const primaryButtonClass =
-  "inline-flex items-center justify-center gap-2 py-2 px-4 font-bold text-[14px] uppercase bg-[#0055cc] text-white border-2 border-t-[#3388ff] border-l-[#3388ff] border-r-[#002266] border-b-[#002266] active:border-t-[#002266] active:border-l-[#002266] active:border-b-[#3388ff] active:border-r-[#3388ff] hover:bg-[#0066ee] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
+  "inline-flex items-center justify-center gap-2 py-2 px-4 font-bold text-[14px]  bg-[#0055cc] text-white border-2 border-t-[#3388ff] border-l-[#3388ff] border-r-[#002266] border-b-[#002266] active:border-t-[#002266] active:border-l-[#002266] active:border-b-[#3388ff] active:border-r-[#3388ff] hover:bg-[#0066ee] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
 
 const secondaryButtonClass =
-  "inline-flex items-center justify-center gap-2 py-2 px-4 font-bold text-[14px] uppercase bg-[#dddddd] text-black border-2 border-t-[#ffffff] border-l-[#ffffff] border-r-[#888888] border-b-[#888888] active:border-t-[#888888] active:border-l-[#888888] active:border-b-[#ffffff] active:border-r-[#ffffff] hover:bg-[#ffffff] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
+  "inline-flex items-center justify-center gap-2 py-2 px-4 font-bold text-[14px]  bg-[#dddddd] text-black border-2 border-t-[#ffffff] border-l-[#ffffff] border-r-[#888888] border-b-[#888888] active:border-t-[#888888] active:border-l-[#888888] active:border-b-[#ffffff] active:border-r-[#ffffff] hover:bg-[#ffffff] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
 
 const dangerButtonClass =
-  "inline-flex items-center justify-center gap-2 py-2 px-4 font-bold text-[14px] uppercase bg-[#cc0000] text-white border-2 border-t-[#ff3333] border-l-[#ff3333] border-r-[#660000] border-b-[#660000] active:border-t-[#660000] active:border-l-[#660000] active:border-b-[#ff3333] active:border-r-[#ff3333] hover:bg-[#ee0000] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
+  "inline-flex items-center justify-center gap-2 py-2 px-4 font-bold text-[14px]  bg-[#cc0000] text-white border-2 border-t-[#ff3333] border-l-[#ff3333] border-r-[#660000] border-b-[#660000] active:border-t-[#660000] active:border-l-[#660000] active:border-b-[#ff3333] active:border-r-[#ff3333] hover:bg-[#ee0000] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
 
 /* ------------------------------------------------------------------ */
 /* Reusable Action Menu (kebab ⋮ dropdown)                            */
@@ -113,7 +113,7 @@ function ActionMenu({
               onDownload(e, fileKey);
               setOpen(false);
             }}
-            className="w-full flex items-center gap-3 px-3 py-2 font-bold text-[13px] text-[#dddddd] uppercase hover:bg-[#0055cc] hover:text-white transition-colors duration-150 cursor-pointer rounded-none"
+            className="w-full flex items-center gap-3 px-3 py-2 font-bold text-[13px] text-[#dddddd]  hover:bg-[#0055cc] hover:text-white transition-colors duration-150 cursor-pointer rounded-none"
           >
             <FaDownload size={13} className="shrink-0" />
             Download
@@ -124,7 +124,7 @@ function ActionMenu({
               onDelete(e, fileKey);
               setOpen(false);
             }}
-            className="w-full flex items-center gap-3 px-3 py-2 font-bold text-[13px] text-[#ff4444] uppercase hover:bg-[#cc0000] hover:text-white transition-colors duration-150 cursor-pointer rounded-none"
+            className="w-full flex items-center gap-3 px-3 py-2 font-bold text-[13px] text-[#ff4444]  hover:bg-[#cc0000] hover:text-white transition-colors duration-150 cursor-pointer rounded-none"
           >
             <FaTrash size={13} className="shrink-0" />
             Delete
@@ -287,7 +287,7 @@ export default function DriveManager() {
 
   const getFileName = (key: string) => key.split("/").pop() || key;
   const getFileExtension = (fileName: string) =>
-    fileName.split(".").pop()?.toUpperCase() || "UNKNOWN";
+    fileName.split(".").pop()?.toLowerCase() || "UNKNOWN";
 
   const getFileType = (fileName: string) => {
     const ext = fileName.split(".").pop()?.toLowerCase() || "";
@@ -329,11 +329,11 @@ export default function DriveManager() {
         <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-4 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           {/* Storage & Stats Badges (Matched Auth Badge Theme) */}
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-[#111111] border border-[#444444] text-[12px] font-bold text-[#aaaaaa] uppercase tracking-wide">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-[#111111] border border-[#444444] text-[12px] font-bold text-[#aaaaaa]  tracking-wide">
               <Folder className="w-4 h-4 text-[#dd7700]" />
               <span>{totalFiles} FILES</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-[#111111] border border-[#444444] text-[12px] font-bold text-[#aaaaaa] uppercase tracking-wide">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-[#111111] border border-[#444444] text-[12px] font-bold text-[#aaaaaa]  tracking-wide">
               <Container className="w-4 h-4 text-[#0055cc]" />
               <span>
                 {formatBytes(storageUsed)} / {formatBytes(storageLimit)}
@@ -353,7 +353,7 @@ export default function DriveManager() {
                 placeholder="SEARCH FILES..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full sm:w-56 outline-none text-[13px] font-bold uppercase bg-transparent px-2 py-2 text-white placeholder-[#777777]"
+                className="w-full sm:w-56 outline-none text-[13px] font-bold  bg-transparent px-2 py-2 text-white placeholder-[#777777]"
               />
             </div>
 
@@ -418,7 +418,7 @@ export default function DriveManager() {
             <div className="mb-2 bg-[#000000] border border-[#444444] p-4 shadow-[4px_4px_0px_#000000]">
               <FaSpinner className="animate-spin text-[#0055cc]" size={32} />
             </div>
-            <h2 className="text-[16px] font-bold text-white uppercase tracking-tight">
+            <h2 className="text-[16px] font-bold text-white  tracking-tight">
               LOADING WORKSPACE
             </h2>
           </div>
@@ -427,7 +427,7 @@ export default function DriveManager() {
             <div className="mb-4 bg-[#000000] border border-[#444444] p-4">
               <FaFileAlt className="text-4xl text-[#dd7700]" />
             </div>
-            <h3 className="text-[18px] font-bold text-white mb-2 uppercase tracking-tight">
+            <h3 className="text-[18px] font-bold text-white mb-2  tracking-tight">
               NO FILES FOUND
             </h3>
             <div className="border-t border-[#444444] w-full max-w-[200px] my-3"></div>
@@ -441,7 +441,7 @@ export default function DriveManager() {
             {viewMode === "list" ? (
               <div className="overflow-x-auto bg-[#1e1e1e] border border-[#444444] shadow-[6px_6px_0px_#000000]">
                 <table className="w-full border-collapse text-left whitespace-nowrap font-bold">
-                  <thead className="border-b border-[#444444] text-[#aaaaaa] bg-[#111111] text-[12px] tracking-wide uppercase">
+                  <thead className="border-b border-[#444444] text-[#aaaaaa] bg-[#111111] text-[12px] tracking-wide ">
                     <tr>
                       <th className="p-4 w-16 text-center border-r border-[#444444]">
                         Type
@@ -476,12 +476,12 @@ export default function DriveManager() {
                           </td>
                           <td className="p-3 text-[14px] text-[#dddddd] truncate max-w-[150px] sm:max-w-xs md:max-w-md lg:max-w-xl group-hover:text-white transition-colors">
                             <span className="block truncate">{fileName}</span>
-                            <span className="inline-block sm:hidden mt-1 text-[10px] text-[#aaaaaa] uppercase tracking-wider">
+                            <span className="inline-block sm:hidden mt-1 text-[10px] text-[#aaaaaa]  tracking-wider">
                               {ext}
                             </span>
                           </td>
                           <td className="p-3 text-center hidden sm:table-cell">
-                            <span className="inline-block text-[11px] text-[#aaaaaa] bg-[#000000] px-2 py-0.5 border border-[#444444] tracking-wider uppercase">
+                            <span className="inline-block text-[11px] text-[#aaaaaa] bg-[#000000] px-2 py-0.5 border border-[#444444] tracking-wider ">
                               {ext}
                             </span>
                           </td>
@@ -561,7 +561,7 @@ export default function DriveManager() {
                       {/* File Info Footer */}
                       <div className="p-3 flex items-center justify-between gap-2 bg-[#1e1e1e]">
                         <span
-                          className="text-[12px] truncate text-white font-bold group-hover:text-[#dd7700] transition-colors duration-150 flex-1 min-w-0 uppercase"
+                          className="text-[12px] truncate text-white font-bold group-hover:text-[#dd7700] transition-colors duration-150 flex-1 min-w-0 "
                           title={fileName}
                         >
                           {fileName}
@@ -605,7 +605,7 @@ export default function DriveManager() {
             className="bg-[#1e1e1e] border border-[#444444] p-3 flex justify-between items-center text-white shadow-[6px_6px_0px_#000000] m-3 rounded-none"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="text-[14px] font-bold uppercase tracking-wide truncate max-w-[50%] md:max-w-[60%] flex items-center gap-3">
+            <div className="text-[14px] font-bold  tracking-wide truncate max-w-[50%] md:max-w-[60%] flex items-center gap-3">
               <div className="w-8 h-8 bg-[#000000] border border-[#444444] flex items-center justify-center shrink-0">
                 {getFileIcon(
                   getFileType(getFileName(selectedFile.key)),
@@ -675,11 +675,11 @@ export default function DriveManager() {
                     "text-4xl text-[#dd7700]",
                   )}
                 </div>
-                <h3 className="text-[18px] font-bold text-white mb-2 uppercase tracking-tight">
+                <h3 className="text-[18px] font-bold text-white mb-2  tracking-tight">
                   NO RICH PREVIEW
                 </h3>
                 <div className="border-t border-[#444444] w-full max-w-[200px] my-3"></div>
-                <p className="text-[13px] font-bold text-[#aaaaaa] mb-8 leading-relaxed uppercase">
+                <p className="text-[13px] font-bold text-[#aaaaaa] mb-8 leading-relaxed ">
                   Format requires a dedicated application. <br /> Download to
                   view.
                 </p>
@@ -710,11 +710,11 @@ export default function DriveManager() {
                 <FaExclamationTriangle size={28} />
               </div>
               <div>
-                <h3 className="text-[18px] font-bold text-white mb-2 uppercase tracking-tight">
+                <h3 className="text-[18px] font-bold text-white mb-2  tracking-tight">
                   DELETE FILE?
                 </h3>
                 <div className="border-t border-[#444444] w-full mx-auto max-w-[150px] my-3"></div>
-                <p className="text-[#aaaaaa] font-bold text-[13px] leading-relaxed uppercase">
+                <p className="text-[#aaaaaa] font-bold text-[13px] leading-relaxed ">
                   Are you sure you want to delete <br />
                   <span className="text-white bg-[#000000] border border-[#555555] px-2 py-1 inline-block mt-2 mb-2 break-all">
                     {getFileName(fileToDelete)}

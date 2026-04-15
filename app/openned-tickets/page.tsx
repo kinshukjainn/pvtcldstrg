@@ -66,10 +66,10 @@ export default function FeedbacksList() {
     "w-full px-3 py-2 bg-[#000000] border-2 border-[#555555] text-[15px] text-white placeholder:text-[#777777] focus:outline-none focus:border-[#aaaaaa] rounded-none";
 
   const primaryButtonClass =
-    "flex items-center justify-center gap-2 py-1.5 px-4 font-bold text-[13px] bg-[#0055cc] text-white border-2 border-t-[#3388ff] border-l-[#3388ff] border-r-[#002266] border-b-[#002266] active:border-t-[#002266] active:border-l-[#002266] active:border-b-[#3388ff] active:border-r-[#3388ff] hover:bg-[#0066ee] rounded-none uppercase transition-none";
+    "flex items-center justify-center gap-2 py-1.5 px-4 font-bold text-[13px] bg-[#0055cc] text-white border-2 border-t-[#3388ff] border-l-[#3388ff] border-r-[#002266] border-b-[#002266] active:border-t-[#002266] active:border-l-[#002266] active:border-b-[#3388ff] active:border-r-[#3388ff] hover:bg-[#0066ee] rounded-none  transition-none";
 
   const secondaryButtonClass =
-    "flex items-center justify-center gap-2 py-1.5 px-4 font-bold text-[13px] bg-[#111111] text-[#aaaaaa] border-2 border-[#444444] hover:border-[#888888] hover:text-white active:border-[#222222] rounded-none uppercase transition-none";
+    "flex items-center justify-center gap-2 py-1.5 px-4 font-bold text-[13px] bg-[#111111] text-[#aaaaaa] border-2 border-[#444444] hover:border-[#888888] hover:text-white active:border-[#222222] rounded-none  transition-none";
 
   useEffect(() => {
     fetchFeedbacks();
@@ -142,11 +142,11 @@ export default function FeedbacksList() {
               <div className="bg-[#000000] border border-[#444444] p-2">
                 <BsCloudRain size={24} className="text-[#dd7700]" />
               </div>
-              <h1 className="text-[20px] sm:text-[24px] font-bold text-white uppercase tracking-tight">
+              <h1 className="text-[20px] sm:text-[24px] font-bold text-white  tracking-tight">
                 Kosha Logs & Issues
               </h1>
             </div>
-            <p className="text-[13px] text-[#aaaaaa] font-bold uppercase tracking-wide">
+            <p className="text-[13px] text-[#aaaaaa] font-bold  tracking-wide">
               SYSTEM FEEDBACK — STRICTLY KOSHA PROJECT
             </p>
           </div>
@@ -188,7 +188,7 @@ export default function FeedbacksList() {
           {isLoading ? (
             <div className="bg-[#1e1e1e] border border-[#444444] shadow-[6px_6px_0px_#000000] flex flex-col items-center justify-center min-h-[40vh] gap-4 p-8">
               <FaSpinner className="animate-spin text-[#0055cc]" size={32} />
-              <span className="text-[13px] font-bold text-[#aaaaaa] uppercase tracking-widest">
+              <span className="text-[13px] font-bold text-[#aaaaaa]  tracking-widest">
                 Fetching Data...
               </span>
             </div>
@@ -197,7 +197,7 @@ export default function FeedbacksList() {
               <div className="bg-[#000000] border border-[#444444] p-4 mb-4">
                 <Search className="text-3xl text-[#dd7700]" />
               </div>
-              <h3 className="text-[18px] font-bold text-white uppercase tracking-tight mb-2">
+              <h3 className="text-[18px] font-bold text-white  tracking-tight mb-2">
                 No Results Found
               </h3>
               <p className="text-[13px] text-[#aaaaaa] font-bold max-w-sm">
@@ -215,17 +215,17 @@ export default function FeedbacksList() {
                   {/* Card Header */}
                   <div className="flex flex-wrap items-center justify-between gap-3 mb-4 pb-4 border-b border-[#333333]">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] sm:text-[11px] text-[#dd7700] px-2 py-1 bg-[#000000] border border-[#444444] font-bold tracking-wider uppercase">
+                      <span className="text-[10px] sm:text-[11px] text-[#dd7700] px-2 py-1 bg-[#000000] border border-[#444444] font-bold tracking-wider ">
                         {fb.category}
                       </span>
                       <span className="text-[12px] text-[#aaaaaa] font-bold">
                         /
                       </span>
-                      <span className="text-[13px] text-white font-bold uppercase tracking-tight">
+                      <span className="text-[13px] text-white font-bold  tracking-tight">
                         KOSHA
                       </span>
                     </div>
-                    <span className="text-[#aaaaaa] text-[11px] flex items-center gap-1.5 font-bold uppercase bg-[#000000] border border-[#444444] px-2 py-1">
+                    <span className="text-[#aaaaaa] text-[11px] flex items-center gap-1.5 font-bold  bg-[#000000] border border-[#444444] px-2 py-1">
                       <Clock size={12} className="text-[#dd7700]" />
                       {new Date(fb.created_at).toLocaleDateString()}
                     </span>
@@ -234,7 +234,7 @@ export default function FeedbacksList() {
                   {/* Markdown Content Area */}
                   <div
                     className="prose prose-sm max-w-none mb-6 flex-grow text-[#dddddd]
-                    prose-p:leading-relaxed prose-headings:text-white prose-headings:font-bold prose-headings:uppercase
+                    prose-p:leading-relaxed prose-headings:text-white prose-headings:font-bold prose-headings:
                     prose-code:bg-[#000000] prose-code:text-[#0088ff] prose-code:px-1 prose-code:py-0.5 prose-code:rounded-none prose-code:border prose-code:border-[#444444]
                     prose-pre:bg-[#000000] prose-pre:border prose-pre:border-[#444444] prose-pre:rounded-none
                     prose-a:text-[#0088ff] prose-a:underline hover:prose-a:bg-[#0055cc] hover:prose-a:text-white transition-none"
@@ -248,7 +248,7 @@ export default function FeedbacksList() {
                       <div className="w-8 h-8 bg-[#000000] border border-[#444444] flex items-center justify-center text-[#dd7700]">
                         <User size={14} />
                       </div>
-                      <span className="text-[13px] font-bold text-white uppercase tracking-wide">
+                      <span className="text-[13px] font-bold text-white  tracking-wide">
                         <HighlightText
                           text={fb.name}
                           highlight={debouncedQuery}

@@ -12,7 +12,7 @@ import {
 import { BsCloudRain } from "react-icons/bs";
 
 const primaryButtonClass =
-  "inline-flex w-fit items-center justify-center gap-2 py-2 px-4 font-bold text-[14px] uppercase bg-[#0055cc] text-white border-2 border-t-[#3388ff] border-l-[#3388ff] border-r-[#002266] border-b-[#002266] active:border-t-[#002266] active:border-l-[#002266] active:border-b-[#3388ff] active:border-r-[#3388ff] hover:bg-[#0066ee] transition-none rounded-none";
+  "inline-flex w-fit items-center justify-center gap-2 py-2 px-4 font-bold text-[14px]  bg-[#0055cc] text-white border-2 border-t-[#3388ff] border-l-[#3388ff] border-r-[#002266] border-b-[#002266] active:border-t-[#002266] active:border-l-[#002266] active:border-b-[#3388ff] active:border-r-[#3388ff] hover:bg-[#0066ee] transition-none rounded-none";
 
 export default function AboutUs() {
   const links = [
@@ -72,10 +72,10 @@ export default function AboutUs() {
               <BsCloudRain className="w-8 h-8 text-[#dd7700]" />
             </div>
             <div>
-              <h1 className="text-[20px] md:text-[24px] font-bold text-white tracking-tight uppercase">
+              <h1 className="text-[20px] md:text-[24px] font-bold text-white tracking-tight ">
                 About Kosha
               </h1>
-              <p className="text-[12px] text-[#dd7700] font-bold uppercase tracking-wide">
+              <p className="text-[12px] text-[#dd7700] font-bold  tracking-wide">
                 Secure Personal Cloud Storage
               </p>
             </div>
@@ -92,7 +92,7 @@ export default function AboutUs() {
 
           <div className="bg-[#111111] border border-[#444444] p-4 md:p-5">
             <p className="text-[13px] text-[#aaaaaa] font-bold mb-5 leading-relaxed">
-              <strong className="text-white uppercase tracking-wide">
+              <strong className="text-white  tracking-wide">
                 Proudly Open Source
               </strong>{" "}
               — Kosha is built with transparency in mind. The core project is
@@ -128,10 +128,10 @@ export default function AboutUs() {
           {/* Bio & Socials */}
           <div className="space-y-4 w-full">
             <div>
-              <h2 className="text-[18px] md:text-[22px] font-bold text-white tracking-tight uppercase">
+              <h2 className="text-[18px] md:text-[22px] font-bold text-white tracking-tight ">
                 Hi, I am Kinshuk Jain
               </h2>
-              <p className="text-[12px] text-[#0055cc] font-bold uppercase tracking-wide">
+              <p className="text-[12px] text-[#0055cc] font-bold  tracking-wide">
                 Lead Developer & Creator
               </p>
             </div>
@@ -167,7 +167,7 @@ export default function AboutUs() {
         {/* ================= RESOURCES & LINKS GRID ================= */}
         <section>
           <div className="flex items-center gap-4 mb-5">
-            <h3 className="text-[18px] md:text-[20px] font-bold text-white tracking-tight uppercase">
+            <h3 className="text-[18px] md:text-[20px] font-bold text-white tracking-tight ">
               More Resources
             </h3>
             <div className="flex-1 border-t border-[#444444]"></div>
@@ -186,7 +186,7 @@ export default function AboutUs() {
                   <div className="p-2.5 bg-[#000000] border border-[#444444] group-hover:border-[#dd7700] transition-colors duration-150">
                     {link.icon}
                   </div>
-                  <h4 className="text-[15px] font-bold text-white uppercase group-hover:text-[#dd7700] transition-colors">
+                  <h4 className="text-[15px] font-bold text-white  group-hover:text-[#dd7700] transition-colors">
                     {link.title}
                   </h4>
                 </div>
@@ -194,7 +194,7 @@ export default function AboutUs() {
                   {link.description}
                 </p>
 
-                <div className="mt-auto flex items-center text-[12px] font-bold text-[#555555] uppercase group-hover:text-[#dd7700] transition-colors">
+                <div className="mt-auto flex items-center text-[12px] font-bold text-[#555555]  group-hover:text-[#dd7700] transition-colors">
                   Visit Link &rarr;
                 </div>
               </a>
@@ -203,7 +203,7 @@ export default function AboutUs() {
         </section>
 
         {/* ================= FOOTER ================= */}
-        <div className="pt-8 border-t border-[#333333] text-center text-[#777777] font-bold text-[11px] uppercase tracking-wide">
+        <div className="pt-8 border-t border-[#333333] text-center text-[#777777] font-bold text-[11px]  tracking-wide">
           <p>
             COPYRIGHT {new Date().getFullYear()} KINSHUK JAIN. ALL RIGHTS
             RESERVED.

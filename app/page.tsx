@@ -268,7 +268,7 @@ const OnboardingStep = ({
         <Icon className="w-6 h-6 text-white" />
       </div>
       <div className="min-w-0">
-        <p className="text-[12px] uppercase tracking-widest text-[#0088ff] font-bold mb-1">
+        <p className="text-[12px]  tracking-widest text-[#0088ff] font-bold mb-1">
           Step {step}
         </p>
         <h3 className="text-[16px] font-bold text-white mb-1">{title}</h3>
@@ -328,7 +328,7 @@ function HomeContent() {
                     <PartyPopper className="w-8 h-8 text-black" />
                   </div>
                   <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-white uppercase tracking-tight">
+                    <h1 className="text-2xl md:text-3xl font-bold text-white  tracking-tight">
                       Welcome,{" "}
                       <span className="text-[#ff9900]">{firstName}</span>
                     </h1>
@@ -395,7 +395,7 @@ function HomeContent() {
           <div className="max-w-2xl mx-auto space-y-8">
             <FadeInItem delay={0}>
               <div className="bg-[#1e1e1e] border-2 border-[#444444] p-6 shadow-[8px_8px_0px_#000000]">
-                <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight uppercase mb-2">
+                <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight  mb-2">
                   {getGreeting()},{" "}
                   <span className="text-[#0088ff]">{firstName}</span>
                 </h1>
@@ -427,7 +427,7 @@ function HomeContent() {
           /* ── Logged-out Hero ── */
           <div className="max-w-4xl mx-auto space-y-8 text-center">
             <FadeInItem delay={0}>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#000000] border-2 border-[#333333] text-[13px] text-[#aaaaaa] font-bold uppercase tracking-wider">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#000000] border-2 border-[#333333] text-[13px] text-[#aaaaaa] font-bold  tracking-wider">
                 <LockKeyhole className="w-4 h-4 text-[#ff9900]" />
                 <span>Secured by AWS Cloud</span>
               </div>
@@ -435,7 +435,7 @@ function HomeContent() {
 
             <FadeInItem delay={150}>
               <h1 className="text-4xl md:text-6xl font-bold text-white tracking-tight leading-tight flex flex-wrap items-center justify-center gap-4">
-                <span className="uppercase">Your Data.</span>
+                <span className="">Your Data.</span>
                 <span className="relative flex items-center justify-center w-14 h-14 bg-[#1e1e1e] border-2 border-[#444444] shadow-[4px_4px_0px_#000000] overflow-hidden">
                   <AnimatePresence mode="wait">
                     <motion.div
@@ -454,7 +454,7 @@ function HomeContent() {
                     </motion.div>
                   </AnimatePresence>
                 </span>
-                <span className="uppercase text-[#ff9900] bg-[#000000] px-3 border-2 border-[#ff9900]">
+                <span className=" text-[#ff9900] bg-[#000000] px-3 border-2 border-[#ff9900]">
                   Only Yours.
                 </span>
               </h1>
@@ -471,14 +471,14 @@ function HomeContent() {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-5 pt-8">
                 <Link
                   href="/verify-regis"
-                  className={`${solidButtonClass} bg-[#ffffff] text-black text-[16px] uppercase`}
+                  className={`${solidButtonClass} bg-[#ffffff] text-black text-[16px] `}
                 >
                   Start for free
                   <ArrowRight className="w-5 h-5" />
                 </Link>
                 <Link
                   href="/supported-formats"
-                  className={`${solidButtonClass} bg-[#1e1e1e] text-[#dddddd] text-[16px] uppercase border-[#444444]`}
+                  className={`${solidButtonClass} bg-[#1e1e1e] text-[#dddddd] text-[16px]  border-[#444444]`}
                 >
                   Supported Formats
                 </Link>
@@ -496,10 +496,10 @@ function HomeContent() {
         className="max-w-6xl mx-auto px-6 py-20 border-t-4 border-[#333333]"
       >
         <div className="mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-white uppercase tracking-tight mb-2">
+          <h2 className="text-3xl md:text-4xl font-bold text-white  tracking-tight mb-2">
             Brilliantly Simple.
           </h2>
-          <p className="text-[#ff9900] font-bold text-[16px] uppercase tracking-widest">
+          <p className="text-[#ff9900] font-bold text-[16px]  tracking-widest">
             Everything you need. Nothing you don&apos;t.
           </p>
         </div>
@@ -539,7 +539,7 @@ function HomeContent() {
         <div className="bg-[#0055cc] border-4 border-[#000000] p-8 md:p-12 shadow-[8px_8px_0px_#000000] flex flex-col items-center text-center">
           {isLoggedIn ? (
             <>
-              <h2 className="text-3xl font-bold text-white uppercase mb-4 tracking-tight">
+              <h2 className="text-3xl font-bold text-white  mb-4 tracking-tight">
                 Your files are waiting
               </h2>
               <p className="text-[#cccccc] font-bold text-[16px] mb-8 max-w-md">
@@ -547,7 +547,7 @@ function HomeContent() {
               </p>
               <Link
                 href="/dashboard"
-                className={`${solidButtonClass} bg-[#000000] text-white text-[16px] uppercase`}
+                className={`${solidButtonClass} bg-[#000000] text-white text-[16px] `}
               >
                 View Dashboard
                 <ArrowRight className="w-5 h-5" />
@@ -555,7 +555,7 @@ function HomeContent() {
             </>
           ) : (
             <>
-              <h2 className="text-3xl font-bold text-white uppercase mb-4 tracking-tight">
+              <h2 className="text-3xl font-bold text-white  mb-4 tracking-tight">
                 Ready to take back your data?
               </h2>
               <p className="text-[#cccccc] font-bold text-[16px] mb-8 max-w-md">
@@ -564,7 +564,7 @@ function HomeContent() {
               </p>
               <Link
                 href="/verify-regis"
-                className={`${solidButtonClass} bg-[#ff9900] text-black text-[16px] uppercase`}
+                className={`${solidButtonClass} bg-[#ff9900] text-black text-[16px] `}
               >
                 Create Free Account
                 <ArrowRight className="w-5 h-5" />

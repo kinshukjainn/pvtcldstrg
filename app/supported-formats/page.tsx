@@ -38,9 +38,9 @@ const DOC_CATEGORIES = [
 // --- COMPONENTS ---
 
 function FormatBadge({ ext }: { ext: string }) {
-  // Converted to bold uppercase labels instead of terminal-style dot extensions
+  // Converted to bold  labels instead of terminal-style dot extensions
   return (
-    <span className="inline-block items-center px-3 py-1 bg-[#ffffff] text-black border-2 border-[#000000] text-[13px] font-bold uppercase tracking-wider shadow-[2px_2px_0px_#000000] mr-3 mb-3 select-none">
+    <span className="inline-block items-center px-3 py-1 bg-[#ffffff] text-black border-2 border-[#000000] text-[13px] font-bold  tracking-wider shadow-[2px_2px_0px_#000000] mr-3 mb-3 select-none">
       {ext}
     </span>
   );
@@ -50,7 +50,7 @@ function SectionAnchor({ id, children }: { id: string; children: ReactNode }) {
   return (
     <a
       href={`#${id}`}
-      className="group relative text-white uppercase tracking-tight hover:text-[#ff9900] transition-colors duration-150 flex items-center gap-3"
+      className="group relative text-white  tracking-tight hover:text-[#ff9900] transition-colors duration-150 flex items-center gap-3"
     >
       <span className="w-4 h-4 bg-[#ff9900] border-2 border-[#000000] opacity-0 group-hover:opacity-100 transition-opacity duration-150 inline-block"></span>
       {children}
@@ -61,7 +61,7 @@ function SectionAnchor({ id, children }: { id: string; children: ReactNode }) {
 function SystemNotice({ children }: { children: ReactNode }) {
   return (
     <div className="my-8 p-6 border-4 border-[#000000] bg-[#0055cc] shadow-[8px_8px_0px_#000000] text-white flex flex-col sm:flex-row gap-5 items-start">
-      <div className="bg-[#ffffff] text-black border-2 border-[#000000] p-2 shrink-0 font-bold uppercase text-[12px] tracking-widest shadow-[2px_2px_0px_#000000]">
+      <div className="bg-[#ffffff] text-black border-2 border-[#000000] p-2 shrink-0 font-bold  text-[12px] tracking-widest shadow-[2px_2px_0px_#000000]">
         Notice
       </div>
       <div className="text-[15px] font-bold leading-relaxed pt-1">
@@ -81,11 +81,11 @@ export default function SupportedFormatsPage() {
         <div className="max-w-5xl mx-auto flex justify-between items-center px-6 py-4">
           <Link
             href="/"
-            className="text-white hover:text-[#ff9900] transition-colors text-[14px] font-bold uppercase tracking-wide flex items-center gap-2"
+            className="text-white hover:text-[#ff9900] transition-colors text-[14px] font-bold  tracking-wide flex items-center gap-2"
           >
             Back to Application
           </Link>
-          <span className="text-[12px] font-bold tracking-widest uppercase text-[#aaaaaa] bg-[#000000] px-3 py-1 border-2 border-[#333333]">
+          <span className="text-[12px] font-bold tracking-widest  text-[#aaaaaa] bg-[#000000] px-3 py-1 border-2 border-[#333333]">
             System Documentation
           </span>
         </div>
@@ -94,7 +94,7 @@ export default function SupportedFormatsPage() {
       <main className="max-w-5xl mx-auto px-6 pt-16">
         {/* Hero Section */}
         <header className="pb-16 border-b-4 border-[#333333] mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 uppercase tracking-tight">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6  tracking-tight">
             Supported Data Formats
           </h1>
           <p className="text-[16px] md:text-lg text-[#aaaaaa] font-bold leading-relaxed max-w-3xl">
@@ -111,10 +111,10 @@ export default function SupportedFormatsPage() {
           aria-label="Table of Contents"
           className="mb-16 p-8 border-4 border-[#000000] bg-[#1e1e1e] shadow-[8px_8px_0px_#000000]"
         >
-          <p className="text-[16px] font-bold uppercase tracking-widest text-[#ff9900] mb-6 border-b-2 border-[#333333] pb-2">
+          <p className="text-[16px] font-bold  tracking-widest text-[#ff9900] mb-6 border-b-2 border-[#333333] pb-2">
             Documentation Index
           </p>
-          <ul className="grid sm:grid-cols-2 gap-y-4 gap-x-8 text-[15px] font-bold list-none p-0 m-0 uppercase">
+          <ul className="grid sm:grid-cols-2 gap-y-4 gap-x-8 text-[15px] font-bold list-none p-0 m-0 ">
             {TOC_ITEMS.map((item) => (
               <li key={item.id}>
                 <a
@@ -130,7 +130,7 @@ export default function SupportedFormatsPage() {
 
         {/* Images */}
         <section id="images" className="mb-20 scroll-mt-28">
-          <h2 className="text-2xl font-bold text-white mb-6 uppercase border-l-8 border-[#ff9900] pl-4">
+          <h2 className="text-2xl font-bold text-white mb-6  border-l-8 border-[#ff9900] pl-4">
             <SectionAnchor id="images">Image Processing</SectionAnchor>
           </h2>
           <p className="text-[16px] text-[#aaaaaa] font-bold mb-6 max-w-3xl leading-relaxed">
@@ -150,7 +150,7 @@ export default function SupportedFormatsPage() {
 
         {/* Videos */}
         <section id="videos" className="mb-20 scroll-mt-28">
-          <h2 className="text-2xl font-bold text-white mb-6 uppercase border-l-8 border-[#0055cc] pl-4">
+          <h2 className="text-2xl font-bold text-white mb-6  border-l-8 border-[#0055cc] pl-4">
             <SectionAnchor id="videos">Video Streaming</SectionAnchor>
           </h2>
           <p className="text-[16px] text-[#aaaaaa] font-bold mb-6 max-w-3xl leading-relaxed">
@@ -169,7 +169,7 @@ export default function SupportedFormatsPage() {
 
         {/* Audio */}
         <section id="audio" className="mb-20 scroll-mt-28">
-          <h2 className="text-2xl font-bold text-white mb-6 uppercase border-l-8 border-[#00cc44] pl-4">
+          <h2 className="text-2xl font-bold text-white mb-6  border-l-8 border-[#00cc44] pl-4">
             <SectionAnchor id="audio">Audio Playback</SectionAnchor>
           </h2>
           <p className="text-[16px] text-[#aaaaaa] font-bold mb-6 max-w-3xl leading-relaxed">
@@ -188,7 +188,7 @@ export default function SupportedFormatsPage() {
 
         {/* Documents */}
         <section id="documents" className="mb-20 scroll-mt-28">
-          <h2 className="text-2xl font-bold text-white mb-6 uppercase border-l-8 border-[#a855f7] pl-4">
+          <h2 className="text-2xl font-bold text-white mb-6  border-l-8 border-[#a855f7] pl-4">
             <SectionAnchor id="documents">Documents & Datasets</SectionAnchor>
           </h2>
           <p className="text-[16px] text-[#aaaaaa] font-bold mb-8 max-w-3xl leading-relaxed">
@@ -204,7 +204,7 @@ export default function SupportedFormatsPage() {
                 key={cat.label}
                 className="p-6 bg-[#1e1e1e] border-4 border-[#000000] shadow-[6px_6px_0px_#000000]"
               >
-                <h3 className="text-[16px] font-bold text-white uppercase mb-4 tracking-wide border-b-2 border-[#333333] pb-2">
+                <h3 className="text-[16px] font-bold text-white  mb-4 tracking-wide border-b-2 border-[#333333] pb-2">
                   {cat.label}
                 </h3>
                 <div className="flex flex-wrap gap-1 mb-5">
@@ -224,7 +224,7 @@ export default function SupportedFormatsPage() {
 
         {/* Archives */}
         <section id="archives" className="mb-20 scroll-mt-28">
-          <h2 className="text-2xl font-bold text-white mb-6 uppercase border-l-8 border-[#ff3333] pl-4">
+          <h2 className="text-2xl font-bold text-white mb-6  border-l-8 border-[#ff3333] pl-4">
             <SectionAnchor id="archives">Encrypted Archives</SectionAnchor>
           </h2>
           <p className="text-[16px] text-[#aaaaaa] font-bold mb-6 max-w-3xl leading-relaxed">

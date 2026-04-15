@@ -396,7 +396,7 @@ export default function ChangelogTracker() {
                     <span className="break-words">{title}</span>
                     {/* Harsh branch tag */}
                     {index === 0 && (
-                      <span className="bg-[#00ff00] text-black text-[10px] font-bold px-1 py-0 uppercase border border-[#008800]">
+                      <span className="bg-[#00ff00] text-black text-[10px] font-bold px-1 py-0  border border-[#008800]">
                         master
                       </span>
                     )}

@@ -262,13 +262,13 @@ export default function AuthPage() {
           <div className="mb-4 bg-[#000000] border border-[#444444] p-3">
             <BsCloudRain size={40} className="text-[#dd7700]" />
           </div>
-          <h1 className="text-[22px] font-bold text-white mb-1 uppercase tracking-tight">
+          <h1 className="text-[22px] font-bold text-white mb-1  tracking-tight">
             Kosha Authentication
           </h1>
 
           <div className="border-t border-[#444444] w-full my-3"></div>
 
-          <h2 className="text-[18px] font-bold text-white uppercase tracking-tight">
+          <h2 className="text-[18px] font-bold text-white  tracking-tight">
             {heading}
           </h2>
           <p className="text-[13px] text-[#aaaaaa] mt-1 font-bold">{subtext}</p>
@@ -276,7 +276,7 @@ export default function AuthPage() {
 
         {/* Security Badge */}
         <div className="flex justify-center mb-6">
-          <div className="flex items-center gap-2 px-3 py-1 bg-[#111111] border border-[#444444] text-[12px] font-bold text-[#aaaaaa] uppercase tracking-wide">
+          <div className="flex items-center gap-2 px-3 py-1 bg-[#111111] border border-[#444444] text-[12px] font-bold text-[#aaaaaa]  tracking-wide">
             <LockKeyhole className="w-3.5 h-3.5 text-[#dd7700]" />
             <span>Secured by</span>
             <div className="relative flex items-center justify-start w-[50px] h-[16px] overflow-hidden">
@@ -308,7 +308,7 @@ export default function AuthPage() {
           {pendingMfa || pendingVerification ? (
             <>
               <div className="flex flex-col gap-1">
-                <label className="text-[12px] font-bold text-[#aaaaaa] uppercase tracking-wide">
+                <label className="text-[12px] font-bold text-[#aaaaaa]  tracking-wide">
                   Security Code
                 </label>
                 <input
@@ -349,7 +349,7 @@ export default function AuthPage() {
                     setMfaCode("");
                     setAuthError(null);
                   }}
-                  className="w-full text-center text-[13px] text-[#0088ff] font-bold uppercase hover:text-white underline hover:bg-[#0055cc] py-1 cursor-pointer"
+                  className="w-full text-center text-[13px] text-[#0088ff] font-bold  hover:text-white underline hover:bg-[#0055cc] py-1 cursor-pointer"
                 >
                   Cancel and go back
                 </button>
@@ -360,7 +360,7 @@ export default function AuthPage() {
               {isSignUp && (
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1">
-                    <label className="text-[12px] font-bold text-[#aaaaaa] uppercase">
+                    <label className="text-[12px] font-bold text-[#aaaaaa] ">
                       First Name
                     </label>
                     <input
@@ -371,7 +371,7 @@ export default function AuthPage() {
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <label className="text-[12px] font-bold text-[#aaaaaa] uppercase">
+                    <label className="text-[12px] font-bold text-[#aaaaaa] ">
                       Last Name
                     </label>
                     <input
@@ -385,7 +385,7 @@ export default function AuthPage() {
               )}
 
               <div className="flex flex-col gap-1">
-                <label className="text-[12px] font-bold text-[#aaaaaa] uppercase">
+                <label className="text-[12px] font-bold text-[#aaaaaa] ">
                   Email Address
                 </label>
                 <input
@@ -398,7 +398,7 @@ export default function AuthPage() {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[12px] font-bold text-[#aaaaaa] uppercase">
+                <label className="text-[12px] font-bold text-[#aaaaaa] ">
                   Password
                 </label>
                 <input
@@ -447,7 +447,7 @@ export default function AuthPage() {
         </div>
 
         {/* Footer */}
-        <div className="mt-6 text-center text-[11px] font-bold text-[#888888] uppercase bg-[#111111] p-2 border border-[#333333]">
+        <div className="mt-6 text-center text-[11px] font-bold text-[#888888]  bg-[#111111] p-2 border border-[#333333]">
           By continuing, you agree to our{" "}
           <Link
             href="/terms"

@@ -15,11 +15,13 @@ const getBucketName = () => {
 
 /**
  * Deletes ALL S3 objects under a user's upload prefix.
- * This prevents orphaned files when a user is removed from the DB.
+ * FIX: Now tracks failures and throws if any objects couldn't be deleted,
+ * so we don't proceed to delete the DB user and orphan S3 objects.
  */
 async function deleteAllUserS3Files(clerkId: string) {
   const bucket = getBucketName();
   const prefix = `uploads/${clerkId}/`;
+  const failedKeys: string[] = [];
 
   let continuationToken: string | undefined;
 
@@ -34,23 +36,35 @@ async function deleteAllUserS3Files(clerkId: string) {
 
     const objects = listResponse.Contents ?? [];
 
-    // Delete in parallel batches of 25 to avoid overwhelming S3
     const BATCH_SIZE = 25;
     for (let i = 0; i < objects.length; i += BATCH_SIZE) {
       const batch = objects.slice(i, i + BATCH_SIZE);
-      await Promise.all(
+      const results = await Promise.allSettled(
         batch.map((obj) =>
           s3Client.send(
             new DeleteObjectCommand({ Bucket: bucket, Key: obj.Key! }),
           ),
         ),
       );
+
+      // Track any failed deletions
+      results.forEach((result, idx) => {
+        if (result.status === "rejected") {
+          failedKeys.push(batch[idx].Key!);
+        }
+      });
     }
 
     continuationToken = listResponse.IsTruncated
       ? listResponse.NextContinuationToken
       : undefined;
   } while (continuationToken);
+
+  if (failedKeys.length > 0) {
+    throw new Error(
+      `Failed to delete ${failedKeys.length} S3 object(s): ${failedKeys.slice(0, 5).join(", ")}${failedKeys.length > 5 ? "..." : ""}`,
+    );
+  }
 }
 
 export async function POST(req: Request) {
@@ -110,8 +124,6 @@ export async function POST(req: Request) {
     const name = [first_name, last_name].filter(Boolean).join(" ") || null;
 
     try {
-      // plan_id defaults to 'free' via the DB column default,
-      // which links to the plans table for storage_limit & file_count_limit.
       await sql`
         INSERT INTO users (clerk_id, email, name, avatar_url)
         VALUES (
@@ -174,6 +186,8 @@ export async function POST(req: Request) {
     try {
       // 1. Purge all of the user's files from S3 BEFORE the DB cascade
       //    wipes the file_key references we'd need to find them.
+      // FIX: If this throws (partial failure), we abort and return 500.
+      //      Clerk will retry the webhook, giving us another chance.
       await deleteAllUserS3Files(id);
 
       // 2. Now delete the user row — CASCADE will clean up the files table.
@@ -182,7 +196,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "User deleted" }, { status: 200 });
     } catch (error) {
       console.error("User deletion error:", error);
-      return NextResponse.json({ error: "Deletion error" }, { status: 500 });
+      // FIX: Return 500 so Clerk retries the webhook instead of silently orphaning files
+      return NextResponse.json(
+        { error: "Deletion incomplete — will retry" },
+        { status: 500 },
+      );
     }
   }
 

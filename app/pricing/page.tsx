@@ -13,7 +13,7 @@ const pricingTiers = [
     features: [
       "15 GB Encrypted Storage",
       "Standard File Sharing",
-      "Access across 3 devices",
+      "File Versioning (Up to 30 Days)",
       "Community Support",
     ],
     buttonText: "Current Plan",
@@ -21,20 +21,45 @@ const pricingTiers = [
     isPopular: false,
   },
   {
-    name: "Pro",
-    price: "₹799",
-    billingPeriod: "/MO",
-    description: "For heavy users who need maximum security and space.",
+    name: "Gold",
+    price: "₹350",
+    billingPeriod: "/Month",
+    description:
+      "For heavy users who need maximum security and space and customizations.",
     features: [
       "2 TB Encrypted Storage",
       "Advanced Sharing (Passwords & Expiration)",
       "Unlimited Devices",
       "Zero-Knowledge Encryption",
-      "Priority 24/7 Support",
+      "File Versioning & Recovery (Up to 1 Year)",
+      "Premuim 5 Theme Features (Including Default themes)",
+      "Pay as you go pricing after 2 TB (₹100/GB)",
+      "Pay only for what you use, no hidden fees or overage charges",
+      "Average Upload and Download Speeds",
     ],
     buttonText: "Upgrade to Pro",
     buttonHref: "/checkout",
     isPopular: true,
+  },
+  {
+    name: "Platinum",
+    price: "₹600",
+    billingPeriod: "/Month",
+    description:
+      "For power users and professionals who demand the best in security, performance, and customization.",
+    features: [
+      "10 TB Encrypted Storage",
+      "All Gold Features",
+      "File versioning & Recovery (Up to 2.5 Years)",
+      "Priority Support with 1 Hour Response Time",
+      "Pay as you go pricing after 10 TB (₹50/10GB)",
+      "Pay only for what you use, no hidden fees or overage charges",
+      "Multiple AI Integrations (Including Custom AI Models)",
+      "Fastest Upload and Download Speeds",
+    ],
+    buttonText: "Upgrade to Platinum",
+    buttonHref: "/checkout",
+    isPopular: false,
   },
 ];
 
@@ -65,10 +90,10 @@ const cardVariants: Variants = {
 export default function PricingPage() {
   // Classic raised 3D button effect from AuthPage
   const primaryButtonClass =
-    "w-full flex items-center justify-center gap-2 py-3 px-4 font-bold text-[14px] tracking-wide uppercase bg-[#0055cc] text-white border-2 border-t-[#3388ff] border-l-[#3388ff] border-r-[#002266] border-b-[#002266] active:border-t-[#002266] active:border-l-[#002266] active:border-b-[#3388ff] active:border-r-[#3388ff] hover:bg-[#0066ee] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
+    "w-full flex items-center justify-center gap-2 py-3 px-4 font-bold text-[14px] tracking-wide  bg-[#0055cc] text-white border-2 border-t-[#3388ff] border-l-[#3388ff] border-r-[#002266] border-b-[#002266] active:border-t-[#002266] active:border-l-[#002266] active:border-b-[#3388ff] active:border-r-[#3388ff] hover:bg-[#0066ee] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
 
   const secondaryButtonClass =
-    "w-full flex items-center justify-center gap-2 py-3 px-4 font-bold text-[14px] tracking-wide uppercase bg-[#dddddd] text-black border-2 border-t-[#ffffff] border-l-[#ffffff] border-r-[#888888] border-b-[#888888] active:border-t-[#888888] active:border-l-[#888888] active:border-b-[#ffffff] active:border-r-[#ffffff] hover:bg-[#ffffff] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
+    "w-full flex items-center justify-center gap-2 py-3 px-4 font-bold text-[14px] tracking-wide  bg-[#dddddd] text-black border-2 border-t-[#ffffff] border-l-[#ffffff] border-r-[#888888] border-b-[#888888] active:border-t-[#888888] active:border-l-[#888888] active:border-b-[#ffffff] active:border-r-[#ffffff] hover:bg-[#ffffff] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
 
   return (
     <div className="min-h-screen bg-[#111111] text-[#dddddd]  flex items-center justify-center p-4 md:p-8 selection:bg-[#0055cc] selection:text-white relative overflow-hidden">
@@ -78,11 +103,11 @@ export default function PricingPage() {
           <div className="mb-6 bg-[#000000] border border-[#444444] p-4 shadow-[6px_6px_0px_#000000]">
             <BsCloudRain size={48} className="text-[#dd7700]" />
           </div>
-          <h1 className="text-[28px] md:text-[36px] font-bold text-white mb-3 uppercase tracking-tight">
+          <h1 className="text-[28px] md:text-[36px] font-bold text-white mb-3  tracking-tight">
             Simple, Transparent Pricing
           </h1>
           <div className="border-t-2 border-[#444444] w-full max-w-[150px] my-3"></div>
-          <p className="text-[14px] font-bold text-[#aaaaaa] uppercase tracking-wide max-w-xl mx-auto leading-relaxed">
+          <p className="text-[14px] font-bold text-[#aaaaaa]  tracking-wide max-w-xl mx-auto leading-relaxed">
             Secure your digital life with Kosha. Choose the plan that best fits
             your storage and privacy needs.
           </p>
@@ -107,7 +132,7 @@ export default function PricingPage() {
             >
               {/* Popular Badge */}
               {tier.isPopular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#dd7700] text-black border-2 border-[#000000] text-[11px] font-bold px-3 py-1.5 uppercase tracking-wider flex items-center gap-2 shadow-[4px_4px_0px_#000000]">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#dd7700] text-black border-2 border-[#000000] text-[11px] font-bold px-3 py-1.5  tracking-wider flex items-center gap-2 shadow-[4px_4px_0px_#000000]">
                   <Sparkles size={14} className="text-black" />
                   Most Popular
                 </div>
@@ -115,7 +140,7 @@ export default function PricingPage() {
 
               {/* Card Header */}
               <div className="mb-6 border-b-2 border-[#333333] pb-6 text-center">
-                <h2 className="text-[20px] font-bold text-white uppercase tracking-tight mb-3">
+                <h2 className="text-[20px] font-bold tracking-tight mb-3 gold-text">
                   {tier.name}
                 </h2>
                 <div className="flex items-end justify-center gap-1 mb-4">
@@ -123,12 +148,12 @@ export default function PricingPage() {
                     {tier.price}
                   </span>
                   {tier.billingPeriod && (
-                    <span className="text-[#aaaaaa] text-[14px] font-bold uppercase mb-1">
+                    <span className="text-[#aaaaaa] text-[14px] font-bold  mb-1">
                       {tier.billingPeriod}
                     </span>
                   )}
                 </div>
-                <p className="text-[12px] text-[#aaaaaa] font-bold uppercase tracking-wide leading-relaxed px-2">
+                <p className="text-[12px] text-[#aaaaaa] font-bold  tracking-wide leading-relaxed px-2">
                   {tier.description}
                 </p>
               </div>
@@ -138,7 +163,7 @@ export default function PricingPage() {
                 {tier.features.map((feature, i) => (
                   <li
                     key={i}
-                    className="flex items-start gap-3 text-[13px] font-bold uppercase text-[#dddddd] tracking-wide"
+                    className="flex items-start gap-3 text-[13px] font-bold  text-[#dddddd] tracking-wide"
                   >
                     <div className="mt-0.5 w-5 h-5 bg-[#000000] border border-[#555555] flex items-center justify-center shrink-0">
                       <Check

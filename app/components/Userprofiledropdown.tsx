@@ -21,10 +21,10 @@ export default function UserProfileDropdown({
 
   // AuthPage Theme 3D Button Classes
   const secondaryButtonClass =
-    "w-full flex items-center cursor-pointer gap-3 py-2 px-4 font-bold text-[13px] uppercase bg-[#dddddd] text-black border-2 border-t-[#ffffff] border-l-[#ffffff] border-r-[#888888] border-b-[#888888] active:border-t-[#888888] active:border-l-[#888888] active:border-b-[#ffffff] active:border-r-[#ffffff] hover:bg-[#ffffff] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
+    "w-full flex items-center cursor-pointer gap-3 py-2 px-4 font-bold text-[13px]  bg-[#dddddd] text-black border-2 border-t-[#ffffff] border-l-[#ffffff] border-r-[#888888] border-b-[#888888] active:border-t-[#888888] active:border-l-[#888888] active:border-b-[#ffffff] active:border-r-[#ffffff] hover:bg-[#ffffff] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
 
   const dangerButtonClass =
-    "w-full flex items-center cursor-pointer gap-3 py-2 px-4 font-bold text-[13px] uppercase bg-[#cc0000] text-white border-2 border-t-[#ff3333] border-l-[#ff3333] border-r-[#660000] border-b-[#660000] active:border-t-[#660000] active:border-l-[#660000] active:border-b-[#ff3333] active:border-r-[#ff3333] hover:bg-[#ee0000] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
+    "w-full flex items-center cursor-pointer gap-3 py-2 px-4 font-bold text-[13px]  bg-[#cc0000] text-white border-2 border-t-[#ff3333] border-l-[#ff3333] border-r-[#660000] border-b-[#660000] active:border-t-[#660000] active:border-l-[#660000] active:border-b-[#ff3333] active:border-r-[#ff3333] hover:bg-[#ee0000] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
 
   useEffect(() => {
     if (variant !== "desktop") return;
@@ -54,11 +54,11 @@ export default function UserProfileDropdown({
     user.fullName || user.firstName || user.username || "USER";
   const email = user.primaryEmailAddress?.emailAddress || "";
   const avatarUrl = user.imageUrl;
+  // Line 68: remove .toLowerCase()
   const initials = displayName
     .split(" ")
     .map((n) => n[0])
     .join("")
-    .toUpperCase()
     .slice(0, 2);
 
   const handleManage = () => {
@@ -110,11 +110,11 @@ export default function UserProfileDropdown({
         >
           {renderAvatar(36)}
           <div className="min-w-0 flex-1 text-left">
-            <p className="text-[14px] font-bold text-white uppercase tracking-tight truncate group-hover:text-[#dd7700] transition-colors">
+            <p className="text-[14px] font-bold text-white  tracking-tight truncate group-hover:text-[#dd7700] transition-colors">
               {displayName}
             </p>
             {email && (
-              <p className="text-[11px] font-bold text-[#aaaaaa] tracking-wider truncate mt-0.5 uppercase">
+              <p className="text-[11px] font-bold text-[#aaaaaa] tracking-wider truncate mt-0.5 ">
                 {email}
               </p>
             )}
@@ -170,11 +170,11 @@ export default function UserProfileDropdown({
           <div className="flex items-center gap-3 p-4 border-b border-[#444444] bg-[#000000]">
             {renderAvatar(40)}
             <div className="min-w-0 flex-1">
-              <p className="text-[14px] font-bold text-white uppercase tracking-tight truncate">
+              <p className="text-[14px] font-bold text-white  tracking-tight truncate">
                 {displayName}
               </p>
               {email && (
-                <p className="text-[10px] font-bold text-[#aaaaaa] tracking-wider uppercase truncate mt-0.5">
+                <p className="text-[10px] font-bold text-[#aaaaaa] tracking-wider  truncate mt-0.5">
                   {email}
                 </p>
               )}
