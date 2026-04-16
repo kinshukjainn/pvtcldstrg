@@ -260,11 +260,12 @@ export default function DriveManager() {
     setTotalFiles((t) => t - 1);
 
     try {
-      await deletePhoto(key, fileObj.size || 0);
+      await deletePhoto(key);
       await fetchStorageInfo();
     } catch (error) {
       console.error("Delete failed", error);
       fetchFiles(0, true);
+      fetchStorageInfo();
     }
   };
 
