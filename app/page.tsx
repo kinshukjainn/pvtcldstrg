@@ -526,7 +526,7 @@ function HomeContent() {
                     <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-[#00cc44] border border-[#000000]" />
                   </div>
                   <div className="flex-1 min-w-0 mx-2 sm:mx-4 px-2 sm:px-3 py-1 bg-[#1e1e1e] border border-[#444444] text-[10px] sm:text-[12px] text-[#aaaaaa] font-bold text-center truncate">
-                    app.yourdomain.com/dashboard
+                    kosha.cloudkinshuk.in/dashboard
                   </div>
                 </div>
 
