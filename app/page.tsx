@@ -184,13 +184,17 @@ const FeatureCard = ({
         transform: inView ? "translateY(0)" : "translateY(16px)",
         transition: `opacity 0.4s ease-out ${delay}ms, transform 0.4s ease-out ${delay}ms`,
       }}
-      className="bg-[#1e1e1e] border-2 border-[#444444] p-5 shadow-[4px_4px_0px_#000000] hover:-translate-y-1 hover:shadow-[6px_6px_0px_#000000] transition-transform duration-200"
+      className="bg-[#1e1e1e] border-2 border-[#444444] p-4 sm:p-5 shadow-[3px_3px_0px_#000000] sm:shadow-[4px_4px_0px_#000000] hover:-translate-y-1 hover:shadow-[5px_5px_0px_#000000] sm:hover:shadow-[6px_6px_0px_#000000] transition-transform duration-200"
     >
-      <div className="w-12 h-12 bg-[#000000] border-2 border-[#555555] flex items-center justify-center mb-4">
-        <Icon className="w-6 h-6 text-[#ff9900]" />
+      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#000000] border-2 border-[#555555] flex items-center justify-center mb-3 sm:mb-4">
+        <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-[#ff9900]" />
       </div>
-      <h3 className="text-[18px] font-bold text-white mb-2">{title}</h3>
-      <p className="text-[15px] text-[#aaaaaa] leading-snug">{description}</p>
+      <h3 className="text-[16px] sm:text-[18px] font-bold text-white mb-1.5 sm:mb-2">
+        {title}
+      </h3>
+      <p className="text-[14px] sm:text-[15px] text-[#aaaaaa] leading-snug">
+        {description}
+      </p>
     </div>
   );
 };
@@ -207,7 +211,7 @@ const getGreeting = (name?: string) => {
 
 /* ── UI Constants ── */
 const solidButtonClass =
-  "inline-flex items-center gap-2 font-bold px-6 py-3 border-2 border-[#000000] shadow-[4px_4px_0px_#000000] active:translate-y-[4px] active:translate-x-[4px] active:shadow-none transition-all duration-150 rounded-none";
+  "inline-flex items-center gap-2 font-bold px-5 sm:px-6 py-2.5 sm:py-3 border-2 border-[#000000] shadow-[3px_3px_0px_#000000] sm:shadow-[4px_4px_0px_#000000] active:translate-y-[3px] active:translate-x-[3px] sm:active:translate-y-[4px] sm:active:translate-x-[4px] active:shadow-none transition-all duration-150 rounded-none";
 
 /* ── Quick Action Card (logged-in hero) ── */
 interface QuickActionProps {
@@ -228,19 +232,21 @@ const QuickAction = ({
   <FadeInItem delay={delay}>
     <Link
       href={href}
-      className="group flex items-center gap-4 p-3 bg-[#1e1e1e] border-2 border-[#444444] shadow-[4px_4px_0px_#000000] hover:border-[#ff9900] active:translate-y-[4px] active:translate-x-[4px] active:shadow-none w-full transition-all duration-150"
+      className="group flex items-center gap-3 sm:gap-4 p-3 bg-[#1e1e1e] border-2 border-[#444444] shadow-[3px_3px_0px_#000000] sm:shadow-[4px_4px_0px_#000000] hover:border-[#ff9900] active:translate-y-[3px] active:translate-x-[3px] sm:active:translate-y-[4px] sm:active:translate-x-[4px] active:shadow-none w-full transition-all duration-150"
     >
-      <div className="w-12 h-12 bg-[#000000] border-2 border-[#444444] flex items-center justify-center shrink-0 group-hover:border-[#ff9900] transition-colors">
-        <Icon className="w-6 h-6 text-white group-hover:text-[#ff9900]" />
+      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#000000] border-2 border-[#444444] flex items-center justify-center shrink-0 group-hover:border-[#ff9900] transition-colors">
+        <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:text-[#ff9900]" />
       </div>
       <div className="min-w-0 flex-1">
-        <h3 className="text-[16px] font-bold text-white group-hover:text-[#ff9900] transition-colors">
+        <h3 className="text-[15px] sm:text-[16px] font-bold text-white group-hover:text-[#ff9900] transition-colors truncate">
           {title}
         </h3>
-        <p className="text-[14px] text-[#aaaaaa]">{description}</p>
+        <p className="text-[13px] sm:text-[14px] text-[#aaaaaa] truncate">
+          {description}
+        </p>
       </div>
-      <div className="w-8 h-8 flex items-center justify-center bg-[#000000] border-2 border-[#444444] group-hover:bg-[#ff9900] group-hover:border-[#ff9900] transition-colors">
-        <ArrowRight className="w-4 h-4 text-white" />
+      <div className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-[#000000] border-2 border-[#444444] group-hover:bg-[#ff9900] group-hover:border-[#ff9900] transition-colors shrink-0">
+        <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
       </div>
     </Link>
   </FadeInItem>
@@ -263,16 +269,20 @@ const OnboardingStep = ({
   delay,
 }: OnboardingStepProps) => (
   <FadeInItem delay={delay}>
-    <div className="flex items-start gap-4 p-4 bg-[#1e1e1e] border-2 border-[#444444] shadow-[4px_4px_0px_#000000]">
-      <div className="w-12 h-12 bg-[#0055cc] border-2 border-[#000000] flex items-center justify-center shrink-0">
-        <Icon className="w-6 h-6 text-white" />
+    <div className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 bg-[#1e1e1e] border-2 border-[#444444] shadow-[3px_3px_0px_#000000] sm:shadow-[4px_4px_0px_#000000]">
+      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#0055cc] border-2 border-[#000000] flex items-center justify-center shrink-0">
+        <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
       </div>
       <div className="min-w-0">
-        <p className="text-[12px]  tracking-widest text-[#0088ff] font-bold mb-1">
+        <p className="text-[11px] sm:text-[12px] tracking-widest text-[#0088ff] font-bold mb-1">
           Step {step}
         </p>
-        <h3 className="text-[16px] font-bold text-white mb-1">{title}</h3>
-        <p className="text-[14px] text-[#aaaaaa] leading-snug">{description}</p>
+        <h3 className="text-[15px] sm:text-[16px] font-bold text-white mb-1">
+          {title}
+        </h3>
+        <p className="text-[13px] sm:text-[14px] text-[#aaaaaa] leading-snug">
+          {description}
+        </p>
       </div>
     </div>
   </FadeInItem>
@@ -313,29 +323,29 @@ function HomeContent() {
   const firstName = user?.firstName || "there";
 
   return (
-    <div className="min-h-screen bg-[#111111] text-[#dddddd]  selection:bg-[#ff9900] selection:text-black">
+    <div className="min-h-screen bg-[#111111] text-[#dddddd] selection:bg-[#ff9900] selection:text-black overflow-x-hidden">
       {/* ════════════════════════════════════════════════════════════════════
           HERO — three different experiences
           ════════════════════════════════════════════════════════════════════ */}
-      <main className="max-w-6xl mx-auto px-6 pt-24 pb-16">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-20 md:pt-24 pb-10 sm:pb-14 md:pb-16">
         {isLoggedIn && isNewUser ? (
           /* ── Just Registered Hero ── */
-          <div className="max-w-2xl mx-auto space-y-8">
+          <div className="max-w-2xl mx-auto space-y-5 sm:space-y-7 md:space-y-8">
             <FadeInItem delay={0}>
-              <div className="bg-[#1e1e1e] border-2 border-[#444444] p-6 shadow-[8px_8px_0px_#000000]">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-14 h-14 bg-[#ff9900] border-2 border-[#000000] flex items-center justify-center">
-                    <PartyPopper className="w-8 h-8 text-black" />
+              <div className="bg-[#1e1e1e] border-2 border-[#444444] p-4 sm:p-5 md:p-6 shadow-[4px_4px_0px_#000000] sm:shadow-[6px_6px_0px_#000000] md:shadow-[8px_8px_0px_#000000]">
+                <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#ff9900] border-2 border-[#000000] flex items-center justify-center shrink-0">
+                    <PartyPopper className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-black" />
                   </div>
-                  <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-white  tracking-tight">
+                  <div className="min-w-0">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tight truncate">
                       Welcome,{" "}
                       <span className="text-[#ff9900]">{firstName}</span>
                     </h1>
                   </div>
                 </div>
                 <div className="bg-[#000000] border-2 border-[#555555] p-3">
-                  <p className="text-[16px] text-[#cccccc] font-bold">
+                  <p className="text-[14px] sm:text-[15px] md:text-[16px] text-[#cccccc] font-bold">
                     Your account is ready. You have{" "}
                     <span className="text-[#00cc44]">5 GB of free storage</span>
                     .
@@ -345,7 +355,7 @@ function HomeContent() {
             </FadeInItem>
 
             {/* Onboarding steps */}
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <OnboardingStep
                 icon={Upload}
                 step={1}
@@ -371,20 +381,22 @@ function HomeContent() {
 
             {/* CTA */}
             <FadeInItem delay={500}>
-              <div className="flex flex-col sm:flex-row items-center justify-center pt-4 gap-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center pt-2 sm:pt-4 gap-3 sm:gap-4">
                 <Link
                   href="/dashboard"
-                  className={`${solidButtonClass} bg-[#ff9900] text-black text-[18px] w-full sm:w-auto justify-center`}
+                  className={`${solidButtonClass} bg-[#ff9900] text-black text-[16px] sm:text-[18px] w-full sm:w-auto justify-center`}
                 >
-                  <Rocket className="w-5 h-5" />
+                  <Rocket className="w-4 h-4 sm:w-5 sm:h-5" />
                   Go to Dashboard
                 </Link>
-                <div className="flex items-center gap-4 text-[13px] font-bold text-[#aaaaaa]">
+                <div className="flex items-center gap-3 sm:gap-4 text-[12px] sm:text-[13px] font-bold text-[#aaaaaa]">
                   <span className="flex items-center gap-1">
-                    <Check className="w-4 h-4 text-[#00cc44]" /> 5GB Free
+                    <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#00cc44]" />{" "}
+                    5GB Free
                   </span>
                   <span className="flex items-center gap-1">
-                    <Check className="w-4 h-4 text-[#00cc44]" /> Secure
+                    <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#00cc44]" />{" "}
+                    Secure
                   </span>
                 </div>
               </div>
@@ -392,21 +404,21 @@ function HomeContent() {
           </div>
         ) : isLoggedIn ? (
           /* ── Returning User Hero ── */
-          <div className="max-w-2xl mx-auto space-y-8">
+          <div className="max-w-2xl mx-auto space-y-5 sm:space-y-7 md:space-y-8">
             <FadeInItem delay={0}>
-              <div className="bg-[#1e1e1e] border-2 border-[#444444] p-6 shadow-[8px_8px_0px_#000000]">
-                <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight  mb-2">
+              <div className="bg-[#1e1e1e] border-2 border-[#444444] p-4 sm:p-5 md:p-6 shadow-[4px_4px_0px_#000000] sm:shadow-[6px_6px_0px_#000000] md:shadow-[8px_8px_0px_#000000]">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight mb-1.5 sm:mb-2 break-words">
                   {getGreeting()},{" "}
                   <span className="text-[#0088ff]">{firstName}</span>
                 </h1>
-                <p className="text-[16px] text-[#aaaaaa] font-bold">
+                <p className="text-[14px] sm:text-[15px] md:text-[16px] text-[#aaaaaa] font-bold">
                   System operational. Pick up where you left off.
                 </p>
               </div>
             </FadeInItem>
 
             {/* Quick actions */}
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <QuickAction
                 icon={FolderOpen}
                 title="Open Dashboard"
@@ -425,18 +437,18 @@ function HomeContent() {
           </div>
         ) : (
           /* ── Logged-out Hero ── */
-          <div className="max-w-4xl mx-auto space-y-8 text-center">
+          <div className="max-w-4xl mx-auto space-y-5 sm:space-y-7 md:space-y-8 text-center">
             <FadeInItem delay={0}>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#000000] border-2 border-[#333333] text-[13px] text-[#aaaaaa] font-bold  tracking-wider">
-                <LockKeyhole className="w-4 h-4 text-[#ff9900]" />
+              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-[#000000] border-2 border-[#333333] text-[11px] sm:text-[13px] text-[#aaaaaa] font-bold tracking-wider">
+                <LockKeyhole className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#ff9900]" />
                 <span>Secured by AWS Cloud</span>
               </div>
             </FadeInItem>
 
             <FadeInItem delay={150}>
-              <h1 className="text-4xl md:text-6xl font-bold text-white tracking-tight leading-tight flex flex-wrap items-center justify-center gap-4">
-                <span className="">Your Data.</span>
-                <span className="relative flex items-center justify-center w-14 h-14 bg-[#1e1e1e] border-2 border-[#444444] shadow-[4px_4px_0px_#000000] overflow-hidden">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:gap-4">
+                <span>Your Data.</span>
+                <span className="relative flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-[#1e1e1e] border-2 border-[#444444] shadow-[3px_3px_0px_#000000] sm:shadow-[4px_4px_0px_#000000] overflow-hidden shrink-0">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={current.label}
@@ -448,43 +460,101 @@ function HomeContent() {
                         stiffness: 300,
                         damping: 25,
                       }}
-                      className="absolute inset-0 p-2"
+                      className="absolute inset-0 p-1.5 sm:p-2"
                     >
                       {current.icon}
                     </motion.div>
                   </AnimatePresence>
                 </span>
-                <span className=" text-[#ff9900] bg-[#000000] px-3 border-2 border-[#ff9900]">
+                <span className="text-[#ff9900] bg-[#000000] px-2 sm:px-3 border-2 border-[#ff9900]">
                   Only Yours.
                 </span>
               </h1>
             </FadeInItem>
 
             <FadeInItem delay={300}>
-              <p className="text-[16px] md:text-xl text-[#aaaaaa] font-bold max-w-2xl mx-auto border-l-4 border-[#0055cc] pl-4 text-left">
+              <p className="text-[14px] sm:text-[16px] md:text-xl text-[#aaaaaa] font-bold max-w-2xl mx-auto border-l-4 border-[#0055cc] pl-3 sm:pl-4 text-left">
                 A cloud storage platform stripped of the noise. No bloatware, no
                 complicated settings, and zero compromises on your privacy.
               </p>
             </FadeInItem>
 
             <FadeInItem delay={450}>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-5 pt-8">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-5 pt-4 sm:pt-6 md:pt-8">
                 <Link
                   href="/verify-regis"
-                  className={`${solidButtonClass} bg-[#ffffff] text-black text-[16px] `}
+                  className={`${solidButtonClass} bg-[#ffffff] text-black text-[15px] sm:text-[16px] w-full sm:w-auto justify-center`}
                 >
                   Start for free
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </Link>
                 <Link
                   href="/supported-formats"
-                  className={`${solidButtonClass} bg-[#1e1e1e] text-[#dddddd] text-[16px]  border-[#444444]`}
+                  className={`${solidButtonClass} bg-[#1e1e1e] text-[#dddddd] text-[15px] sm:text-[16px] border-[#444444] w-full sm:w-auto justify-center`}
                 >
                   Supported Formats
                 </Link>
               </div>
             </FadeInItem>
           </div>
+        )}
+        {/* ════════════════════════════════════════════════════════════════════
+    PRODUCT PREVIEW VIDEO — only for logged-out users
+    ════════════════════════════════════════════════════════════════════ */}
+        {isLoaded && !userId && (
+          <section className="max-w-6xl mx-auto px-0 pt-12 sm:pt-16 md:pt-20 pb-6 sm:pb-8">
+            <FadeInItem delay={0}>
+              <div className="mb-6 sm:mb-8 text-center">
+                <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-[#000000] border-2 border-[#333333] text-[11px] sm:text-[13px] text-[#aaaaaa] font-bold tracking-wider mb-3 sm:mb-4">
+                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#00cc44] animate-pulse" />
+                  <span>LIVE PREVIEW</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight mb-1.5 sm:mb-2">
+                  See it in action.
+                </h2>
+                <p className="text-[#aaaaaa] font-bold text-[14px] sm:text-[15px] md:text-[16px]">
+                  A dashboard that respects your time and your data.
+                </p>
+              </div>
+
+              <div className="relative bg-[#1e1e1e] border-2 sm:border-4 border-[#444444] shadow-[4px_4px_0px_#000000] sm:shadow-[6px_6px_0px_#000000] md:shadow-[8px_8px_0px_#000000] overflow-hidden">
+                {/* Browser-style top bar */}
+                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3 bg-[#000000] border-b-2 border-[#444444]">
+                  <div className="flex gap-1.5 sm:gap-2 shrink-0">
+                    <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-[#ff5555] border border-[#000000]" />
+                    <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-[#ffbb00] border border-[#000000]" />
+                    <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-[#00cc44] border border-[#000000]" />
+                  </div>
+                  <div className="flex-1 min-w-0 mx-2 sm:mx-4 px-2 sm:px-3 py-1 bg-[#1e1e1e] border border-[#444444] text-[10px] sm:text-[12px] text-[#aaaaaa] font-bold text-center truncate">
+                    app.yourdomain.com/dashboard
+                  </div>
+                </div>
+
+                {/* Looping video */}
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="metadata"
+                  onError={(e) => {
+                    const v = e.currentTarget;
+                    console.error("Video error:", {
+                      code: v.error?.code,
+                      message: v.error?.message,
+                      networkState: v.networkState,
+                      readyState: v.readyState,
+                      currentSrc: v.currentSrc,
+                    });
+                  }}
+                  onLoadedData={() => console.log("Video loaded successfully")}
+                  className="w-full h-auto block aspect-video object-cover bg-[#000000]"
+                >
+                  <source src="/videos/branding.mp4" type="video/mp4" />
+                </video>
+              </div>
+            </FadeInItem>
+          </section>
         )}
       </main>
 
@@ -493,18 +563,18 @@ function HomeContent() {
           ════════════════════════════════════════════════════════════════════ */}
       <section
         id="features"
-        className="max-w-6xl mx-auto px-6 py-20 border-t-4 border-[#333333]"
+        className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20 border-t-4 border-[#333333]"
       >
-        <div className="mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-white  tracking-tight mb-2">
+        <div className="mb-8 sm:mb-10 md:mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight mb-1.5 sm:mb-2">
             Brilliantly Simple.
           </h2>
-          <p className="text-[#ff9900] font-bold text-[16px]  tracking-widest">
+          <p className="text-[#ff9900] font-bold text-[13px] sm:text-[15px] md:text-[16px] tracking-widest">
             Everything you need. Nothing you don&apos;t.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
           <FeatureCard
             icon={HardDrive}
             title="5 GB Free Forever"
@@ -535,39 +605,39 @@ function HomeContent() {
       {/* ════════════════════════════════════════════════════════════════════
           CTA — adapts based on auth state
           ════════════════════════════════════════════════════════════════════ */}
-      <section className="max-w-4xl mx-auto px-6 py-20">
-        <div className="bg-[#0055cc] border-4 border-[#000000] p-8 md:p-12 shadow-[8px_8px_0px_#000000] flex flex-col items-center text-center">
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20">
+        <div className="bg-[#0055cc] border-2 sm:border-4 border-[#000000] p-6 sm:p-8 md:p-12 shadow-[4px_4px_0px_#000000] sm:shadow-[6px_6px_0px_#000000] md:shadow-[8px_8px_0px_#000000] flex flex-col items-center text-center">
           {isLoggedIn ? (
             <>
-              <h2 className="text-3xl font-bold text-white  mb-4 tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4 tracking-tight">
                 Your files are waiting
               </h2>
-              <p className="text-[#cccccc] font-bold text-[16px] mb-8 max-w-md">
+              <p className="text-[#cccccc] font-bold text-[14px] sm:text-[15px] md:text-[16px] mb-6 sm:mb-8 max-w-md">
                 Jump back into your dashboard and keep your workflow going.
               </p>
               <Link
                 href="/dashboard"
-                className={`${solidButtonClass} bg-[#000000] text-white text-[16px] `}
+                className={`${solidButtonClass} bg-[#000000] text-white text-[15px] sm:text-[16px] w-full sm:w-auto justify-center`}
               >
                 View Dashboard
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </Link>
             </>
           ) : (
             <>
-              <h2 className="text-3xl font-bold text-white  mb-4 tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4 tracking-tight">
                 Ready to take back your data?
               </h2>
-              <p className="text-[#cccccc] font-bold text-[16px] mb-8 max-w-md">
+              <p className="text-[#cccccc] font-bold text-[14px] sm:text-[15px] md:text-[16px] mb-6 sm:mb-8 max-w-md">
                 Join thousands who have migrated to a simpler, more secure way
                 to store their digital life.
               </p>
               <Link
                 href="/verify-regis"
-                className={`${solidButtonClass} bg-[#ff9900] text-black text-[16px] `}
+                className={`${solidButtonClass} bg-[#ff9900] text-black text-[15px] sm:text-[16px] w-full sm:w-auto justify-center`}
               >
                 Create Free Account
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </Link>
             </>
           )}
