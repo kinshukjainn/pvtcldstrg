@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
-import { Search, User, Clock, Mail } from "lucide-react";
+import { Search, User, Clock, Mail, CheckCircle2 } from "lucide-react";
 import Fuse from "fuse.js";
 import { getFeedbacksAction } from "../actions"; // Adjust import path as needed
 import { LuGithub } from "react-icons/lu";
@@ -13,16 +13,17 @@ import { BsCloudRain } from "react-icons/bs";
 type Feedback = {
   id: string;
   created_at: string;
-  category: "Blogs" | "Projects" | "Portfolio Website" | string;
-  project_name: string | null;
+  category: "Blogs" | "Projects" | "Portfolio Website";
+  project_name: "Kosha" | "MScada" | null;
   name: string;
   github_id: string | null;
   email: string;
   feedback: string;
+  status: "pending" | "approved" | "rejected";
+  reviewed_at: string | null;
 };
 
 // --- Helper Component ---
-// Updated to use the sharp, high-contrast theme
 const HighlightText = ({
   text,
   highlight,
@@ -81,15 +82,10 @@ export default function FeedbacksList() {
       const result = await getFeedbacksAction();
       if (!result.success) throw new Error(result.error);
 
+      // The server already strictly filters for 'approved' AND 'Kosha'.
+      // We safely set the state directly.
       const allFeedbacks = (result.data as Feedback[]) || [];
-
-      // STRICTLY FILTER FOR "KOSHA" PROJECT ONLY
-      const koshaFeedbacks = allFeedbacks.filter(
-        (fb) =>
-          fb.project_name && fb.project_name.toLowerCase().includes("kosha"),
-      );
-
-      setFeedbacks(koshaFeedbacks);
+      setFeedbacks(allFeedbacks);
     } catch (error) {
       console.error("Error fetching feedbacks:", error);
     } finally {
@@ -105,7 +101,7 @@ export default function FeedbacksList() {
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
-  // Memoize the filtered and searched results
+  // Memoize the dynamic UI filtered and searched results
   const filteredFeedbacks = useMemo(() => {
     let baseList = feedbacks;
     if (activeCategory !== "All") {
@@ -223,6 +219,9 @@ export default function FeedbacksList() {
                       </span>
                       <span className="text-[13px] text-white font-bold  tracking-tight">
                         KOSHA
+                      </span>
+                      <span className="ml-2 flex items-center gap-1 text-[10px] font-bold text-green-500 uppercase tracking-widest border border-green-500/30 bg-[#000000] px-1.5 py-0.5">
+                        <CheckCircle2 size={10} /> {fb.status}
                       </span>
                     </div>
                     <span className="text-[#aaaaaa] text-[11px] flex items-center gap-1.5 font-bold  bg-[#000000] border border-[#444444] px-2 py-1">

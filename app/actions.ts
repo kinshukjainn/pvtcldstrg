@@ -9,8 +9,8 @@ const getDb = () => {
 };
 
 export async function submitFeedbackAction(data: {
-  category: string;
-  projectName: string;
+  category: "Blogs" | "Projects" | "Portfolio Website";
+  projectName: "Kosha" | "MScada" | null;
   name: string;
   githubId: string;
   email: string;
@@ -48,6 +48,8 @@ export async function getFeedbacksAction() {
   try {
     const sql = getDb();
 
+    // BEST PRACTICE: Strict filtering at the database level.
+    // Never send unapproved or non-Kosha data over the network to this specific dashboard.
     const data = await sql`
       SELECT
         id,
@@ -57,8 +59,11 @@ export async function getFeedbacksAction() {
         category,
         project_name,
         feedback_content AS feedback,
-        created__at      AS created_at
+        created__at      AS created_at,
+        status,
+        reviewed_at
       FROM user_feedback
+      WHERE status = 'approved' AND project_name = 'Kosha'
       ORDER BY created__at DESC
     `;
 
