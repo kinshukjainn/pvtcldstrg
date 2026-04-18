@@ -243,43 +243,41 @@ export default function AuthPage() {
         ? !!(email && password && firstName && lastName)
         : !!(email && password);
 
-  // Flat, sharp, high-contrast input styling
+  // Azure Standard Input Classes
   const inputClass =
-    "w-full px-3 py-2 bg-[#000000] border-2 border-[#555555] text-[15px] text-white placeholder:text-[#777777] focus:outline-none focus:border-[#aaaaaa] rounded-none";
+    "w-full px-3 py-2 bg-white border border-gray-300 text-[14px] text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#0078D4] focus:ring-1 focus:ring-[#0078D4] rounded-sm transition-all";
 
-  // Classic raised 3D button effect
+  // Azure Standard Label Classes
+  const labelClass = "block text-[13px] font-semibold text-gray-700 mb-1.5";
+
+  // Azure Flat Button Effects
   const primaryButtonClass =
-    "w-full flex items-center justify-center gap-2 py-2 px-4 font-bold text-[15px] bg-[#0055cc] text-white border-2 border-t-[#3388ff] border-l-[#3388ff] border-r-[#002266] border-b-[#002266] active:border-t-[#002266] active:border-l-[#002266] active:border-b-[#3388ff] active:border-r-[#3388ff] hover:bg-[#0066ee] disabled:opacity-50 disabled:cursor-not-allowed rounded-none";
+    "w-full flex items-center justify-center gap-2 py-2 px-4 font-semibold text-[14px] bg-[#0078D4] hover:bg-[#005a9e] text-white rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
   const secondaryButtonClass =
-    "w-full flex items-center justify-center gap-2 py-2 px-4 font-bold text-[15px] bg-[#dddddd] text-black border-2 border-t-[#ffffff] border-l-[#ffffff] border-r-[#888888] border-b-[#888888] active:border-t-[#888888] active:border-l-[#888888] active:border-b-[#ffffff] active:border-r-[#ffffff] hover:bg-[#ffffff] rounded-none";
+    "w-full flex items-center justify-center gap-2 py-2 px-4 font-semibold text-[14px] bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 rounded-sm transition-colors disabled:opacity-50";
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#111111] text-[#dddddd]  selection:bg-[#0055cc] selection:text-white">
-      <div className="w-full max-w-md bg-[#1e1e1e] border border-[#444444] p-6 shadow-[6px_6px_0px_#000000]">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[#faf9f8] text-gray-900 font-sans selection:bg-[#cce3f5]">
+      <div className="w-full max-w-[440px] bg-white border border-gray-200 p-8 shadow-sm rounded-sm">
         {/* Header Section */}
         <div className="flex flex-col items-center text-center mb-6">
-          <div className="mb-4 bg-[#000000] border border-[#444444] p-3">
-            <BsCloudRain size={40} className="text-[#dd7700]" />
+          <div className="mb-4">
+            <BsCloudRain size={40} className="text-[#0078D4]" />
           </div>
-          <h1 className="text-[22px] font-bold text-white mb-1  tracking-tight">
+          <h1 className="text-xl font-semibold text-gray-900 mb-1 leading-tight">
             Kosha Authentication
           </h1>
-
-          <div className="border-t border-[#444444] w-full my-3"></div>
-
-          <h2 className="text-[18px] font-bold text-white  tracking-tight">
-            {heading}
-          </h2>
-          <p className="text-[13px] text-[#aaaaaa] mt-1 font-bold">{subtext}</p>
+          <h2 className="text-lg text-gray-800 mt-2">{heading}</h2>
+          <p className="text-[13px] text-gray-500 mt-1">{subtext}</p>
         </div>
 
         {/* Security Badge */}
         <div className="flex justify-center mb-6">
-          <div className="flex items-center gap-2 px-3 py-1 bg-[#111111] border border-[#444444] text-[12px] font-bold text-[#aaaaaa]  tracking-wide">
-            <LockKeyhole className="w-3.5 h-3.5 text-[#dd7700]" />
+          <div className="flex items-center gap-1.5 text-[12px] text-gray-500 bg-gray-50 px-3 py-1 rounded-sm border border-gray-100">
+            <LockKeyhole className="w-3.5 h-3.5" />
             <span>Secured by</span>
-            <div className="relative flex items-center justify-start w-[50px] h-[16px] overflow-hidden">
+            <div className="relative flex items-center justify-start w-[40px] h-[16px] overflow-hidden">
               <AnimatePresence mode="popLayout">
                 <motion.span
                   key={providers[index]}
@@ -287,7 +285,7 @@ export default function AuthPage() {
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -15, opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="text-[#dd7700] absolute left-0"
+                  className="text-[#0078D4] font-medium absolute left-0"
                 >
                   {providers[index]}
                 </motion.span>
@@ -298,19 +296,17 @@ export default function AuthPage() {
 
         {/* Error Banner */}
         {authError && (
-          <div className="mb-5 p-2 bg-[#440000] border border-[#ff0000] text-[#ffaaaa] text-[13px] font-bold text-center">
-            Error: {authError}
+          <div className="mb-5 p-3 bg-[#fdf3f4] border border-[#f4c8ca] text-[#a4262c] text-[13px] font-medium rounded-sm">
+            {authError}
           </div>
         )}
 
         {/* Main Form */}
-        <div className="space-y-4">
+        <div className="space-y-5">
           {pendingMfa || pendingVerification ? (
             <>
               <div className="flex flex-col gap-1">
-                <label className="text-[12px] font-bold text-[#aaaaaa]  tracking-wide">
-                  Security Code
-                </label>
+                <label className={labelClass}>Security Code</label>
                 <input
                   type="text"
                   inputMode="numeric"
@@ -324,7 +320,7 @@ export default function AuthPage() {
                   onKeyDown={(e) =>
                     e.key === "Enter" && canSubmit && handleSubmit()
                   }
-                  className={`${inputClass} text-center text-xl tracking-[0.2em]`}
+                  className={`${inputClass} text-center text-xl tracking-[0.2em] py-3`}
                 />
               </div>
 
@@ -349,7 +345,7 @@ export default function AuthPage() {
                     setMfaCode("");
                     setAuthError(null);
                   }}
-                  className="w-full text-center text-[13px] text-[#0088ff] font-bold  hover:text-white underline hover:bg-[#0055cc] py-1 cursor-pointer"
+                  className="w-full text-center text-[13px] text-[#0078D4] hover:text-[#005a9e] hover:underline py-1 cursor-pointer transition-colors"
                 >
                   Cancel and go back
                 </button>
@@ -359,10 +355,8 @@ export default function AuthPage() {
             <>
               {isSignUp && (
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[12px] font-bold text-[#aaaaaa] ">
-                      First Name
-                    </label>
+                  <div>
+                    <label className={labelClass}>First Name</label>
                     <input
                       type="text"
                       value={firstName}
@@ -370,10 +364,8 @@ export default function AuthPage() {
                       className={inputClass}
                     />
                   </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[12px] font-bold text-[#aaaaaa] ">
-                      Last Name
-                    </label>
+                  <div>
+                    <label className={labelClass}>Last Name</label>
                     <input
                       type="text"
                       value={lastName}
@@ -384,10 +376,8 @@ export default function AuthPage() {
                 </div>
               )}
 
-              <div className="flex flex-col gap-1">
-                <label className="text-[12px] font-bold text-[#aaaaaa] ">
-                  Email Address
-                </label>
+              <div>
+                <label className={labelClass}>Email Address</label>
                 <input
                   type="email"
                   value={email}
@@ -397,10 +387,8 @@ export default function AuthPage() {
                 />
               </div>
 
-              <div className="flex flex-col gap-1">
-                <label className="text-[12px] font-bold text-[#aaaaaa] ">
-                  Password
-                </label>
+              <div>
+                <label className={labelClass}>Password</label>
                 <input
                   type="password"
                   value={password}
@@ -413,12 +401,12 @@ export default function AuthPage() {
                 />
               </div>
 
-              {/* CLERK CAPTCHA RESTORED EXACTLY */}
+              {/* CLERK CAPTCHA - Theme switched to light to match Azure */}
               <div
                 id="clerk-captcha"
-                data-cl-theme="dark"
+                data-cl-theme="light"
                 data-cl-size="flexible"
-                className="pt-3"
+                className="pt-1"
               />
 
               <div className="pt-4 space-y-3">
@@ -432,14 +420,21 @@ export default function AuthPage() {
                   ) : isSignUp ? (
                     "Create Account"
                   ) : (
-                    "Log In"
+                    "Sign In"
                   )}
                 </button>
 
-                <div className="border-t border-[#444444] w-full my-2"></div>
+                <div className="relative py-2 flex items-center justify-center">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-200"></div>
+                  </div>
+                  <div className="relative bg-white px-2 text-[12px] text-gray-500 bg-white">
+                    or
+                  </div>
+                </div>
 
                 <button onClick={toggleMode} className={secondaryButtonClass}>
-                  {isSignUp ? "Switch to Login" : "Create New Account"}
+                  {isSignUp ? "Switch to Sign In" : "Create New Account"}
                 </button>
               </div>
             </>
@@ -447,19 +442,13 @@ export default function AuthPage() {
         </div>
 
         {/* Footer */}
-        <div className="mt-6 text-center text-[11px] font-bold text-[#888888]  bg-[#111111] p-2 border border-[#333333]">
+        <div className="mt-8 text-center text-[12px] text-gray-500 leading-relaxed">
           By continuing, you agree to our{" "}
-          <Link
-            href="/terms"
-            className="text-[#0088ff] underline hover:bg-[#0055cc] hover:text-white px-1"
-          >
-            Terms
+          <Link href="/terms" className="text-[#0078D4] hover:underline">
+            Terms of Service
           </Link>{" "}
           and{" "}
-          <Link
-            href="/privacy"
-            className="text-[#0088ff] underline hover:bg-[#0055cc] hover:text-white px-1"
-          >
+          <Link href="/privacy" className="text-[#0078D4] hover:underline">
             Privacy Policy
           </Link>
           .

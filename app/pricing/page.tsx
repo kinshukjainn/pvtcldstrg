@@ -63,51 +63,50 @@ const pricingTiers = [
   },
 ];
 
-// Framer Motion animation variants (made slightly sharper/faster)
+// Azure-style animations: Quick, subtle, no bounce
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15,
+      staggerChildren: 0.1,
     },
   },
 };
 
 const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 15 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      type: "spring",
-      stiffness: 300,
-      damping: 24,
+      type: "tween",
+      ease: "easeOut",
+      duration: 0.3,
     },
   },
 };
 
 export default function PricingPage() {
-  // Classic raised 3D button effect from AuthPage
+  // Azure Standard Button Classes
   const primaryButtonClass =
-    "w-full flex items-center justify-center gap-2 py-3 px-4 font-bold text-[14px] tracking-wide  bg-[#0055cc] text-white border-2 border-t-[#3388ff] border-l-[#3388ff] border-r-[#002266] border-b-[#002266] active:border-t-[#002266] active:border-l-[#002266] active:border-b-[#3388ff] active:border-r-[#3388ff] hover:bg-[#0066ee] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
+    "w-full flex items-center justify-center gap-2 py-2 px-4 font-semibold text-[13px] bg-[#0078D4] hover:bg-[#005a9e] text-white rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
   const secondaryButtonClass =
-    "w-full flex items-center justify-center gap-2 py-3 px-4 font-bold text-[14px] tracking-wide  bg-[#dddddd] text-black border-2 border-t-[#ffffff] border-l-[#ffffff] border-r-[#888888] border-b-[#888888] active:border-t-[#888888] active:border-l-[#888888] active:border-b-[#ffffff] active:border-r-[#ffffff] hover:bg-[#ffffff] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
+    "w-full flex items-center justify-center gap-2 py-2 px-4 font-semibold text-[13px] bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
   return (
-    <div className="min-h-screen bg-[#111111] text-[#dddddd]  flex items-center justify-center p-4 md:p-8 selection:bg-[#0055cc] selection:text-white relative overflow-hidden">
-      <div className="w-full max-w-5xl mx-auto z-10 py-10">
+    <div className="min-h-screen bg-[#faf9f8] text-gray-900 flex items-center justify-center p-4 md:p-8 font-sans">
+      <div className="w-full max-w-6xl mx-auto py-10">
         {/* Header Section */}
         <div className="flex flex-col items-center text-center mb-12">
-          <div className="mb-6 bg-[#000000] border border-[#444444] p-4 shadow-[6px_6px_0px_#000000]">
-            <BsCloudRain size={48} className="text-[#dd7700]" />
+          <div className="mb-4">
+            <BsCloudRain size={40} className="text-[#0078D4]" />
           </div>
-          <h1 className="text-[28px] md:text-[36px] font-bold text-white mb-3  tracking-tight">
+          <h1 className="text-[24px] md:text-[32px] font-semibold text-gray-900 mb-2 tracking-tight">
             Simple, Transparent Pricing
           </h1>
-          <div className="border-t-2 border-[#444444] w-full max-w-[150px] my-3"></div>
-          <p className="text-[14px] font-bold text-[#aaaaaa]  tracking-wide max-w-xl mx-auto leading-relaxed">
+          <p className="text-[14px] text-gray-600 max-w-xl mx-auto leading-relaxed">
             Secure your digital life with Kosha. Choose the plan that best fits
             your storage and privacy needs.
           </p>
@@ -118,71 +117,70 @@ export default function PricingPage() {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 max-w-4xl mx-auto"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto"
         >
           {pricingTiers.map((tier) => (
             <motion.div
               key={tier.name}
               variants={cardVariants}
-              className={`relative flex flex-col bg-[#1e1e1e] p-8 border-2 rounded-none transition-all duration-300 ${
+              className={`relative flex flex-col bg-white p-6 border rounded-sm shadow-sm transition-shadow hover:shadow-md ${
                 tier.isPopular
-                  ? "border-[#dd7700] shadow-[10px_10px_0px_#dd7700]"
-                  : "border-[#444444] shadow-[10px_10px_0px_#000000]"
+                  ? "border-[#0078D4] border-t-4"
+                  : "border-gray-200"
               }`}
             >
               {/* Popular Badge */}
               {tier.isPopular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#dd7700] text-black border-2 border-[#000000] text-[11px] font-bold px-3 py-1.5  tracking-wider flex items-center gap-2 shadow-[4px_4px_0px_#000000]">
-                  <Sparkles size={14} className="text-black" />
+                <div className="absolute -top-[14px] right-4 bg-[#f3f9fd] text-[#0078D4] border border-[#0078D4] text-[11px] font-semibold px-2 py-0.5 rounded-sm flex items-center gap-1.5 uppercase tracking-wide">
+                  <Sparkles size={12} />
                   Most Popular
                 </div>
               )}
 
               {/* Card Header */}
-              <div className="mb-6 border-b-2 border-[#333333] pb-6 text-center">
-                <h2 className="text-[20px] font-bold tracking-tight mb-3 gold-text">
+              <div className="mb-6 border-b border-gray-100 pb-6">
+                <h2 className="text-[16px] font-semibold text-gray-900 mb-2">
                   {tier.name}
                 </h2>
-                <div className="flex items-end justify-center gap-1 mb-4">
-                  <span className="text-[42px] font-bold text-white tracking-tighter leading-none">
+                <div className="flex items-end gap-1 mb-3">
+                  <span className="text-[36px] font-semibold text-gray-900 leading-none">
                     {tier.price}
                   </span>
                   {tier.billingPeriod && (
-                    <span className="text-[#aaaaaa] text-[14px] font-bold  mb-1">
+                    <span className="text-gray-500 text-[13px] font-medium mb-1">
                       {tier.billingPeriod}
                     </span>
                   )}
                 </div>
-                <p className="text-[12px] text-[#aaaaaa] font-bold  tracking-wide leading-relaxed px-2">
+                <p className="text-[13px] text-gray-600 leading-relaxed min-h-[40px]">
                   {tier.description}
                 </p>
               </div>
 
               {/* Features List */}
-              <ul className="space-y-4 mb-8 flex-grow">
+              <ul className="space-y-3.5 mb-8 flex-grow">
                 {tier.features.map((feature, i) => (
                   <li
                     key={i}
-                    className="flex items-start gap-3 text-[13px] font-bold  text-[#dddddd] tracking-wide"
+                    className="flex items-start gap-2.5 text-[13px] text-gray-700"
                   >
-                    <div className="mt-0.5 w-5 h-5 bg-[#000000] border border-[#555555] flex items-center justify-center shrink-0">
-                      <Check
-                        size={12}
-                        className={
-                          tier.isPopular ? "text-[#dd7700]" : "text-[#aaaaaa]"
-                        }
-                      />
-                    </div>
-                    <span className="leading-snug pt-[1px]">{feature}</span>
+                    <Check
+                      size={16}
+                      className={`shrink-0 mt-0.5 ${
+                        tier.isPopular ? "text-[#0078D4]" : "text-gray-400"
+                      }`}
+                    />
+                    <span className="leading-snug">{feature}</span>
                   </li>
                 ))}
               </ul>
 
               {/* Action Button */}
-              <div className="mt-auto pt-4">
+              <div className="mt-auto pt-4 border-t border-gray-50">
                 <Link
                   href={tier.buttonHref}
                   className="w-full block outline-none"
+                  tabIndex={-1}
                 >
                   <button
                     className={

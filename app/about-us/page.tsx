@@ -12,7 +12,7 @@ import {
 import { BsCloudRain } from "react-icons/bs";
 
 const primaryButtonClass =
-  "inline-flex w-fit items-center justify-center gap-2 py-2 px-4 font-bold text-[14px]  bg-[#0055cc] text-white border-2 border-t-[#3388ff] border-l-[#3388ff] border-r-[#002266] border-b-[#002266] active:border-t-[#002266] active:border-l-[#002266] active:border-b-[#3388ff] active:border-r-[#3388ff] hover:bg-[#0066ee] transition-none rounded-none";
+  "inline-flex w-fit items-center justify-center gap-2 py-2 px-5 font-semibold text-[13px] bg-[#0078D4] hover:bg-[#005a9e] text-white rounded-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#0078D4]";
 
 export default function AboutUs() {
   const links = [
@@ -21,26 +21,26 @@ export default function AboutUs() {
       description:
         "Explore my main website to see my latest work and creations.",
       href: "https://cloudkinshuk.in",
-      icon: <FaGlobe className="w-5 h-5 text-[#0055cc]" />,
+      icon: <FaGlobe className="w-5 h-5 text-[#0078D4]" />,
     },
     {
       title: "Read the Blog",
       description: "Thoughts, tutorials, and articles on tech and development.",
       href: "https://cloudkinshuk.in/home-blog",
-      icon: <FaPenNib className="w-5 h-5 text-[#00cc44]" />,
+      icon: <FaPenNib className="w-5 h-5 text-[#107c10]" />, // Microsoft green
     },
     {
       title: "Share Feedback",
       description: "Got ideas or found a bug? Let me know how I can improve.",
       href: "https://fdb.cloudkinshuk.in",
-      icon: <FaCommentDots className="w-5 h-5 text-[#a855f7]" />,
+      icon: <FaCommentDots className="w-5 h-5 text-[#5c2d91]" />, // Microsoft purple
     },
     {
       title: "Support My Work",
       description:
         "Buy me a brew or support the repository to keep servers running.",
       href: "https://brewrepo.cloudkinshuk.in",
-      icon: <FaMugHot className="w-5 h-5 text-[#dd7700]" />,
+      icon: <FaMugHot className="w-5 h-5 text-[#d83b01]" />, // Microsoft rust/orange
     },
   ];
 
@@ -63,36 +63,36 @@ export default function AboutUs() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#111111] text-[#dddddd] py-12 px-4 md:px-8  selection:bg-[#0055cc] selection:text-white">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <div className="min-h-screen bg-[#faf9f8] text-gray-900 py-10 px-4 md:px-8 font-sans selection:bg-[#cce3f5]">
+      <div className="max-w-4xl mx-auto space-y-6">
         {/* ================= PROJECT SECTION ================= */}
-        <section className="bg-[#1e1e1e] border border-[#444444] p-6 md:p-8 shadow-[6px_6px_0px_#000000]">
+        <section className="bg-white border border-gray-200 p-6 md:p-8 shadow-sm rounded-sm">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
-            <div className="p-3 bg-[#000000] border border-[#444444]">
-              <BsCloudRain className="w-8 h-8 text-[#dd7700]" />
+            <div className="p-3 bg-[#0078D4] rounded-sm flex shrink-0 items-center justify-center">
+              <BsCloudRain className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h1 className="text-[20px] md:text-[24px] font-bold text-white tracking-tight ">
+              <h1 className="text-[20px] md:text-[24px] font-semibold text-gray-900 tracking-tight leading-tight">
                 About Kosha
               </h1>
-              <p className="text-[12px] text-[#dd7700] font-bold  tracking-wide">
+              <p className="text-[13px] text-[#0078D4] font-medium mt-0.5">
                 Secure Personal Cloud Storage
               </p>
             </div>
           </div>
 
-          <div className="border-t border-[#444444] w-full my-4"></div>
+          <div className="border-t border-gray-100 w-full my-5"></div>
 
-          <p className="text-[13px] md:text-[14px] text-[#aaaaaa] font-bold leading-relaxed mb-6">
+          <p className="text-[14px] text-gray-700 leading-relaxed mb-6">
             Kosha is a secure, high-performance personal cloud storage platform
             designed to make your digital experience seamless and entirely under
             your control. Say goodbye to restrictive storage limits and hello to
             a private ecosystem built for your files, photos, and documents.
           </p>
 
-          <div className="bg-[#111111] border border-[#444444] p-4 md:p-5">
-            <p className="text-[13px] text-[#aaaaaa] font-bold mb-5 leading-relaxed">
-              <strong className="text-white  tracking-wide">
+          <div className="bg-[#f8f8f8] border border-gray-200 p-5 rounded-sm">
+            <p className="text-[13px] text-gray-700 mb-4 leading-relaxed">
+              <strong className="text-gray-900 font-semibold">
                 Proudly Open Source
               </strong>{" "}
               — Kosha is built with transparency in mind. The core project is
@@ -105,22 +105,22 @@ export default function AboutUs() {
               rel="noopener noreferrer"
               className={primaryButtonClass}
             >
-              <FaGithub className="w-4 h-4" />
+              <FaGithub className="w-[18px] h-[18px]" />
               View Source on GitHub
             </a>
           </div>
         </section>
 
         {/* ================= DEVELOPER SECTION ================= */}
-        <section className="flex flex-col md:flex-row gap-6 md:gap-8 items-start bg-[#1e1e1e] border border-[#444444] p-6 md:p-8 shadow-[6px_6px_0px_#000000]">
-          {/* Avatar (Sharp edges, hard shadow) */}
-          <div className="flex-shrink-0 relative w-28 h-28 md:w-36 md:h-36 border border-[#444444] shadow-[4px_4px_0px_#000000] bg-[#000000]">
+        <section className="flex flex-col md:flex-row gap-6 md:gap-8 items-start bg-white border border-gray-200 p-6 md:p-8 shadow-sm rounded-sm">
+          {/* Avatar (Azure square/rounded profile style) */}
+          <div className="flex-shrink-0 relative w-24 h-24 md:w-32 md:h-32 border border-gray-200 shadow-sm rounded-sm overflow-hidden bg-gray-50">
             <Image
               src="/profile.jpg" // Replace with your actual image path
               alt="Kinshuk Jain Avatar"
               fill
               className="object-cover"
-              sizes="(max-width: 768px) 112px, 144px"
+              sizes="(max-width: 768px) 96px, 128px"
               priority
             />
           </div>
@@ -128,17 +128,17 @@ export default function AboutUs() {
           {/* Bio & Socials */}
           <div className="space-y-4 w-full">
             <div>
-              <h2 className="text-[18px] md:text-[22px] font-bold text-white tracking-tight ">
+              <h2 className="text-[18px] md:text-[22px] font-semibold text-gray-900 tracking-tight leading-tight">
                 Hi, I am Kinshuk Jain
               </h2>
-              <p className="text-[12px] text-[#0055cc] font-bold  tracking-wide">
+              <p className="text-[13px] text-[#0078D4] font-medium mt-0.5">
                 Lead Developer & Creator
               </p>
             </div>
 
-            <div className="border-t border-[#444444] w-full"></div>
+            <div className="border-t border-gray-100 w-full"></div>
 
-            <p className="text-[13px] md:text-[14px] text-[#aaaaaa] font-bold leading-relaxed">
+            <p className="text-[14px] text-gray-700 leading-relaxed">
               I am the lead developer and creator behind Kosha. I specialize in
               building robust tools, platforms, and web applications focused on
               great user experiences and modern architectures. When I am not
@@ -147,7 +147,7 @@ export default function AboutUs() {
             </p>
 
             {/* Social Links */}
-            <div className="flex flex-wrap gap-3 pt-2">
+            <div className="flex flex-wrap gap-2 pt-2">
               {socialLinks.map((social, idx) => (
                 <a
                   key={idx}
@@ -155,7 +155,7 @@ export default function AboutUs() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="flex items-center justify-center w-10 h-10 bg-[#000000] text-[#aaaaaa] border border-[#444444] shadow-[2px_2px_0px_#000000] hover:border-[#dd7700] hover:text-[#dd7700] active:translate-y-[2px] active:translate-x-[2px] active:shadow-none transition-all duration-150"
+                  className="flex items-center justify-center w-9 h-9 bg-white text-gray-600 border border-gray-300 hover:border-[#0078D4] hover:text-[#0078D4] hover:bg-[#f3f9fd] rounded-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#0078D4]"
                 >
                   {social.icon}
                 </a>
@@ -166,11 +166,11 @@ export default function AboutUs() {
 
         {/* ================= RESOURCES & LINKS GRID ================= */}
         <section>
-          <div className="flex items-center gap-4 mb-5">
-            <h3 className="text-[18px] md:text-[20px] font-bold text-white tracking-tight ">
+          <div className="flex items-center gap-4 mb-5 mt-8">
+            <h3 className="text-[18px] md:text-[20px] font-semibold text-gray-900 tracking-tight">
               More Resources
             </h3>
-            <div className="flex-1 border-t border-[#444444]"></div>
+            <div className="flex-1 border-t border-gray-200 mt-1"></div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -180,21 +180,22 @@ export default function AboutUs() {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col p-5 bg-[#1e1e1e] border border-[#444444] shadow-[4px_4px_0px_#000000] hover:-translate-y-1 hover:border-[#dd7700] hover:shadow-[6px_6px_0px_#000000] active:translate-y-[2px] active:translate-x-[2px] active:shadow-none transition-all duration-150 rounded-none"
+                className="group flex flex-col p-6 bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow rounded-sm"
               >
-                <div className="flex items-center gap-4 mb-3">
-                  <div className="p-2.5 bg-[#000000] border border-[#444444] group-hover:border-[#dd7700] transition-colors duration-150">
+                <div className="flex items-center gap-3.5 mb-3">
+                  <div className="p-2.5 bg-[#f3f2f1] rounded-sm group-hover:bg-[#e1dfdd] transition-colors">
                     {link.icon}
                   </div>
-                  <h4 className="text-[15px] font-bold text-white  group-hover:text-[#dd7700] transition-colors">
+                  <h4 className="text-[15px] font-semibold text-gray-900 group-hover:text-[#0078D4] transition-colors">
                     {link.title}
                   </h4>
                 </div>
-                <p className="text-[#aaaaaa] font-bold text-[13px] leading-relaxed mb-4 flex-1">
+
+                <p className="text-gray-600 text-[13px] leading-relaxed mb-4 flex-1">
                   {link.description}
                 </p>
 
-                <div className="mt-auto flex items-center text-[12px] font-bold text-[#555555]  group-hover:text-[#dd7700] transition-colors">
+                <div className="mt-auto flex items-center text-[13px] font-medium text-[#0078D4] group-hover:underline">
                   Visit Link &rarr;
                 </div>
               </a>
@@ -203,9 +204,9 @@ export default function AboutUs() {
         </section>
 
         {/* ================= FOOTER ================= */}
-        <div className="pt-8 border-t border-[#333333] text-center text-[#777777] font-bold text-[11px]  tracking-wide">
+        <div className="pt-10 pb-4 text-center text-gray-500 text-[12px]">
           <p>
-            COPYRIGHT {new Date().getFullYear()} KINSHUK JAIN. ALL RIGHTS
+            COPYRIGHT © {new Date().getFullYear()} KINSHUK JAIN. ALL RIGHTS
             RESERVED.
           </p>
         </div>

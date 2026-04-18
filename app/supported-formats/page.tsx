@@ -2,6 +2,7 @@
 
 import React, { ReactNode } from "react";
 import Link from "next/link";
+import { Info, AlertTriangle, ChevronRight } from "lucide-react";
 
 // --- DATA CONSTANTS ---
 const TOC_ITEMS = [
@@ -37,34 +38,34 @@ const DOC_CATEGORIES = [
 
 // --- COMPONENTS ---
 
+// Azure-style flat tag
 function FormatBadge({ ext }: { ext: string }) {
-  // Converted to bold  labels instead of terminal-style dot extensions
   return (
-    <span className="inline-block items-center px-3 py-1 bg-[#ffffff] text-black border-2 border-[#000000] text-[13px] font-bold  tracking-wider shadow-[2px_2px_0px_#000000] mr-3 mb-3 select-none">
+    <span className="inline-block items-center px-2.5 py-1 bg-gray-100 text-gray-800 border border-gray-200 text-[12px] font-semibold rounded-sm mr-2 mb-2 select-none">
       {ext}
     </span>
   );
 }
 
+// Clean anchor link
 function SectionAnchor({ id, children }: { id: string; children: ReactNode }) {
   return (
     <a
       href={`#${id}`}
-      className="group relative text-white  tracking-tight hover:text-[#ff9900] transition-colors duration-150 flex items-center gap-3"
+      className="group relative text-gray-900 hover:text-[#0078D4] transition-colors duration-150"
     >
-      <span className="w-4 h-4 bg-[#ff9900] border-2 border-[#000000] opacity-0 group-hover:opacity-100 transition-opacity duration-150 inline-block"></span>
       {children}
     </a>
   );
 }
 
+// Azure-style warning callout box
 function SystemNotice({ children }: { children: ReactNode }) {
   return (
-    <div className="my-8 p-6 border-4 border-[#000000] bg-[#0055cc] shadow-[8px_8px_0px_#000000] text-white flex flex-col sm:flex-row gap-5 items-start">
-      <div className="bg-[#ffffff] text-black border-2 border-[#000000] p-2 shrink-0 font-bold  text-[12px] tracking-widest shadow-[2px_2px_0px_#000000]">
-        Notice
-      </div>
-      <div className="text-[15px] font-bold leading-relaxed pt-1">
+    <div className="my-6 p-4 border-l-4 border-[#d13438] bg-[#fdf3f4] text-gray-900 flex gap-3 items-start rounded-r-sm">
+      <AlertTriangle className="w-5 h-5 text-[#d13438] shrink-0 mt-0.5" />
+      <div className="text-[13px] leading-relaxed">
+        <strong className="font-semibold block mb-1">Security Notice</strong>
         {children}
       </div>
     </div>
@@ -75,29 +76,33 @@ function SystemNotice({ children }: { children: ReactNode }) {
 
 export default function SupportedFormatsPage() {
   return (
-    <div className="min-h-screen text-[#dddddd] pb-24 bg-[#111111]  selection:bg-[#ff9900] selection:text-black">
-      {/* Header */}
-      <header className="sticky top-0 z-40 border-b-4 border-[#000000] bg-[#1e1e1e]">
-        <div className="max-w-5xl mx-auto flex justify-between items-center px-6 py-4">
+    <div className="min-h-screen text-gray-900 pb-24 bg-[#faf9f8] font-sans selection:bg-[#cce3f5]">
+      {/* Header / Command Bar */}
+      <header className="sticky top-0 z-40 border-b border-gray-200 bg-white shadow-sm">
+        <div className="max-w-[1000px] mx-auto flex justify-between items-center px-6 py-3">
           <Link
             href="/"
-            className="text-white hover:text-[#ff9900] transition-colors text-[14px] font-bold  tracking-wide flex items-center gap-2"
+            className="text-[#0078D4] hover:underline text-[13px] font-semibold flex items-center gap-1"
           >
             Back to Application
           </Link>
-          <span className="text-[12px] font-bold tracking-widest  text-[#aaaaaa] bg-[#000000] px-3 py-1 border-2 border-[#333333]">
+          <span className="text-[12px] font-semibold text-gray-600 bg-gray-50 px-2.5 py-1 border border-gray-200 rounded-sm">
             System Documentation
           </span>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 pt-16">
+      <main className="max-w-[1000px] mx-auto px-6 pt-12">
         {/* Hero Section */}
-        <header className="pb-16 border-b-4 border-[#333333] mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6  tracking-tight">
+        <header className="pb-10 border-b border-gray-200 mb-10">
+          <div className="text-[13px] font-medium text-gray-500 flex items-center gap-1.5 mb-4">
+            Documentation <ChevronRight size={14} /> Reference{" "}
+            <ChevronRight size={14} /> Formats
+          </div>
+          <h1 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-4 tracking-tight">
             Supported Data Formats
           </h1>
-          <p className="text-[16px] md:text-lg text-[#aaaaaa] font-bold leading-relaxed max-w-3xl">
+          <p className="text-[15px] text-gray-600 leading-relaxed max-w-3xl">
             Kosha is engineered to handle a wide array of digital assets. This
             reference guide details the file specifications, rendering
             protocols, and security measures applied to data stored within your
@@ -106,20 +111,20 @@ export default function SupportedFormatsPage() {
           </p>
         </header>
 
-        {/* Table of Contents */}
+        {/* Table of Contents (Azure "In this article" style) */}
         <nav
           aria-label="Table of Contents"
-          className="mb-16 p-8 border-4 border-[#000000] bg-[#1e1e1e] shadow-[8px_8px_0px_#000000]"
+          className="mb-14 p-5 border border-gray-200 bg-white rounded-sm shadow-sm"
         >
-          <p className="text-[16px] font-bold  tracking-widest text-[#ff9900] mb-6 border-b-2 border-[#333333] pb-2">
-            Documentation Index
+          <p className="text-[14px] font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <Info size={16} className="text-[#0078D4]" /> In this article
           </p>
-          <ul className="grid sm:grid-cols-2 gap-y-4 gap-x-8 text-[15px] font-bold list-none p-0 m-0 ">
+          <ul className="grid sm:grid-cols-2 gap-y-2 gap-x-8 text-[13px] list-none p-0 m-0">
             {TOC_ITEMS.map((item) => (
               <li key={item.id}>
                 <a
                   href={`#${item.id}`}
-                  className="text-white hover:text-[#0088ff] hover:underline hover:bg-[#000000] px-1 transition-all duration-150"
+                  className="text-[#0078D4] hover:underline transition-all duration-150"
                 >
                   {item.label}
                 </a>
@@ -129,11 +134,11 @@ export default function SupportedFormatsPage() {
         </nav>
 
         {/* Images */}
-        <section id="images" className="mb-20 scroll-mt-28">
-          <h2 className="text-2xl font-bold text-white mb-6  border-l-8 border-[#ff9900] pl-4">
+        <section id="images" className="mb-16 scroll-mt-20">
+          <h2 className="text-xl font-semibold text-gray-900 mb-3">
             <SectionAnchor id="images">Image Processing</SectionAnchor>
           </h2>
-          <p className="text-[16px] text-[#aaaaaa] font-bold mb-6 max-w-3xl leading-relaxed">
+          <p className="text-[14px] text-gray-700 mb-5 max-w-3xl leading-relaxed">
             Standard high-fidelity image formats are fully supported. Upon
             upload, Kosha automatically generates lightweight, encrypted
             thumbnails for UI performance without altering the original binary
@@ -141,7 +146,7 @@ export default function SupportedFormatsPage() {
             preserved by default but can be stripped via user privacy settings
             prior to upload.
           </p>
-          <div className="flex flex-wrap bg-[#1e1e1e] p-6 border-2 border-[#333333]">
+          <div className="flex flex-wrap bg-white p-5 border border-gray-200 rounded-sm shadow-sm">
             {["JPG", "JPEG", "PNG", "GIF", "WEBP", "SVG", "HEIC"].map((e) => (
               <FormatBadge key={e} ext={e} />
             ))}
@@ -149,18 +154,18 @@ export default function SupportedFormatsPage() {
         </section>
 
         {/* Videos */}
-        <section id="videos" className="mb-20 scroll-mt-28">
-          <h2 className="text-2xl font-bold text-white mb-6  border-l-8 border-[#0055cc] pl-4">
+        <section id="videos" className="mb-16 scroll-mt-20">
+          <h2 className="text-xl font-semibold text-gray-900 mb-3">
             <SectionAnchor id="videos">Video Streaming</SectionAnchor>
           </h2>
-          <p className="text-[16px] text-[#aaaaaa] font-bold mb-6 max-w-3xl leading-relaxed">
+          <p className="text-[14px] text-gray-700 mb-5 max-w-3xl leading-relaxed">
             Multimedia viewing is powered by native HTML5 playback frameworks.
             Kosha handles large media files via HTTP range requests, allowing
             seamless chunked buffering directly from encrypted storage. Formats
             requiring proprietary decoding pipelines may require localized
             download for optimal viewing.
           </p>
-          <div className="flex flex-wrap bg-[#1e1e1e] p-6 border-2 border-[#333333]">
+          <div className="flex flex-wrap bg-white p-5 border border-gray-200 rounded-sm shadow-sm">
             {["MP4", "WEBM", "OGG", "MOV", "MKV"].map((e) => (
               <FormatBadge key={e} ext={e} />
             ))}
@@ -168,18 +173,18 @@ export default function SupportedFormatsPage() {
         </section>
 
         {/* Audio */}
-        <section id="audio" className="mb-20 scroll-mt-28">
-          <h2 className="text-2xl font-bold text-white mb-6  border-l-8 border-[#00cc44] pl-4">
+        <section id="audio" className="mb-16 scroll-mt-20">
+          <h2 className="text-xl font-semibold text-gray-900 mb-3">
             <SectionAnchor id="audio">Audio Playback</SectionAnchor>
           </h2>
-          <p className="text-[16px] text-[#aaaaaa] font-bold mb-6 max-w-3xl leading-relaxed">
+          <p className="text-[14px] text-gray-700 mb-5 max-w-3xl leading-relaxed">
             Audio files bypass intermediate servers and stream directly to the
             client browser. Our player supports high-bitrate streams up to
             320kbps as well as lossless compression standards. Audio waveform
             visualization is generated locally on the client machine to ensure
             data privacy.
           </p>
-          <div className="flex flex-wrap bg-[#1e1e1e] p-6 border-2 border-[#333333]">
+          <div className="flex flex-wrap bg-white p-5 border border-gray-200 rounded-sm shadow-sm">
             {["MP3", "WAV", "AAC", "FLAC", "M4A"].map((e) => (
               <FormatBadge key={e} ext={e} />
             ))}
@@ -187,33 +192,33 @@ export default function SupportedFormatsPage() {
         </section>
 
         {/* Documents */}
-        <section id="documents" className="mb-20 scroll-mt-28">
-          <h2 className="text-2xl font-bold text-white mb-6  border-l-8 border-[#a855f7] pl-4">
+        <section id="documents" className="mb-16 scroll-mt-20">
+          <h2 className="text-xl font-semibold text-gray-900 mb-3">
             <SectionAnchor id="documents">Documents & Datasets</SectionAnchor>
           </h2>
-          <p className="text-[16px] text-[#aaaaaa] font-bold mb-8 max-w-3xl leading-relaxed">
+          <p className="text-[14px] text-gray-700 mb-6 max-w-3xl leading-relaxed">
             Enterprise and personal document handling relies on strict browser
             isolation. To prevent cross-site scripting (XSS) and malicious macro
             execution, complex document structures are either sandboxed in
             secure iframes or restricted to raw binary downloads.
           </p>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-5">
             {DOC_CATEGORIES.map((cat) => (
               <div
                 key={cat.label}
-                className="p-6 bg-[#1e1e1e] border-4 border-[#000000] shadow-[6px_6px_0px_#000000]"
+                className="p-5 bg-white border border-gray-200 rounded-sm shadow-sm hover:shadow-md transition-shadow"
               >
-                <h3 className="text-[16px] font-bold text-white  mb-4 tracking-wide border-b-2 border-[#333333] pb-2">
+                <h3 className="text-[15px] font-semibold text-gray-900 mb-3">
                   {cat.label}
                 </h3>
-                <div className="flex flex-wrap gap-1 mb-5">
+                <div className="flex flex-wrap mb-3">
                   {cat.exts.map((e) => (
                     <FormatBadge key={e} ext={e} />
                   ))}
                 </div>
                 {cat.note && (
-                  <p className="text-[14px] text-[#aaaaaa] font-bold leading-relaxed">
+                  <p className="text-[13px] text-gray-600 leading-relaxed border-t border-gray-100 pt-3">
                     {cat.note}
                   </p>
                 )}
@@ -223,28 +228,28 @@ export default function SupportedFormatsPage() {
         </section>
 
         {/* Archives */}
-        <section id="archives" className="mb-20 scroll-mt-28">
-          <h2 className="text-2xl font-bold text-white mb-6  border-l-8 border-[#ff3333] pl-4">
+        <section id="archives" className="mb-16 scroll-mt-20">
+          <h2 className="text-xl font-semibold text-gray-900 mb-3">
             <SectionAnchor id="archives">Encrypted Archives</SectionAnchor>
           </h2>
-          <p className="text-[16px] text-[#aaaaaa] font-bold mb-6 max-w-3xl leading-relaxed">
+          <p className="text-[14px] text-gray-700 mb-5 max-w-3xl leading-relaxed">
             Compressed directories and bundled system formats are treated as
             contiguous secure blobs. They benefit from dual-layer encryption
             (the archive&apos;s native encryption plus Kosha&apos;s
             platform-level AES-256 encryption).
           </p>
-          <div className="flex flex-wrap bg-[#1e1e1e] p-6 border-2 border-[#333333] mb-8">
+          <div className="flex flex-wrap bg-white p-5 border border-gray-200 rounded-sm shadow-sm mb-6">
             {["ZIP", "TAR", "TAR.GZ", "RAR", "7Z"].map((e) => (
               <FormatBadge key={e} ext={e} />
             ))}
           </div>
 
           <SystemNotice>
-            IN-BROWSER ARCHIVE EXTRACTION IS DISABLED FOR SECURITY PURPOSES.
-            ATTEMPTING TO PARSE HEAVILY COMPRESSED DIRECTORIES CLIENT-SIDE
-            EXPOSES THE BROWSER TO DECOMPRESSION BOMB (&quot;ZIP BOMB&quot;)
-            ATTACKS. THESE FILES MUST BE SECURELY DOWNLOADED AND EXTRACTED ON
-            YOUR LOCAL MACHINE.
+            In-browser archive extraction is disabled for security purposes.
+            Attempting to parse heavily compressed directories client-side
+            exposes the browser to decompression bomb (&quot;ZIP Bomb&quot;)
+            attacks. These files must be securely downloaded and extracted on
+            your local machine.
           </SystemNotice>
         </section>
       </main>

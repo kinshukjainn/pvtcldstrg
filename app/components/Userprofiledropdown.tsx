@@ -19,12 +19,12 @@ export default function UserProfileDropdown({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // AuthPage Theme 3D Button Classes
-  const secondaryButtonClass =
-    "w-full flex items-center cursor-pointer gap-3 py-2 px-4 font-bold text-[13px]  bg-[#dddddd] text-black border-2 border-t-[#ffffff] border-l-[#ffffff] border-r-[#888888] border-b-[#888888] active:border-t-[#888888] active:border-l-[#888888] active:border-b-[#ffffff] active:border-r-[#ffffff] hover:bg-[#ffffff] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
+  // Azure Standard Context Menu Button Classes
+  const menuButtonClass =
+    "w-full flex items-center cursor-pointer gap-3 py-2 px-3 text-[13px] text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-sm outline-none";
 
-  const dangerButtonClass =
-    "w-full flex items-center cursor-pointer gap-3 py-2 px-4 font-bold text-[13px]  bg-[#cc0000] text-white border-2 border-t-[#ff3333] border-l-[#ff3333] border-r-[#660000] border-b-[#660000] active:border-t-[#660000] active:border-l-[#660000] active:border-b-[#ff3333] active:border-r-[#ff3333] hover:bg-[#ee0000] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
+  const dangerMenuButtonClass =
+    "w-full flex items-center cursor-pointer gap-3 py-2 px-3 text-[13px] text-[#a4262c] hover:bg-[#fdf3f4] transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-sm outline-none";
 
   useEffect(() => {
     if (variant !== "desktop") return;
@@ -51,15 +51,16 @@ export default function UserProfileDropdown({
   if (!user) return null;
 
   const displayName =
-    user.fullName || user.firstName || user.username || "USER";
+    user.fullName || user.firstName || user.username || "User";
   const email = user.primaryEmailAddress?.emailAddress || "";
   const avatarUrl = user.imageUrl;
-  // Line 68: remove .toLowerCase()
+
   const initials = displayName
     .split(" ")
     .map((n) => n[0])
     .join("")
-    .slice(0, 2);
+    .slice(0, 2)
+    .toUpperCase();
 
   const handleManage = () => {
     setIsOpen(false);
@@ -73,7 +74,7 @@ export default function UserProfileDropdown({
     signOut();
   };
 
-  // Sharp, square avatar rendering matched to theme
+  // Standard Microsoft/Azure circular avatar
   const renderAvatar = (size: number) =>
     avatarUrl ? (
       <Image
@@ -82,60 +83,63 @@ export default function UserProfileDropdown({
         width={size}
         height={size}
         unoptimized
-        className="object-cover shrink-0 border border-[#444444] rounded-none bg-[#000000]"
+        className="object-cover shrink-0 rounded-full border border-gray-200 bg-white"
         referrerPolicy="no-referrer"
       />
     ) : (
       <span
-        className="bg-[#dd7700] text-white font-bold flex items-center justify-center shrink-0 border border-[#444444] rounded-none"
+        className="bg-[#0078D4] text-white font-semibold flex items-center justify-center shrink-0 rounded-full"
         style={{
           width: size,
           height: size,
-          fontSize: size < 32 ? 12 : 16,
+          fontSize: size < 32 ? 11 : 14,
         }}
       >
         {initials}
       </span>
     );
 
-  /* ─── MOBILE: inline expandable card ─── */
+  /* ─── MOBILE: inline expandable card (Azure List Style) ─── */
   if (variant === "mobile") {
     return (
-      <div className="w-full" ref={dropdownRef}>
+      <div
+        className="w-full bg-white rounded-sm border border-gray-200 shadow-sm"
+        ref={dropdownRef}
+      >
         <button
           onClick={() => setIsOpen((prev) => !prev)}
-          className="w-full flex items-center gap-3 p-3 bg-[#1e1e1e] border border-[#444444] shadow-[4px_4px_0px_#000000] hover:border-[#dd7700] transition-colors duration-150 cursor-pointer rounded-none outline-none group"
+          className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors duration-150 cursor-pointer outline-none group"
           aria-expanded={isOpen}
           aria-haspopup="true"
         >
           {renderAvatar(36)}
           <div className="min-w-0 flex-1 text-left">
-            <p className="text-[14px] font-bold text-white  tracking-tight truncate group-hover:text-[#dd7700] transition-colors">
+            <p className="text-[14px] font-semibold text-gray-900 truncate">
               {displayName}
             </p>
             {email && (
-              <p className="text-[11px] font-bold text-[#aaaaaa] tracking-wider truncate mt-0.5 ">
+              <p className="text-[12px] text-gray-500 truncate mt-0.5">
                 {email}
               </p>
             )}
           </div>
-          <div className="w-8 h-8 flex items-center justify-center bg-[#000000] border border-[#555555] transition-colors duration-150 shrink-0 group-hover:border-[#dd7700]">
+          <div className="w-8 h-8 flex items-center justify-center shrink-0">
             <FiChevronDown
-              className={`w-4 h-4 text-[#aaaaaa] transition-transform duration-200 group-hover:text-[#dd7700] ${
-                isOpen ? "rotate-180 text-[#dd7700]" : ""
+              className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
+                isOpen ? "rotate-180 text-[#0078D4]" : ""
               }`}
             />
           </div>
         </button>
 
         {isOpen && (
-          <div className="mt-3 flex flex-col gap-3 p-3 bg-[#111111] border border-[#444444] shadow-[4px_4px_0px_#000000]">
-            <button onClick={handleManage} className={secondaryButtonClass}>
-              <FiSettings className="w-4 h-4 shrink-0" />
+          <div className="flex flex-col gap-1 p-2 bg-gray-50 border-t border-gray-100">
+            <button onClick={handleManage} className={menuButtonClass}>
+              <FiSettings className="w-4 h-4 shrink-0 text-gray-500" />
               <span>Manage Account</span>
             </button>
 
-            <button onClick={handleSignOut} className={dangerButtonClass}>
+            <button onClick={handleSignOut} className={dangerMenuButtonClass}>
               <FiLogOut className="w-4 h-4 shrink-0" />
               <span>Sign Out</span>
             </button>
@@ -145,36 +149,36 @@ export default function UserProfileDropdown({
     );
   }
 
-  /* ─── DESKTOP: floating dropdown ─── */
+  /* ─── DESKTOP: floating dropdown (Azure Top Nav Style) ─── */
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Desktop Trigger */}
+      {/* Desktop Trigger (Styled for blue global header) */}
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex items-center gap-2 p-1.5 pr-2 bg-[#1e1e1e] border border-[#444444] shadow-[2px_2px_0px_#000000] hover:border-[#dd7700] active:translate-y-[1px] active:shadow-none transition-all duration-150 cursor-pointer outline-none rounded-none group"
+        className="flex items-center gap-1.5 p-1 rounded-sm hover:bg-white/10 transition-colors duration-150 cursor-pointer outline-none group"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
         {renderAvatar(28)}
         <FiChevronDown
-          className={`w-4 h-4 text-[#aaaaaa] transition-transform duration-200 group-hover:text-[#dd7700] ${
-            isOpen ? "rotate-180 text-[#dd7700]" : ""
+          className={`w-3.5 h-3.5 text-white/80 transition-transform duration-200 ${
+            isOpen ? "rotate-180" : ""
           }`}
         />
       </button>
 
       {/* Desktop Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 top-[calc(100%+8px)] w-[260px] sm:w-[280px] bg-[#1e1e1e] border border-[#444444] shadow-[6px_6px_0px_#000000] z-50 rounded-none">
+        <div className="absolute right-0 top-[calc(100%+8px)] w-[280px] bg-white border border-gray-200 shadow-md z-50 rounded-sm overflow-hidden">
           {/* User Info Header */}
-          <div className="flex items-center gap-3 p-4 border-b border-[#444444] bg-[#000000]">
-            {renderAvatar(40)}
+          <div className="flex items-center gap-3 p-4 border-b border-gray-200 bg-[#faf9f8]">
+            {renderAvatar(44)}
             <div className="min-w-0 flex-1">
-              <p className="text-[14px] font-bold text-white  tracking-tight truncate">
+              <p className="text-[14px] font-semibold text-gray-900 truncate">
                 {displayName}
               </p>
               {email && (
-                <p className="text-[10px] font-bold text-[#aaaaaa] tracking-wider  truncate mt-0.5">
+                <p className="text-[12px] text-gray-500 truncate mt-0.5">
                   {email}
                 </p>
               )}
@@ -182,15 +186,15 @@ export default function UserProfileDropdown({
           </div>
 
           {/* Action Buttons */}
-          <div className="p-4 flex flex-col gap-3">
-            <button onClick={handleManage} className={secondaryButtonClass}>
-              <FiSettings className="w-4 h-4 shrink-0" />
+          <div className="p-2 flex flex-col">
+            <button onClick={handleManage} className={menuButtonClass}>
+              <FiSettings className="w-4 h-4 shrink-0 text-gray-500" />
               <span>Manage Account</span>
             </button>
 
-            <div className="w-full border-t border-[#333333] my-0.5"></div>
+            <div className="w-full border-t border-gray-100 my-1"></div>
 
-            <button onClick={handleSignOut} className={dangerButtonClass}>
+            <button onClick={handleSignOut} className={dangerMenuButtonClass}>
               <FiLogOut className="w-4 h-4 shrink-0" />
               <span>Sign Out</span>
             </button>

@@ -17,8 +17,8 @@ import {
   FaListUl,
   FaTimes,
   FaPlay,
-  FaExclamationTriangle,
   FaEllipsisV,
+  FaExclamationCircle,
 } from "react-icons/fa";
 import {
   getUploadUrl,
@@ -28,7 +28,7 @@ import {
   getDownloadUrl,
   getStorageInfo,
 } from "@/actions/drive";
-import { Container, Folder } from "lucide-react";
+import { Database, HardDrive, ChevronRight } from "lucide-react";
 
 type DriveFile = {
   key: string;
@@ -52,16 +52,19 @@ const formatBytes = (bytes: number, decimals = 2) => {
 };
 
 /* ------------------------------------------------------------------ */
-/* AuthPage Match Themes & Classes                                    */
+/* Azure Standard Button Classes                                      */
 /* ------------------------------------------------------------------ */
 const primaryButtonClass =
-  "inline-flex items-center justify-center gap-2 py-2 px-4 font-bold text-[14px]  bg-[#0055cc] text-white border-2 border-t-[#3388ff] border-l-[#3388ff] border-r-[#002266] border-b-[#002266] active:border-t-[#002266] active:border-l-[#002266] active:border-b-[#3388ff] active:border-r-[#3388ff] hover:bg-[#0066ee] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
+  "inline-flex items-center justify-center gap-2 py-1.5 px-4 font-semibold text-[13px] bg-[#0078D4] text-white hover:bg-[#005a9e] rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
 const secondaryButtonClass =
-  "inline-flex items-center justify-center gap-2 py-2 px-4 font-bold text-[14px]  bg-[#dddddd] text-black border-2 border-t-[#ffffff] border-l-[#ffffff] border-r-[#888888] border-b-[#888888] active:border-t-[#888888] active:border-l-[#888888] active:border-b-[#ffffff] active:border-r-[#ffffff] hover:bg-[#ffffff] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
+  "inline-flex items-center justify-center gap-2 py-1.5 px-4 font-semibold text-[13px] bg-white border border-gray-300 text-gray-800 hover:bg-gray-50 rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
 const dangerButtonClass =
-  "inline-flex items-center justify-center gap-2 py-2 px-4 font-bold text-[14px]  bg-[#cc0000] text-white border-2 border-t-[#ff3333] border-l-[#ff3333] border-r-[#660000] border-b-[#660000] active:border-t-[#660000] active:border-l-[#660000] active:border-b-[#ff3333] active:border-r-[#ff3333] hover:bg-[#ee0000] disabled:opacity-50 disabled:cursor-not-allowed rounded-none transition-none";
+  "inline-flex items-center justify-center gap-2 py-1.5 px-4 font-semibold text-[13px] bg-[#d13438] text-white hover:bg-[#a4262c] rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+
+const iconButtonClass =
+  "p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-sm transition-colors cursor-pointer outline-none";
 
 /* ------------------------------------------------------------------ */
 /* Reusable Action Menu (kebab ⋮ dropdown)                            */
@@ -96,8 +99,8 @@ function ActionMenu({
           e.stopPropagation();
           setOpen((prev) => !prev);
         }}
-        className="w-8 h-8 flex items-center justify-center bg-[#000000] border border-[#555555] text-[#aaaaaa] hover:text-[#dd7700] hover:border-[#dd7700] active:translate-y-[1px] transition-all duration-150 cursor-pointer rounded-none"
-        title="Actions"
+        className={iconButtonClass}
+        title="More actions"
         aria-label="File actions"
       >
         <FaEllipsisV size={14} />
@@ -105,7 +108,7 @@ function ActionMenu({
 
       {open && (
         <div
-          className="absolute right-0 top-full mt-1 z-[100] min-w-[160px] bg-[#1e1e1e] border border-[#444444] shadow-[4px_4px_0px_#000000] p-1 flex flex-col gap-1 rounded-none"
+          className="absolute right-0 top-full mt-1 z-[100] min-w-[160px] bg-white border border-gray-200 shadow-md py-1 flex flex-col rounded-sm"
           onClick={(e) => e.stopPropagation()}
         >
           <button
@@ -113,20 +116,20 @@ function ActionMenu({
               onDownload(e, fileKey);
               setOpen(false);
             }}
-            className="w-full flex items-center gap-3 px-3 py-2 font-bold text-[13px] text-[#dddddd]  hover:bg-[#0055cc] hover:text-white transition-colors duration-150 cursor-pointer rounded-none"
+            className="w-full flex items-center gap-3 px-4 py-2 text-[13px] text-gray-700 hover:bg-gray-100 transition-colors"
           >
-            <FaDownload size={13} className="shrink-0" />
+            <FaDownload size={14} className="text-gray-500" />
             Download
           </button>
-          <div className="w-full h-[1px] bg-[#444444]" />
+          <div className="w-full h-px bg-gray-100 my-1" />
           <button
             onClick={(e) => {
               onDelete(e, fileKey);
               setOpen(false);
             }}
-            className="w-full flex items-center gap-3 px-3 py-2 font-bold text-[13px] text-[#ff4444]  hover:bg-[#cc0000] hover:text-white transition-colors duration-150 cursor-pointer rounded-none"
+            className="w-full flex items-center gap-3 px-4 py-2 text-[13px] text-[#d13438] hover:bg-[#fdf3f4] transition-colors"
           >
-            <FaTrash size={13} className="shrink-0" />
+            <FaTrash size={14} />
             Delete
           </button>
         </div>
@@ -324,139 +327,169 @@ export default function DriveManager() {
   );
 
   return (
-    <div className="w-full min-h-screen bg-[#111111] text-[#dddddd]  flex flex-col relative selection:bg-[#0055cc] selection:text-white">
-      {/* --- Top Control Panel --- */}
-      <div className="top-0 z-40 bg-[#1e1e1e] border-b border-[#444444] shadow-[0px_4px_0px_#000000]">
-        <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-4 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-          {/* Storage & Stats Badges (Matched Auth Badge Theme) */}
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-[#111111] border border-[#444444] text-[12px] font-bold text-[#aaaaaa]  tracking-wide">
-              <Folder className="w-4 h-4 text-[#dd7700]" />
-              <span>{totalFiles} FILES</span>
+    <div className="w-full min-h-screen bg-[#faf9f8] text-gray-900 font-sans flex flex-col">
+      {/* --- Page Header & Breadcrumbs --- */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="px-6 py-4">
+          <div className="text-[13px] font-medium text-[#0078D4] flex items-center gap-1.5 mb-4 w-fit cursor-pointer hover:underline">
+            Home <ChevronRight size={14} className="text-gray-500" /> Storage
+            Explorer
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#0078D4] rounded-sm flex items-center justify-center shrink-0">
+              <HardDrive size={20} className="text-white" />
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-[#111111] border border-[#444444] text-[12px] font-bold text-[#aaaaaa]  tracking-wide">
-              <Container className="w-4 h-4 text-[#0055cc]" />
-              <span>
-                {formatBytes(storageUsed)} / {formatBytes(storageLimit)}
-              </span>
+            <div>
+              <h1 className="text-xl font-semibold text-gray-900 tracking-tight leading-tight">
+                Storage Explorer
+              </h1>
+              <p className="text-[13px] text-gray-600 mt-0.5">
+                Manage and review your secure files
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* --- Command Bar --- */}
+        <div className="bg-[#f3f2f1] px-4 sm:px-6 py-2 flex flex-wrap items-center justify-between border-t border-gray-200 gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              type="file"
+              accept="image/*,video/*,application/pdf,.pptx,.ppt,.xlsx,.xls,.csv,.txt,.md"
+              className="hidden"
+              ref={fileInputRef}
+              onChange={handleUpload}
+              disabled={isUploading}
+              multiple
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+              className={primaryButtonClass}
+            >
+              {isUploading ? (
+                <FaSpinner className="animate-spin" size={14} />
+              ) : (
+                <FaCloudUploadAlt size={16} />
+              )}
+              {isUploading ? "Uploading..." : "Upload Files"}
+            </button>
+
+            <div className="w-px h-5 bg-gray-300 mx-2 hidden sm:block" />
+
+            {/* View Mode Toggles */}
+            <div className="flex items-center bg-white border border-gray-300 rounded-sm overflow-hidden">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`p-1.5 transition-colors ${
+                  viewMode === "grid"
+                    ? "bg-gray-100 text-[#0078D4]"
+                    : "text-gray-500 hover:bg-gray-50"
+                }`}
+                title="Grid View"
+              >
+                <FaThLarge size={14} />
+              </button>
+              <div className="w-px h-4 bg-gray-200" />
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-1.5 transition-colors ${
+                  viewMode === "list"
+                    ? "bg-gray-100 text-[#0078D4]"
+                    : "text-gray-500 hover:bg-gray-50"
+                }`}
+                title="List View"
+              >
+                <FaListUl size={14} />
+              </button>
             </div>
           </div>
 
-          {/* Controls */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
-            {/* Search */}
-            <div className="flex items-center bg-[#000000] border-2 border-[#555555] focus-within:border-[#aaaaaa] flex-1 sm:flex-none transition-colors duration-150">
-              <div className="pl-3 pr-2 text-[#777777]">
-                <FaSearch size={14} />
-              </div>
-              <input
-                type="text"
-                placeholder="SEARCH FILES..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full sm:w-56 outline-none text-[13px] font-bold  bg-transparent px-2 py-2 text-white placeholder-[#777777]"
-              />
-            </div>
-
-            <div className="flex gap-3 w-full sm:w-auto">
-              {/* View Toggle */}
-              <div className="flex border-2 border-[#555555] bg-[#000000]">
-                <button
-                  onClick={() => setViewMode("grid")}
-                  className={`px-3 py-2 flex-1 sm:flex-none flex justify-center items-center transition-colors duration-150 cursor-pointer outline-none ${
-                    viewMode === "grid"
-                      ? "bg-[#dddddd] text-black border-r-2 border-[#555555]"
-                      : "text-[#aaaaaa] hover:bg-[#1e1e1e] border-r-2 border-[#555555]"
-                  }`}
-                  title="Grid View"
-                >
-                  <FaThLarge size={14} />
-                </button>
-                <button
-                  onClick={() => setViewMode("list")}
-                  className={`px-3 py-2 flex-1 sm:flex-none flex justify-center items-center transition-colors duration-150 cursor-pointer outline-none ${
-                    viewMode === "list"
-                      ? "bg-[#dddddd] text-black"
-                      : "text-[#aaaaaa] hover:bg-[#1e1e1e]"
-                  }`}
-                  title="List View"
-                >
-                  <FaListUl size={14} />
-                </button>
-              </div>
-
-              {/* Upload Button */}
-              <input
-                type="file"
-                accept="image/*,video/*,application/pdf,.pptx,.ppt,.xlsx,.xls,.csv,.txt,.md"
-                className="hidden"
-                ref={fileInputRef}
-                onChange={handleUpload}
-                disabled={isUploading}
-                multiple
-              />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isUploading}
-                className={`${primaryButtonClass} flex-1 sm:flex-none text-[13px]`}
-              >
-                {isUploading ? (
-                  <FaSpinner className="animate-spin" size={14} />
-                ) : (
-                  <FaCloudUploadAlt size={16} />
-                )}
-                {isUploading ? "UPLOADING" : "UPLOAD"}
-              </button>
-            </div>
+          {/* Search Box */}
+          <div className="relative w-full sm:w-64">
+            <FaSearch
+              size={12}
+              className="absolute left-2.5 top-2.5 text-gray-500"
+            />
+            <input
+              type="text"
+              placeholder="Filter by name..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-8 pr-3 py-1.5 bg-white border border-gray-300 rounded-sm text-[13px] text-gray-900 focus:outline-none focus:border-[#0078D4] focus:ring-1 focus:ring-[#0078D4] transition-all placeholder-gray-400"
+            />
           </div>
         </div>
       </div>
 
       {/* --- Main Content Area --- */}
-      <div className="flex-1 w-full max-w-[1600px] mx-auto p-4 md:p-8 z-10">
-        {isLoading ? (
-          <div className="flex flex-col items-center justify-center min-h-[40vh] gap-4">
-            <div className="mb-2 bg-[#000000] border border-[#444444] p-4 shadow-[4px_4px_0px_#000000]">
-              <FaSpinner className="animate-spin text-[#0055cc]" size={32} />
+      <div className="flex-1 w-full max-w-[1600px] mx-auto p-4 md:p-6 lg:p-8 z-10">
+        {/* Essentials Block */}
+        <div className="mb-6">
+          <h2 className="font-semibold text-[14px] text-gray-900 mb-3">
+            Essentials
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-12 gap-y-4 text-[13px] ml-1">
+            <div className="flex flex-col gap-1">
+              <span className="text-gray-500">Total Resources</span>
+              <span className="text-gray-900 font-medium">
+                {totalFiles} items
+              </span>
             </div>
-            <h2 className="text-[16px] font-bold text-white  tracking-tight">
-              LOADING WORKSPACE
-            </h2>
+            <div className="flex flex-col gap-1">
+              <span className="text-gray-500">Storage Used</span>
+              <span className="text-[#0078D4] font-medium">
+                {formatBytes(storageUsed)}
+              </span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-gray-500">Storage Capacity</span>
+              <span className="text-gray-900">{formatBytes(storageLimit)}</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-gray-500">Status</span>
+              <span className="text-[#107c10] font-medium flex items-center gap-1">
+                <Database size={14} /> Online
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Content View */}
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-3">
+            <FaSpinner className="animate-spin text-[#0078D4]" size={24} />
+            <span className="text-[13px] text-gray-600">
+              Loading resources...
+            </span>
           </div>
         ) : filteredFiles.length === 0 ? (
-          <div className="flex flex-col items-center justify-center min-h-[40vh] p-8 bg-[#1e1e1e] border border-[#444444] shadow-[6px_6px_0px_#000000] max-w-lg mx-auto mt-10">
-            <div className="mb-4 bg-[#000000] border border-[#444444] p-4">
-              <FaFileAlt className="text-4xl text-[#dd7700]" />
-            </div>
-            <h3 className="text-[18px] font-bold text-white mb-2  tracking-tight">
-              NO FILES FOUND
+          <div className="flex flex-col items-center justify-center py-16 bg-white border border-gray-200 rounded-sm">
+            <FaFileAlt className="text-4xl text-gray-300 mb-3" />
+            <h3 className="text-[15px] font-semibold text-gray-900 mb-1">
+              No files found
             </h3>
-            <div className="border-t border-[#444444] w-full max-w-[200px] my-3"></div>
-            <p className="text-[13px] font-bold text-[#aaaaaa] text-center">
-              Upload documents, images, or videos <br /> to get started.
+            <p className="text-[13px] text-gray-500 text-center">
+              Upload documents or media to populate this directory.
             </p>
           </div>
         ) : (
-          <>
+          <div className="bg-white border border-gray-200 rounded-sm">
             {/* ===================== LIST VIEW ===================== */}
             {viewMode === "list" ? (
-              <div className="overflow-x-auto bg-[#1e1e1e] border border-[#444444] shadow-[6px_6px_0px_#000000]">
-                <table className="w-full border-collapse text-left whitespace-nowrap font-bold">
-                  <thead className="border-b border-[#444444] text-[#aaaaaa] bg-[#111111] text-[12px] tracking-wide ">
+              <div className="overflow-x-auto w-full">
+                <table className="w-full text-left border-collapse whitespace-nowrap">
+                  <thead className="bg-[#fafafa] border-b border-gray-200 text-[12px] font-semibold text-gray-700 uppercase">
                     <tr>
-                      <th className="p-4 w-16 text-center border-r border-[#444444]">
-                        Type
+                      <th className="px-4 py-2.5 w-12 text-center">Type</th>
+                      <th className="px-4 py-2.5">Name</th>
+                      <th className="px-4 py-2.5 w-32 hidden sm:table-cell">
+                        Extension
                       </th>
-                      <th className="p-4 border-r border-[#444444]">
-                        File Name
-                      </th>
-                      <th className="p-4 w-28 text-center hidden sm:table-cell border-r border-[#444444]">
-                        Format
-                      </th>
-                      <th className="p-4 w-20 text-center">Action</th>
+                      <th className="px-4 py-2.5 w-20 text-center">Actions</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-gray-100">
                     {filteredFiles.map((file) => {
                       const fileName = getFileName(file.key);
                       const fileType = getFileType(fileName);
@@ -464,30 +497,28 @@ export default function DriveManager() {
                       return (
                         <tr
                           key={file.key}
-                          className="hover:bg-[#111111] cursor-pointer transition-colors duration-150 group border-b border-[#333333] last:border-none"
                           onClick={() => setSelectedFile(file)}
+                          className="hover:bg-[#f6f6f6] cursor-pointer transition-colors group"
                         >
-                          <td className="p-3 flex justify-center items-center">
-                            <div className="w-8 h-8 bg-[#000000] border border-[#444444] flex items-center justify-center group-hover:border-[#dd7700] transition-colors">
-                              {getFileIcon(
-                                fileType,
-                                "text-sm text-[#777777] group-hover:text-[#dd7700]",
-                              )}
-                            </div>
+                          <td className="px-4 py-3 text-center">
+                            {getFileIcon(
+                              fileType,
+                              "text-[16px] text-[#0078D4] mx-auto",
+                            )}
                           </td>
-                          <td className="p-3 text-[14px] text-[#dddddd] truncate max-w-[150px] sm:max-w-xs md:max-w-md lg:max-w-xl group-hover:text-white transition-colors">
-                            <span className="block truncate">{fileName}</span>
-                            <span className="inline-block sm:hidden mt-1 text-[10px] text-[#aaaaaa]  tracking-wider">
-                              {ext}
+                          <td className="px-4 py-3 text-[13px] text-[#0078D4] font-medium truncate max-w-[200px] md:max-w-md group-hover:underline">
+                            {fileName}
+                            <span className="block sm:hidden text-[11px] text-gray-500 mt-0.5 no-underline">
+                              {ext.toUpperCase()}
                             </span>
                           </td>
-                          <td className="p-3 text-center hidden sm:table-cell">
-                            <span className="inline-block text-[11px] text-[#aaaaaa] bg-[#000000] px-2 py-0.5 border border-[#444444] tracking-wider ">
-                              {ext}
+                          <td className="px-4 py-3 hidden sm:table-cell">
+                            <span className="bg-gray-100 text-gray-700 px-2 py-0.5 text-[11px] font-semibold rounded-sm">
+                              {ext.toUpperCase()}
                             </span>
                           </td>
                           <td
-                            className="p-3 flex justify-center items-center"
+                            className="px-4 py-3 text-center"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <ActionMenu
@@ -504,7 +535,7 @@ export default function DriveManager() {
               </div>
             ) : (
               /* ===================== GRID VIEW ===================== */
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5 md:gap-6">
+              <div className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                 {filteredFiles.map((file) => {
                   const fileName = getFileName(file.key);
                   const fileType = getFileType(fileName);
@@ -513,11 +544,10 @@ export default function DriveManager() {
                     <div
                       key={file.key}
                       onClick={() => setSelectedFile(file)}
-                      className="relative bg-[#1e1e1e] border border-[#444444] shadow-[4px_4px_0px_#000000] hover:-translate-y-1 hover:shadow-[6px_6px_0px_#000000] hover:border-[#dd7700] transition-all duration-150 cursor-pointer flex flex-col group rounded-none"
+                      className="relative bg-white border border-gray-200 hover:border-[#0078D4] hover:shadow-sm transition-all duration-150 cursor-pointer flex flex-col group rounded-sm overflow-hidden"
                     >
-                      {/* Action Menu (always visible on mobile, hover on desktop) */}
                       <div
-                        className="absolute top-2 right-2 z-30 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-150"
+                        className="absolute top-1.5 right-1.5 z-10 bg-white/90 rounded-sm opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity shadow-sm"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <ActionMenu
@@ -528,47 +558,48 @@ export default function DriveManager() {
                       </div>
 
                       {/* Preview Area */}
-                      <div className="h-28 sm:h-32 md:h-36 bg-[#000000] border-b border-[#444444] flex flex-col items-center justify-center relative overflow-hidden group-hover:border-[#dd7700] transition-colors duration-150">
+                      <div className="h-28 sm:h-32 bg-[#fafafa] border-b border-gray-100 flex items-center justify-center relative overflow-hidden">
                         {fileType === "image" ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
                             src={file.url}
                             alt={fileName}
-                            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-300 scale-100 group-hover:scale-105"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             loading="lazy"
                           />
                         ) : fileType === "video" ? (
-                          <>
+                          <div className="w-full h-full relative">
                             <video
                               src={file.url}
-                              className="w-full h-full object-cover opacity-50 group-hover:opacity-90 transition-opacity duration-300"
+                              className="w-full h-full object-cover opacity-80"
                             />
-                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                              <div className="w-10 h-10 bg-[#0055cc] border-2 border-[#000000] flex items-center justify-center shadow-[2px_2px_0px_#000000] group-hover:bg-[#dd7700] transition-colors duration-150">
-                                <FaPlay className="text-white ml-1" size={14} />
+                            <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                              <div className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-sm">
+                                <FaPlay
+                                  className="text-[#0078D4] ml-0.5"
+                                  size={12}
+                                />
                               </div>
                             </div>
-                          </>
-                        ) : (
-                          <div className="w-14 h-14 bg-[#111111] border border-[#555555] flex items-center justify-center group-hover:border-[#dd7700] transition-colors duration-150">
-                            {getFileIcon(
-                              fileType,
-                              "text-2xl text-[#777777] group-hover:text-[#dd7700]",
-                            )}
                           </div>
+                        ) : (
+                          getFileIcon(
+                            fileType,
+                            "text-3xl text-gray-400 group-hover:text-[#0078D4] transition-colors",
+                          )
                         )}
                       </div>
 
                       {/* File Info Footer */}
-                      <div className="p-3 flex items-center justify-between gap-2 bg-[#1e1e1e]">
+                      <div className="p-2.5 flex flex-col gap-1">
                         <span
-                          className="text-[12px] truncate text-white font-bold group-hover:text-[#dd7700] transition-colors duration-150 flex-1 min-w-0 "
+                          className="text-[12px] font-semibold text-gray-900 truncate"
                           title={fileName}
                         >
                           {fileName}
                         </span>
-                        <span className="text-[9px] sm:text-[10px] px-1.5 py-0.5 bg-[#111111] text-[#aaaaaa] border border-[#444444] font-bold tracking-wider flex-shrink-0">
-                          {ext}
+                        <span className="text-[11px] text-gray-500">
+                          {ext.toUpperCase()} file
                         </span>
                       </div>
                     </div>
@@ -577,64 +608,62 @@ export default function DriveManager() {
               </div>
             )}
 
+            {/* Load More Row */}
             {hasMore && (
-              <div className="flex justify-center mt-10 mb-6">
+              <div className="border-t border-gray-200 bg-[#fafafa] p-3 text-center">
                 <button
                   onClick={handleLoadMore}
                   disabled={isLoadingMore}
-                  className={secondaryButtonClass}
+                  className="text-[#0078D4] hover:text-[#005a9e] hover:underline text-[13px] font-semibold disabled:no-underline disabled:opacity-50"
                 >
-                  {isLoadingMore && (
-                    <FaSpinner className="animate-spin" size={14} />
-                  )}
-                  {isLoadingMore ? "LOADING..." : "LOAD MORE FILES"}
+                  {isLoadingMore ? "Loading more..." : "Load more resources"}
                 </button>
               </div>
             )}
-          </>
+          </div>
         )}
       </div>
 
-      {/* --- File Viewer Overlay --- */}
+      {/* --- File Viewer Overlay (Modal) --- */}
       {selectedFile && (
         <div
-          className="fixed inset-0 z-[100] bg-black/95 flex flex-col"
+          className="fixed inset-0 z-[100] bg-black/80 flex flex-col backdrop-blur-sm"
           onClick={() => setSelectedFile(null)}
         >
           {/* Viewer Header */}
           <div
-            className="bg-[#1e1e1e] border border-[#444444] p-3 flex justify-between items-center text-white shadow-[6px_6px_0px_#000000] m-3 rounded-none"
+            className="bg-white px-4 py-3 flex justify-between items-center shadow-sm"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="text-[14px] font-bold  tracking-wide truncate max-w-[50%] md:max-w-[60%] flex items-center gap-3">
-              <div className="w-8 h-8 bg-[#000000] border border-[#444444] flex items-center justify-center shrink-0">
-                {getFileIcon(
-                  getFileType(getFileName(selectedFile.key)),
-                  "text-[#dd7700]",
-                )}
-              </div>
-              {getFileName(selectedFile.key)}
+            <div className="flex items-center gap-2 min-w-0">
+              {getFileIcon(
+                getFileType(getFileName(selectedFile.key)),
+                "text-[#0078D4] text-lg shrink-0",
+              )}
+              <span className="text-[14px] font-semibold text-gray-900 truncate">
+                {getFileName(selectedFile.key)}
+              </span>
             </div>
-            <div className="flex gap-2 sm:gap-3">
+            <div className="flex items-center gap-2 shrink-0 ml-4">
               <button
                 onClick={(e) => handleDownload(e, selectedFile.key)}
-                className={`${primaryButtonClass} hidden sm:flex text-[12px] py-1.5 px-3`}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-[13px] font-semibold rounded-sm transition-colors"
               >
                 <FaDownload size={12} /> Download
               </button>
               <button
                 onClick={(e) => handleDeleteClick(e, selectedFile.key)}
-                className={`${dangerButtonClass} hidden sm:flex text-[12px] py-1.5 px-3`}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-[#fdf3f4] hover:bg-[#f8d7da] text-[#a4262c] text-[13px] font-semibold rounded-sm transition-colors"
               >
                 <FaTrash size={12} /> Delete
               </button>
-              <div className="w-[1px] bg-[#444444] mx-1 hidden sm:block" />
+              <div className="w-px h-5 bg-gray-300 mx-1 hidden sm:block" />
               <button
                 onClick={() => setSelectedFile(null)}
-                className={`${secondaryButtonClass} w-10 h-10 p-0 flex items-center justify-center`}
-                title="Close"
+                className="p-1.5 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-sm transition-colors"
+                title="Close Viewer"
               >
-                <FaTimes size={16} />
+                <FaTimes size={18} />
               </button>
             </div>
           </div>
@@ -649,7 +678,7 @@ export default function DriveManager() {
               <img
                 src={selectedFile.url}
                 alt="preview"
-                className="max-w-full max-h-full object-contain bg-[#1e1e1e] border border-[#444444] shadow-[8px_8px_0px_#000000]"
+                className="max-w-full max-h-full object-contain shadow-2xl rounded-sm"
               />
             )}
             {getFileType(getFileName(selectedFile.key)) === "video" && (
@@ -657,38 +686,37 @@ export default function DriveManager() {
                 src={selectedFile.url}
                 controls
                 autoPlay
-                className="max-w-full max-h-full object-contain bg-[#000000] border border-[#444444] shadow-[8px_8px_0px_#000000]"
+                className="max-w-full max-h-full object-contain shadow-2xl rounded-sm bg-black"
               />
             )}
             {getFileType(getFileName(selectedFile.key)) === "pdf" && (
               <iframe
                 src={selectedFile.url}
-                className="w-full h-full max-w-5xl bg-[#ffffff] border border-[#444444] shadow-[8px_8px_0px_#000000]"
+                className="w-full h-full max-w-5xl bg-white shadow-2xl rounded-sm"
               />
             )}
             {!["image", "video", "pdf"].includes(
               getFileType(getFileName(selectedFile.key)),
             ) && (
-              <div className="bg-[#1e1e1e] p-8 md:p-10 border border-[#444444] shadow-[6px_6px_0px_#000000] text-center flex flex-col items-center max-w-sm w-full">
-                <div className="mb-6 bg-[#000000] border border-[#444444] p-4">
+              <div className="bg-white p-8 md:p-10 shadow-xl rounded-sm text-center flex flex-col items-center max-w-sm w-full">
+                <div className="mb-4">
                   {getFileIcon(
                     getFileType(getFileName(selectedFile.key)),
-                    "text-4xl text-[#dd7700]",
+                    "text-5xl text-gray-300",
                   )}
                 </div>
-                <h3 className="text-[18px] font-bold text-white mb-2  tracking-tight">
-                  NO RICH PREVIEW
+                <h3 className="text-[16px] font-semibold text-gray-900 mb-1">
+                  Preview not available
                 </h3>
-                <div className="border-t border-[#444444] w-full max-w-[200px] my-3"></div>
-                <p className="text-[13px] font-bold text-[#aaaaaa] mb-8 leading-relaxed ">
-                  Format requires a dedicated application. <br /> Download to
-                  view.
+                <p className="text-[13px] text-gray-500 mb-6">
+                  This file format requires a dedicated application to view.
+                  Please download it locally.
                 </p>
                 <button
                   onClick={(e) => handleDownload(e, selectedFile.key)}
                   className={primaryButtonClass}
                 >
-                  <FaDownload size={14} /> DOWNLOAD FILE
+                  <FaDownload size={14} /> Download File
                 </button>
               </div>
             )}
@@ -696,46 +724,45 @@ export default function DriveManager() {
         </div>
       )}
 
-      {/* --- Delete Confirmation Modal --- */}
+      {/* --- Delete Confirmation Dialog (Azure Style) --- */}
       {fileToDelete && (
         <div
-          className="fixed inset-0 z-[110] bg-black/90 flex items-center justify-center p-4"
+          className="fixed inset-0 z-[110] bg-black/40 flex items-center justify-center p-4 backdrop-blur-sm"
           onClick={() => setFileToDelete(null)}
         >
           <div
-            className="bg-[#1e1e1e] border border-[#444444] shadow-[6px_6px_0px_#000000] p-6 w-full max-w-sm flex flex-col gap-6 rounded-none"
+            className="bg-white shadow-xl w-full max-w-md rounded-sm overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex flex-col items-center text-center gap-4">
-              <div className="bg-[#440000] border border-[#ff0000] p-4 text-[#ffaaaa]">
-                <FaExclamationTriangle size={28} />
-              </div>
-              <div>
-                <h3 className="text-[18px] font-bold text-white mb-2  tracking-tight">
-                  DELETE FILE?
-                </h3>
-                <div className="border-t border-[#444444] w-full mx-auto max-w-[150px] my-3"></div>
-                <p className="text-[#aaaaaa] font-bold text-[13px] leading-relaxed ">
-                  Are you sure you want to delete <br />
-                  <span className="text-white bg-[#000000] border border-[#555555] px-2 py-1 inline-block mt-2 mb-2 break-all">
-                    {getFileName(fileToDelete)}
-                  </span>
-                  <br /> This action cannot be undone.
-                </p>
+            <div className="p-6">
+              <div className="flex items-start gap-3">
+                <FaExclamationCircle
+                  size={24}
+                  className="text-[#d13438] shrink-0 mt-0.5"
+                />
+                <div>
+                  <h3 className="text-[16px] font-semibold text-gray-900 mb-2">
+                    Delete Resource
+                  </h3>
+                  <p className="text-[13px] text-gray-600 leading-relaxed">
+                    Are you sure you want to permanently delete{" "}
+                    <span className="font-semibold text-gray-900 break-all">
+                      {getFileName(fileToDelete)}
+                    </span>
+                    ? This action cannot be undone.
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3 w-full">
-              <button
-                onClick={() => setFileToDelete(null)}
-                className={`${secondaryButtonClass} flex-1`}
-              >
-                CANCEL
+            <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end gap-2">
+              <button onClick={confirmDelete} className={dangerButtonClass}>
+                Delete
               </button>
               <button
-                onClick={confirmDelete}
-                className={`${dangerButtonClass} flex-1`}
+                onClick={() => setFileToDelete(null)}
+                className={secondaryButtonClass}
               >
-                <FaTrash size={13} /> DELETE
+                Cancel
               </button>
             </div>
           </div>
