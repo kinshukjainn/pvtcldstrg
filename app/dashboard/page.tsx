@@ -19,6 +19,8 @@ import {
   FaPlay,
   FaEllipsisV,
   FaExclamationCircle,
+  FaCheckCircle,
+  FaInfoCircle,
 } from "react-icons/fa";
 import {
   getUploadUrl,
@@ -40,6 +42,12 @@ type PhotoItem = {
   key?: string;
   url: string;
   size?: number;
+};
+
+type ToastItem = {
+  id: string;
+  message: string;
+  type: "error" | "success" | "info";
 };
 
 const formatBytes = (bytes: number, decimals = 2) => {
@@ -65,6 +73,95 @@ const dangerButtonClass =
 
 const iconButtonClass =
   "p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-sm transition-colors cursor-pointer outline-none";
+
+/* ------------------------------------------------------------------ */
+/* Toast Notification Component                                       */
+/* ------------------------------------------------------------------ */
+function ToastContainer({
+  toasts,
+  onDismiss,
+}: {
+  toasts: ToastItem[];
+  onDismiss: (id: string) => void;
+}) {
+  if (toasts.length === 0) return null;
+
+  const config = {
+    error: {
+      border: "border-l-[#d13438]",
+      bg: "bg-[#fdf3f4]",
+      icon: (
+        <FaExclamationCircle
+          size={16}
+          className="text-[#d13438] shrink-0 mt-0.5"
+        />
+      ),
+      title: "Error",
+      titleColor: "text-[#d13438]",
+    },
+    success: {
+      border: "border-l-[#107c10]",
+      bg: "bg-[#f1faf1]",
+      icon: (
+        <FaCheckCircle size={16} className="text-[#107c10] shrink-0 mt-0.5" />
+      ),
+      title: "Success",
+      titleColor: "text-[#107c10]",
+    },
+    info: {
+      border: "border-l-[#0078D4]",
+      bg: "bg-[#f0f6ff]",
+      icon: (
+        <FaInfoCircle size={16} className="text-[#0078D4] shrink-0 mt-0.5" />
+      ),
+      title: "Info",
+      titleColor: "text-[#0078D4]",
+    },
+  };
+
+  return (
+    <div className="fixed top-4 right-4 z-[200] flex flex-col gap-2 max-w-sm w-full pointer-events-none">
+      {toasts.map((toast) => {
+        const c = config[toast.type];
+        return (
+          <div
+            key={toast.id}
+            className={`pointer-events-auto ${c.bg} border border-gray-200 border-l-4 ${c.border} shadow-lg rounded-sm animate-[slideIn_0.25s_ease-out]`}
+          >
+            <div className="flex items-start gap-3 px-4 py-3">
+              {c.icon}
+              <div className="flex-1 min-w-0">
+                <p
+                  className={`text-[12px] font-semibold ${c.titleColor} uppercase tracking-wide mb-0.5`}
+                >
+                  {c.title}
+                </p>
+                <p className="text-[13px] text-gray-700 leading-snug">
+                  {toast.message}
+                </p>
+              </div>
+              <button
+                onClick={() => onDismiss(toast.id)}
+                className="p-0.5 text-gray-400 hover:text-gray-700 transition-colors shrink-0"
+                aria-label="Dismiss notification"
+              >
+                <FaTimes size={12} />
+              </button>
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Inline keyframes for the slide-in animation */}
+      <style>{`
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateX(24px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+      `}</style>
+    </div>
+  );
+}
 
 /* ------------------------------------------------------------------ */
 /* Reusable Action Menu (kebab ⋮ dropdown)                            */
@@ -156,15 +253,27 @@ export default function DriveManager() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedFile, setSelectedFile] = useState<DriveFile | null>(null);
   const [fileToDelete, setFileToDelete] = useState<string | null>(null);
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    fetchFiles(0, true);
-    fetchStorageInfo();
+  /* ── Toast helpers ── */
+  const showToast = useCallback(
+    (message: string, type: ToastItem["type"] = "error") => {
+      const id = crypto.randomUUID();
+      setToasts((prev) => [...prev, { id, message, type }]);
+      setTimeout(() => {
+        setToasts((prev) => prev.filter((t) => t.id !== id));
+      }, 5000);
+    },
+    [],
+  );
+
+  const dismissToast = useCallback((id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const fetchStorageInfo = async () => {
+  const fetchStorageInfo = useCallback(async () => {
     try {
       const info = await getStorageInfo();
       setStorageUsed(info.used);
@@ -172,31 +281,40 @@ export default function DriveManager() {
     } catch (e) {
       console.error("Failed to fetch storage info", e);
     }
-  };
+  }, []);
 
-  const fetchFiles = async (pageNum = 0, replace = false) => {
-    if (replace) setIsLoading(true);
-    else setIsLoadingMore(true);
+  const fetchFiles = useCallback(
+    async (pageNum = 0, replace = false) => {
+      if (replace) setIsLoading(true);
+      else setIsLoadingMore(true);
 
-    try {
-      const data = await listPhotos(pageNum);
-      const mapped = data.files.map((item: PhotoItem) => ({
-        key: item.key || item.url,
-        url: item.url,
-        size: item.size,
-      }));
+      try {
+        const data = await listPhotos(pageNum);
+        const mapped = data.files.map((item: PhotoItem) => ({
+          key: item.key || item.url,
+          url: item.url,
+          size: item.size,
+        }));
 
-      setFiles((prev) => (replace ? mapped : [...prev, ...mapped]));
-      setHasMore(data.hasMore);
-      setTotalFiles(data.total);
-      setPage(pageNum);
-    } catch (error) {
-      console.error("Failed to fetch:", error);
-    } finally {
-      setIsLoading(false);
-      setIsLoadingMore(false);
-    }
-  };
+        setFiles((prev) => (replace ? mapped : [...prev, ...mapped]));
+        setHasMore(data.hasMore);
+        setTotalFiles(data.total);
+        setPage(pageNum);
+      } catch (error) {
+        console.error("Failed to fetch:", error);
+        showToast("Failed to load files. Please try again.", "error");
+      } finally {
+        setIsLoading(false);
+        setIsLoadingMore(false);
+      }
+    },
+    [showToast],
+  );
+
+  useEffect(() => {
+    fetchFiles(0, true);
+    fetchStorageInfo();
+  }, [fetchFiles, fetchStorageInfo]);
 
   const handleLoadMore = () => fetchFiles(page + 1, false);
 
@@ -205,8 +323,12 @@ export default function DriveManager() {
     if (!selectedFiles || selectedFiles.length === 0) return;
 
     setIsUploading(true);
-    try {
-      const uploadPromises = Array.from(selectedFiles).map(async (file) => {
+
+    let successCount = 0;
+    const failedItems: { name: string; reason: string }[] = [];
+
+    const uploadPromises = Array.from(selectedFiles).map(async (file) => {
+      try {
         const { url, fields, key } = await getUploadUrl(
           file.name,
           file.type,
@@ -225,25 +347,49 @@ export default function DriveManager() {
         });
 
         if (!response.ok && response.status !== 204) {
-          throw new Error(`S3 upload failed: ${response.status}`);
+          throw new Error(`Upload failed with status ${response.status}`);
         }
 
         await confirmUploadDB(key, file.name, file.size, file.type);
-      });
+        successCount++;
+      } catch (error) {
+        const reason = error instanceof Error ? error.message : "Unknown error";
+        failedItems.push({ name: file.name, reason });
+      }
+    });
 
-      await Promise.all(uploadPromises);
-      await fetchFiles(0, true);
-      await fetchStorageInfo();
-    } catch (error) {
-      console.error("Upload failed", error);
-      alert(
-        (error instanceof Error ? error.message : String(error)) ||
-          "Failed to upload one or more files. Storage limit may be reached.",
+    await Promise.all(uploadPromises);
+
+    // Show results via toast
+    if (successCount > 0) {
+      showToast(
+        successCount === 1
+          ? "File uploaded successfully."
+          : `${successCount} files uploaded successfully.`,
+        "success",
       );
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
     }
+
+    if (failedItems.length > 0) {
+      // Show one toast per unique error reason to avoid flooding
+      const reasonGroups = new Map<string, string[]>();
+      for (const item of failedItems) {
+        const existing = reasonGroups.get(item.reason) || [];
+        existing.push(item.name);
+        reasonGroups.set(item.reason, existing);
+      }
+      for (const [reason, names] of reasonGroups) {
+        const fileLabel =
+          names.length === 1 ? names[0] : `${names.length} files`;
+        showToast(`${fileLabel} — ${reason}`, "error");
+      }
+    }
+
+    await fetchFiles(0, true);
+    await fetchStorageInfo();
+
+    setIsUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleDeleteClick = useCallback((e: React.MouseEvent, key: string) => {
@@ -257,6 +403,7 @@ export default function DriveManager() {
     if (!fileObj) return;
 
     const key = fileToDelete;
+    const fileName = key.split("/").pop() || key;
     setFileToDelete(null);
     setFiles((prev) => prev.filter((p) => p.key !== key));
     if (selectedFile?.key === key) setSelectedFile(null);
@@ -265,8 +412,15 @@ export default function DriveManager() {
     try {
       await deletePhoto(key);
       await fetchStorageInfo();
+      showToast(`${fileName} deleted successfully.`, "success");
     } catch (error) {
       console.error("Delete failed", error);
+      showToast(
+        error instanceof Error
+          ? error.message
+          : "Failed to delete file. Please try again.",
+        "error",
+      );
       fetchFiles(0, true);
       fetchStorageInfo();
     }
@@ -328,6 +482,9 @@ export default function DriveManager() {
 
   return (
     <div className="w-full min-h-screen bg-[#faf9f8] text-gray-900 font-sans flex flex-col">
+      {/* ── Toast Notifications ── */}
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+
       {/* --- Page Header & Breadcrumbs --- */}
       <div className="bg-white border-b border-gray-200">
         <div className="px-6 py-4">

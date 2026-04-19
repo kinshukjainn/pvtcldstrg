@@ -2,8 +2,8 @@ import React from "react";
 import { ChevronRight, Shield, Mail } from "lucide-react";
 
 const PLATFORM_NAME = "Kosha";
-const PLATFORM_URL = "https://fsspvt.cloudkinshuk.in";
-const SUPPORT_EMAIL = "support@cloudkinshuk.in";
+const PLATFORM_URL = "https://kosha.cloudkinshuk.in";
+const SUPPORT_EMAIL = "kinshuk25jan04@gmail.com";
 const COMPANY_NAME = "Kosha";
 const EFFECTIVE_DATE = "April 15, 2026";
 

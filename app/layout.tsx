@@ -84,10 +84,63 @@ export const inter = Inter({
   variable: "--font-inter",
   display: "swap",
 });
-
 export const metadata: Metadata = {
-  title: "Kosha - निजी क्लाउड स्टोरेज",
-  description: "This is my own custom private cloud storage",
+  title: {
+    default: "Kosha - Your Private Cloud Storage Solution",
+    template: "%s | Kosha",
+  },
+  description:
+    "Kosha is a secure, private cloud storage platform designed for personal data management, file syncing, and privacy-first storage solutions.",
+
+  keywords: [
+    "Kosha",
+    "private cloud storage",
+    "secure file storage",
+    "self hosted cloud",
+    "personal cloud",
+    "file management",
+  ],
+
+  authors: [{ name: "Kijauk" }],
+  creator: "Kijauk",
+
+  metadataBase: new URL("https://kosha.cloudkinshuk.in"),
+
+  icons: {
+    icon: [{ url: "/logo.svg", type: "image/svg+xml" }],
+    shortcut: "/logo.svg",
+    apple: "/logo.svg",
+  },
+
+  openGraph: {
+    title: "Kosha - Your Private Cloud Storage Solution",
+    description:
+      "A privacy-first custom cloud storage solution to securely store, manage, and access your files anywhere.",
+    url: "https://kosha.cloudkinhuk.in",
+    siteName: "Kosha",
+    images: [
+      {
+        url: "/logo.svg", // MUST be SVG if you want consistency
+        width: 1200,
+        height: 630,
+        alt: "Kosha Cloud Storage",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Kosha - Your Private Cloud Storage Solution",
+    description: "Secure and private cloud storage built for personal use.",
+    images: ["/logo.svg"],
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

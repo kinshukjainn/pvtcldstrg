@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useSignIn, useSignUp, useClerk } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaSpinner } from "react-icons/fa";
-import { BsCloudRain } from "react-icons/bs";
+import Image from "next/image";
 import Link from "next/link";
 import { LockKeyhole } from "lucide-react";
 
@@ -263,7 +263,13 @@ export default function AuthPage() {
         {/* Header Section */}
         <div className="flex flex-col items-center text-center mb-6">
           <div className="mb-4">
-            <BsCloudRain size={40} className="text-[#0078D4]" />
+            <Image
+              src="/authlogo.png"
+              alt="Kosha Logo"
+              width={80}
+              height={80}
+              className="object-contain"
+            />
           </div>
           <h1 className="text-xl font-semibold text-gray-900 mb-1 leading-tight">
             Kosha Authentication
