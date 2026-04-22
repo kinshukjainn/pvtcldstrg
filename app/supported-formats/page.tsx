@@ -41,7 +41,7 @@ const DOC_CATEGORIES = [
 // Azure-style flat tag
 function FormatBadge({ ext }: { ext: string }) {
   return (
-    <span className="inline-block items-center px-2.5 py-1 bg-gray-100 text-gray-800 border border-gray-200 text-[12px] font-semibold rounded-sm mr-2 mb-2 select-none">
+    <span className="inline-block items-center px-2.5 py-1 bg-gray-100 text-gray-800 border border-gray-200 text-[12px] font-semibold rounded-xl mr-2 mb-2 select-none">
       {ext}
     </span>
   );
@@ -76,7 +76,7 @@ function SystemNotice({ children }: { children: ReactNode }) {
 
 export default function SupportedFormatsPage() {
   return (
-    <div className="min-h-screen text-gray-900 pb-24 bg-[#faf9f8] font-sans selection:bg-[#cce3f5]">
+    <div className="min-h-screen text-gray-900 pb-24 bg-[#faf9f8]  selection:bg-[#cce3f5]">
       {/* Header / Command Bar */}
       <header className="sticky top-0 z-40 border-b border-gray-200 bg-white shadow-sm">
         <div className="max-w-[1000px] mx-auto flex justify-between items-center px-6 py-3">
@@ -86,7 +86,7 @@ export default function SupportedFormatsPage() {
           >
             Back to Application
           </Link>
-          <span className="text-[12px] font-semibold text-gray-600 bg-gray-50 px-2.5 py-1 border border-gray-200 rounded-sm">
+          <span className="text-[12px] font-semibold text-gray-600 bg-gray-50 px-2.5 py-1 border border-gray-200 rounded-xl">
             System Documentation
           </span>
         </div>
@@ -114,7 +114,7 @@ export default function SupportedFormatsPage() {
         {/* Table of Contents (Azure "In this article" style) */}
         <nav
           aria-label="Table of Contents"
-          className="mb-14 p-5 border border-gray-200 bg-white rounded-sm shadow-sm"
+          className="mb-14 p-5 border border-gray-200 bg-white rounded-xl shadow-sm"
         >
           <p className="text-[14px] font-semibold text-gray-900 mb-3 flex items-center gap-2">
             <Info size={16} className="text-[#0078D4]" /> In this article
@@ -146,7 +146,7 @@ export default function SupportedFormatsPage() {
             preserved by default but can be stripped via user privacy settings
             prior to upload.
           </p>
-          <div className="flex flex-wrap bg-white p-5 border border-gray-200 rounded-sm shadow-sm">
+          <div className="flex flex-wrap bg-white p-5 border border-gray-200 rounded-xl shadow-sm">
             {["JPG", "JPEG", "PNG", "GIF", "WEBP", "SVG", "HEIC"].map((e) => (
               <FormatBadge key={e} ext={e} />
             ))}
@@ -165,7 +165,7 @@ export default function SupportedFormatsPage() {
             requiring proprietary decoding pipelines may require localized
             download for optimal viewing.
           </p>
-          <div className="flex flex-wrap bg-white p-5 border border-gray-200 rounded-sm shadow-sm">
+          <div className="flex flex-wrap bg-white p-5 border border-gray-200 rounded-xl shadow-sm">
             {["MP4", "WEBM", "OGG", "MOV", "MKV"].map((e) => (
               <FormatBadge key={e} ext={e} />
             ))}
@@ -184,7 +184,7 @@ export default function SupportedFormatsPage() {
             visualization is generated locally on the client machine to ensure
             data privacy.
           </p>
-          <div className="flex flex-wrap bg-white p-5 border border-gray-200 rounded-sm shadow-sm">
+          <div className="flex flex-wrap bg-white p-5 border border-gray-200 rounded-xl shadow-sm">
             {["MP3", "WAV", "AAC", "FLAC", "M4A"].map((e) => (
               <FormatBadge key={e} ext={e} />
             ))}
@@ -207,7 +207,7 @@ export default function SupportedFormatsPage() {
             {DOC_CATEGORIES.map((cat) => (
               <div
                 key={cat.label}
-                className="p-5 bg-white border border-gray-200 rounded-sm shadow-sm hover:shadow-md transition-shadow"
+                className="p-5 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow"
               >
                 <h3 className="text-[15px] font-semibold text-gray-900 mb-3">
                   {cat.label}
@@ -238,7 +238,7 @@ export default function SupportedFormatsPage() {
             (the archive&apos;s native encryption plus Kosha&apos;s
             platform-level AES-256 encryption).
           </p>
-          <div className="flex flex-wrap bg-white p-5 border border-gray-200 rounded-sm shadow-sm mb-6">
+          <div className="flex flex-wrap bg-white p-5 border border-gray-200 rounded-xl shadow-sm mb-6">
             {["ZIP", "TAR", "TAR.GZ", "RAR", "7Z"].map((e) => (
               <FormatBadge key={e} ext={e} />
             ))}

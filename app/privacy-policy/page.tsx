@@ -9,7 +9,7 @@ const EFFECTIVE_DATE = "April 15, 2026";
 
 export default function PrivacyPolicy() {
   return (
-    <div className="min-h-screen bg-[#faf9f8] text-gray-900 font-sans pb-12">
+    <div className="min-h-screen bg-[#faf9f8] text-gray-900  pb-12">
       {/* PAGE HEADER */}
       <div className="bg-white border-b border-gray-200">
         <div className="px-6 py-4">
@@ -22,7 +22,7 @@ export default function PrivacyPolicy() {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-[#0078D4] rounded-sm flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 bg-[#0078D4] rounded-xl flex items-center justify-center shrink-0">
               <Shield size={20} className="text-white" />
             </div>
             <div>
@@ -39,7 +39,7 @@ export default function PrivacyPolicy() {
 
       {/* MAIN CONTENT */}
       <main className="max-w-[1000px] mx-auto px-4 sm:px-6 mt-6 sm:mt-8">
-        <div className="bg-white border border-gray-200 shadow-sm rounded-sm p-6 sm:p-8 space-y-8">
+        <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 sm:p-8 space-y-8">
           {/* Intro */}
           <section className="text-[14px] text-gray-700 leading-relaxed border-b border-gray-100 pb-6">
             <p>
@@ -135,7 +135,7 @@ export default function PrivacyPolicy() {
                   "Session-based authentication",
                 ]}
               />
-              <p className="text-[13px] text-gray-500 mt-4 bg-[#f3f2f1] p-3 rounded-sm border border-gray-200">
+              <p className="text-[13px] text-gray-500 mt-4 bg-[#f3f2f1] p-3 rounded-xl border border-gray-200">
                 <strong className="font-semibold text-gray-700">Note:</strong>{" "}
                 No system is completely secure. Users are responsible for
                 maintaining the confidentiality of their credentials.
@@ -147,7 +147,7 @@ export default function PrivacyPolicy() {
           <section>
             <SectionHeading number="4" title="Third-Party Services" />
             <div className="ml-1 sm:ml-6 mt-4">
-              <div className="overflow-x-auto border border-gray-200 rounded-sm">
+              <div className="overflow-x-auto border border-gray-200 rounded-xl">
                 <table className="w-full text-left border-collapse min-w-[500px]">
                   <thead>
                     <tr className="bg-[#fafafa] border-b border-gray-200">
@@ -205,7 +205,7 @@ export default function PrivacyPolicy() {
           {/* Section 11 - Contact */}
           <section>
             <SectionHeading number="11" title="Contact" />
-            <div className="ml-1 sm:ml-6 mt-4 border border-gray-200 bg-[#fafafa] rounded-sm p-5">
+            <div className="ml-1 sm:ml-6 mt-4 border border-gray-200 bg-[#fafafa] rounded-xl p-5">
               <p className="text-[13px] text-gray-600 mb-3">
                 For privacy-related requests or inquiries, please contact our
                 support team:

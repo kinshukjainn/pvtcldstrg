@@ -68,13 +68,13 @@ const cardVariants: Variants = {
 export default function PricingPage() {
   // Azure Standard Button Classes
   const primaryButtonClass =
-    "w-full flex items-center justify-center gap-2 py-2 px-4 font-semibold text-[13px] bg-[#0078D4] hover:bg-[#005a9e] text-white rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+    "w-full flex items-center justify-center gap-2 py-2 px-4 font-semibold text-[13px] bg-[#0078D4] hover:bg-[#005a9e] text-white rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
   const secondaryButtonClass =
-    "w-full flex items-center justify-center gap-2 py-2 px-4 font-semibold text-[13px] bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+    "w-full flex items-center justify-center gap-2 py-2 px-4 font-semibold text-[13px] bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
   return (
-    <div className="min-h-screen bg-[#faf9f8] text-gray-900 flex items-center justify-center p-4 md:p-8 font-sans">
+    <div className="min-h-screen bg-[#faf9f8] text-gray-900 flex items-center justify-center p-4 md:p-8 ">
       <div className="w-full max-w-6xl mx-auto py-10">
         {/* Header Section */}
         <div className="flex flex-col items-center text-center mb-12">
@@ -101,7 +101,7 @@ export default function PricingPage() {
             <motion.div
               key={tier.name}
               variants={cardVariants}
-              className={`relative flex flex-col bg-white p-6 border rounded-sm shadow-sm transition-shadow hover:shadow-md ${
+              className={`relative flex flex-col bg-white p-6 border rounded-xl shadow-sm transition-shadow hover:shadow-md ${
                 tier.isPopular
                   ? "border-[#0078D4] border-t-4"
                   : "border-gray-200"
@@ -109,7 +109,7 @@ export default function PricingPage() {
             >
               {/* Popular Badge */}
               {tier.isPopular && (
-                <div className="absolute -top-[14px] right-4 bg-[#f3f9fd] text-[#0078D4] border border-[#0078D4] text-[11px] font-semibold px-2 py-0.5 rounded-sm flex items-center gap-1.5 uppercase tracking-wide">
+                <div className="absolute -top-[14px] right-4 bg-[#f3f9fd] text-[#0078D4] border border-[#0078D4] text-[11px] font-semibold px-2 py-0.5 rounded-xl flex items-center gap-1.5 uppercase tracking-wide">
                   <Sparkles size={12} />
                   Most Popular
                 </div>

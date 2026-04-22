@@ -49,7 +49,7 @@ const HighlightText = ({
           // Azure standard text highlight
           <mark
             key={i}
-            className="bg-[#fff100] text-black px-0.5 rounded-sm font-semibold"
+            className="bg-[#fff100] text-black px-0.5 rounded-xl font-semibold"
           >
             {part}
           </mark>
@@ -72,7 +72,7 @@ export default function FeedbacksList() {
 
   // Azure Theme Classes
   const inputClass =
-    "w-full px-3 py-1.5 bg-white border border-gray-300 text-[13px] text-gray-900 placeholder-gray-500 focus:outline-none focus:border-[#0078D4] focus:ring-1 focus:ring-[#0078D4] rounded-sm transition-all";
+    "w-full px-3 py-1.5 bg-white border border-gray-300 text-[13px] text-gray-900 placeholder-gray-500 focus:outline-none focus:border-[#0078D4] focus:ring-1 focus:ring-[#0078D4] rounded-xl transition-all";
 
   const primaryTabClass =
     "px-4 py-2 text-[15px] font-semibold text-[#0078D4] border-b-2 border-[#0078D4]  transition-colors";
@@ -135,7 +135,7 @@ export default function FeedbacksList() {
   const filterOptions = ["All", "Projects", "Blogs", "Portfolio Website"];
 
   return (
-    <div className="w-full min-h-screen bg-[#faf9f8] text-gray-900 font-sans">
+    <div className="w-full min-h-screen bg-[#faf9f8] text-gray-900 ">
       {/* --- Page Header (Azure Style) --- */}
       <div className="bg-white border-b border-gray-200">
         <div className="px-6 py-4 max-w-7xl mx-auto w-full">
@@ -149,7 +149,7 @@ export default function FeedbacksList() {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-[#0078D4] rounded-sm flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 bg-[#0078D4] rounded-xl flex items-center justify-center shrink-0">
               <BsCloudRain size={20} className="text-white" />
             </div>
             <div>
@@ -199,14 +199,14 @@ export default function FeedbacksList() {
       {/* --- Main Content Area --- */}
       <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {isLoading ? (
-          <div className="bg-white border border-gray-200 shadow-sm flex flex-col items-center justify-center min-h-[40vh] gap-3 p-8 rounded-sm">
+          <div className="bg-white border border-gray-200 shadow-sm flex flex-col items-center justify-center min-h-[40vh] gap-3 p-8 rounded-xl">
             <FaSpinner className="animate-spin text-[#0078D4]" size={24} />
             <span className="text-[13px] font-semibold text-gray-600">
               Fetching telemetry data...
             </span>
           </div>
         ) : filteredFeedbacks.length === 0 ? (
-          <div className="bg-white border border-gray-200 shadow-sm flex flex-col items-center justify-center min-h-[40vh] p-8 text-center rounded-sm">
+          <div className="bg-white border border-gray-200 shadow-sm flex flex-col items-center justify-center min-h-[40vh] p-8 text-center rounded-xl">
             <Search className="text-4xl text-gray-300 mb-4" />
             <h3 className="text-[16px] font-semibold text-gray-900 mb-1">
               No Results Found
@@ -220,19 +220,19 @@ export default function FeedbacksList() {
             {filteredFeedbacks.map((fb) => (
               <article
                 key={fb.id}
-                className="bg-white border border-gray-200 p-5 rounded-sm shadow-sm hover:shadow-md transition-shadow flex flex-col"
+                className="bg-white border border-gray-200 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col"
               >
                 {/* Card Header */}
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-gray-100">
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] text-gray-700 bg-gray-100 px-2 py-0.5 rounded-sm font-semibold uppercase">
+                    <span className="text-[11px] text-gray-700 bg-gray-100 px-2 py-0.5 rounded-xl font-semibold uppercase">
                       {fb.category}
                     </span>
                     <span className="text-gray-400 text-[12px]">/</span>
                     <span className="text-[12px] font-semibold text-[#0078D4] uppercase">
                       KOSHA
                     </span>
-                    <span className="ml-2 flex items-center gap-1 text-[11px] font-semibold text-green-700 bg-green-50 px-1.5 py-0.5 rounded-sm border border-green-200 uppercase">
+                    <span className="ml-2 flex items-center gap-1 text-[11px] font-semibold text-green-700 bg-green-50 px-1.5 py-0.5 rounded-xl border border-green-200 uppercase">
                       <CheckCircle2 size={12} /> {fb.status}
                     </span>
                   </div>
@@ -250,8 +250,8 @@ export default function FeedbacksList() {
                 <div
                   className="prose prose-sm max-w-none mb-6 flex-grow text-gray-800 text-[13px]
                   prose-p:leading-relaxed prose-headings:text-gray-900 prose-headings:font-semibold
-                  prose-code:bg-gray-100 prose-code:text-[#a4262c] prose-code:px-1 prose-code:py-0.5 prose-code:rounded-sm
-                  prose-pre:bg-gray-50 prose-pre:border prose-pre:border-gray-200 prose-pre:rounded-sm prose-pre:p-3
+                  prose-code:bg-gray-100 prose-code:text-[#a4262c] prose-code:px-1 prose-code:py-0.5 prose-code:rounded-xl
+                  prose-pre:bg-gray-50 prose-pre:border prose-pre:border-gray-200 prose-pre:rounded-xl prose-pre:p-3
                   prose-a:text-[#0078D4] hover:prose-a:underline"
                 >
                   <ReactMarkdown>{fb.feedback}</ReactMarkdown>
@@ -277,7 +277,7 @@ export default function FeedbacksList() {
                         href={`https://github.com/${fb.github_id.replace("@", "")}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-gray-500 hover:text-[#0078D4] hover:bg-gray-100 p-1.5 rounded-sm transition-colors"
+                        className="text-gray-500 hover:text-[#0078D4] hover:bg-gray-100 p-1.5 rounded-xl transition-colors"
                         title="View GitHub Profile"
                       >
                         <LuGithub size={16} />
@@ -285,7 +285,7 @@ export default function FeedbacksList() {
                     )}
                     <a
                       href={`mailto:${fb.email}`}
-                      className="text-gray-500 hover:text-[#0078D4] hover:bg-gray-100 p-1.5 rounded-sm transition-colors"
+                      className="text-gray-500 hover:text-[#0078D4] hover:bg-gray-100 p-1.5 rounded-xl transition-colors"
                       title="Send Email"
                     >
                       <Mail size={16} />

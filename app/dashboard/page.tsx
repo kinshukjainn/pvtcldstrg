@@ -63,16 +63,16 @@ const formatBytes = (bytes: number, decimals = 2) => {
 /* Azure Standard Button Classes                                      */
 /* ------------------------------------------------------------------ */
 const primaryButtonClass =
-  "inline-flex items-center justify-center gap-2 py-1.5 px-4 font-semibold text-[13px] bg-[#0078D4] text-white hover:bg-[#005a9e] rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+  "inline-flex items-center justify-center gap-2 py-1.5 px-4 font-semibold text-[13px] bg-[#0078D4] text-white hover:bg-[#005a9e] rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
 const secondaryButtonClass =
-  "inline-flex items-center justify-center gap-2 py-1.5 px-4 font-semibold text-[13px] bg-white border border-gray-300 text-gray-800 hover:bg-gray-50 rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+  "inline-flex items-center justify-center gap-2 py-1.5 px-4 font-semibold text-[13px] bg-white border border-gray-300 text-gray-800 hover:bg-gray-50 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
 const dangerButtonClass =
-  "inline-flex items-center justify-center gap-2 py-1.5 px-4 font-semibold text-[13px] bg-[#d13438] text-white hover:bg-[#a4262c] rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+  "inline-flex items-center justify-center gap-2 py-1.5 px-4 font-semibold text-[13px] bg-[#d13438] text-white hover:bg-[#a4262c] rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
 const iconButtonClass =
-  "p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-sm transition-colors cursor-pointer outline-none";
+  "p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors cursor-pointer outline-none";
 
 /* ------------------------------------------------------------------ */
 /* Toast Notification Component                                       */
@@ -126,7 +126,7 @@ function ToastContainer({
         return (
           <div
             key={toast.id}
-            className={`pointer-events-auto ${c.bg} border border-gray-200 border-l-4 ${c.border} shadow-lg rounded-sm animate-[slideIn_0.25s_ease-out]`}
+            className={`pointer-events-auto ${c.bg} border border-gray-200 border-l-4 ${c.border} shadow-lg rounded-xl animate-[slideIn_0.25s_ease-out]`}
           >
             <div className="flex items-start gap-3 px-4 py-3">
               {c.icon}
@@ -205,7 +205,7 @@ function ActionMenu({
 
       {open && (
         <div
-          className="absolute right-0 top-full mt-1 z-[100] min-w-[160px] bg-white border border-gray-200 shadow-md py-1 flex flex-col rounded-sm"
+          className="absolute right-0 top-full mt-1 z-[100] min-w-[160px] bg-white border border-gray-200 shadow-md py-1 flex flex-col rounded-xl"
           onClick={(e) => e.stopPropagation()}
         >
           <button
@@ -481,7 +481,7 @@ export default function DriveManager() {
   );
 
   return (
-    <div className="w-full min-h-screen bg-[#faf9f8] text-gray-900 font-sans flex flex-col">
+    <div className="w-full min-h-screen bg-[#faf9f8] text-gray-900  flex flex-col">
       {/* ── Toast Notifications ── */}
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
 
@@ -493,7 +493,7 @@ export default function DriveManager() {
             Explorer
           </div>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#0078D4] rounded-sm flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 bg-[#0078D4] rounded-xl flex items-center justify-center shrink-0">
               <HardDrive size={20} className="text-white" />
             </div>
             <div>
@@ -535,12 +535,12 @@ export default function DriveManager() {
             <div className="w-px h-5 bg-gray-300 mx-2 hidden sm:block" />
 
             {/* View Mode Toggles */}
-            <div className="flex items-center bg-white border border-gray-300 rounded-sm overflow-hidden">
+            <div className="flex items-center bg-white p-1 rounded-full overflow-hidden">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-1.5 transition-colors ${
+                className={`p-2 transition-colors rounded-xl ${
                   viewMode === "grid"
-                    ? "bg-gray-100 text-[#0078D4]"
+                    ? "bg-blue-400 text-black"
                     : "text-gray-500 hover:bg-gray-50"
                 }`}
                 title="Grid View"
@@ -550,9 +550,9 @@ export default function DriveManager() {
               <div className="w-px h-4 bg-gray-200" />
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-1.5 transition-colors ${
+                className={`p-2 transition-colors rounded-xl ${
                   viewMode === "list"
-                    ? "bg-gray-100 text-[#0078D4]"
+                    ? "bg-blue-400 text-black"
                     : "text-gray-500 hover:bg-gray-50"
                 }`}
                 title="List View"
@@ -573,7 +573,7 @@ export default function DriveManager() {
               placeholder="Filter by name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 bg-white border border-gray-300 rounded-sm text-[13px] text-gray-900 focus:outline-none focus:border-[#0078D4] focus:ring-1 focus:ring-[#0078D4] transition-all placeholder-gray-400"
+              className="w-full pl-8 pr-3 py-1.5 bg-white border border-gray-300 rounded-xl text-[13px] text-gray-900 focus:outline-none focus:border-[#0078D4] focus:ring-1 focus:ring-[#0078D4] transition-all placeholder-gray-400"
             />
           </div>
         </div>
@@ -621,7 +621,7 @@ export default function DriveManager() {
             </span>
           </div>
         ) : filteredFiles.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 bg-white border border-gray-200 rounded-sm">
+          <div className="flex flex-col items-center justify-center py-16 bg-white border border-gray-200 rounded-xl">
             <FaFileAlt className="text-4xl text-gray-300 mb-3" />
             <h3 className="text-[15px] font-semibold text-gray-900 mb-1">
               No files found
@@ -631,7 +631,7 @@ export default function DriveManager() {
             </p>
           </div>
         ) : (
-          <div className="bg-white border border-gray-200 rounded-sm">
+          <div className="bg-white border border-gray-200 rounded-xl">
             {/* ===================== LIST VIEW ===================== */}
             {viewMode === "list" ? (
               <div className="overflow-x-auto w-full">
@@ -670,7 +670,7 @@ export default function DriveManager() {
                             </span>
                           </td>
                           <td className="px-4 py-3 hidden sm:table-cell">
-                            <span className="bg-gray-100 text-gray-700 px-2 py-0.5 text-[11px] font-semibold rounded-sm">
+                            <span className="bg-gray-100 text-gray-700 px-2 py-0.5 text-[11px] font-semibold rounded-xl">
                               {ext.toUpperCase()}
                             </span>
                           </td>
@@ -701,10 +701,10 @@ export default function DriveManager() {
                     <div
                       key={file.key}
                       onClick={() => setSelectedFile(file)}
-                      className="relative bg-white border border-gray-200 hover:border-[#0078D4] hover:shadow-sm transition-all duration-150 cursor-pointer flex flex-col group rounded-sm overflow-hidden"
+                      className="relative bg-white border border-gray-200 hover:border-[#0078D4] hover:shadow-sm transition-all duration-150 cursor-pointer flex flex-col group rounded-xl overflow-hidden"
                     >
                       <div
-                        className="absolute top-1.5 right-1.5 z-10 bg-white/90 rounded-sm opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity shadow-sm"
+                        className="absolute top-1.5 right-1.5 z-10 bg-white/90 rounded-xl opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity shadow-sm"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <ActionMenu
@@ -804,20 +804,20 @@ export default function DriveManager() {
             <div className="flex items-center gap-2 shrink-0 ml-4">
               <button
                 onClick={(e) => handleDownload(e, selectedFile.key)}
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-[13px] font-semibold rounded-sm transition-colors"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-[13px] font-semibold rounded-xl transition-colors"
               >
                 <FaDownload size={12} /> Download
               </button>
               <button
                 onClick={(e) => handleDeleteClick(e, selectedFile.key)}
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-[#fdf3f4] hover:bg-[#f8d7da] text-[#a4262c] text-[13px] font-semibold rounded-sm transition-colors"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-[#fdf3f4] hover:bg-[#f8d7da] text-[#a4262c] text-[13px] font-semibold rounded-xl transition-colors"
               >
                 <FaTrash size={12} /> Delete
               </button>
               <div className="w-px h-5 bg-gray-300 mx-1 hidden sm:block" />
               <button
                 onClick={() => setSelectedFile(null)}
-                className="p-1.5 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-sm transition-colors"
+                className="p-1.5 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors"
                 title="Close Viewer"
               >
                 <FaTimes size={18} />
@@ -835,7 +835,7 @@ export default function DriveManager() {
               <img
                 src={selectedFile.url}
                 alt="preview"
-                className="max-w-full max-h-full object-contain shadow-2xl rounded-sm"
+                className="max-w-full max-h-full object-contain shadow-2xl rounded-xl"
               />
             )}
             {getFileType(getFileName(selectedFile.key)) === "video" && (
@@ -843,19 +843,19 @@ export default function DriveManager() {
                 src={selectedFile.url}
                 controls
                 autoPlay
-                className="max-w-full max-h-full object-contain shadow-2xl rounded-sm bg-black"
+                className="max-w-full max-h-full object-contain shadow-2xl rounded-xl bg-black"
               />
             )}
             {getFileType(getFileName(selectedFile.key)) === "pdf" && (
               <iframe
                 src={selectedFile.url}
-                className="w-full h-full max-w-5xl bg-white shadow-2xl rounded-sm"
+                className="w-full h-full max-w-5xl bg-white shadow-2xl rounded-xl"
               />
             )}
             {!["image", "video", "pdf"].includes(
               getFileType(getFileName(selectedFile.key)),
             ) && (
-              <div className="bg-white p-8 md:p-10 shadow-xl rounded-sm text-center flex flex-col items-center max-w-sm w-full">
+              <div className="bg-white p-8 md:p-10 shadow-xl rounded-xl text-center flex flex-col items-center max-w-sm w-full">
                 <div className="mb-4">
                   {getFileIcon(
                     getFileType(getFileName(selectedFile.key)),
@@ -888,7 +888,7 @@ export default function DriveManager() {
           onClick={() => setFileToDelete(null)}
         >
           <div
-            className="bg-white shadow-xl w-full max-w-md rounded-sm overflow-hidden"
+            className="bg-white shadow-xl w-full max-w-md rounded-xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">

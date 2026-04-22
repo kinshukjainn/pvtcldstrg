@@ -12,7 +12,7 @@ import {
 import { BsCloudRain } from "react-icons/bs";
 
 const primaryButtonClass =
-  "inline-flex w-fit items-center justify-center gap-2 py-2 px-5 font-semibold text-[13px] bg-[#0078D4] hover:bg-[#005a9e] text-white rounded-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#0078D4]";
+  "inline-flex w-fit items-center justify-center gap-2 py-2 px-5 font-semibold text-[13px] bg-[#0078D4] hover:bg-[#005a9e] text-white rounded-2xl transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#0078D4]";
 
 export default function AboutUs() {
   const links = [
@@ -63,12 +63,12 @@ export default function AboutUs() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#faf9f8] text-gray-900 py-10 px-4 md:px-8 font-sans selection:bg-[#cce3f5]">
+    <div className="min-h-screen bg-[#faf9f8] text-gray-900 py-10 px-4 md:px-8  selection:bg-[#cce3f5]">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* ================= PROJECT SECTION ================= */}
-        <section className="bg-white border border-gray-200 p-6 md:p-8 shadow-sm rounded-sm">
+        <section className="bg-white border border-gray-200 p-6 md:p-8 shadow-sm rounded-2xl">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
-            <div className="p-3 bg-[#0078D4] rounded-sm flex shrink-0 items-center justify-center">
+            <div className="p-3 bg-[#0078D4] rounded-2xl flex shrink-0 items-center justify-center">
               <BsCloudRain className="w-8 h-8 text-white" />
             </div>
             <div>
@@ -90,7 +90,7 @@ export default function AboutUs() {
             a private ecosystem built for your files, photos, and documents.
           </p>
 
-          <div className="bg-[#f8f8f8] border border-gray-200 p-5 rounded-sm">
+          <div className="bg-[#f8f8f8] border border-gray-200 p-5 rounded-2xl">
             <p className="text-[13px] text-gray-700 mb-4 leading-relaxed">
               <strong className="text-gray-900 font-semibold">
                 Proudly Open Source
@@ -112,9 +112,9 @@ export default function AboutUs() {
         </section>
 
         {/* ================= DEVELOPER SECTION ================= */}
-        <section className="flex flex-col md:flex-row gap-6 md:gap-8 items-start bg-white border border-gray-200 p-6 md:p-8 shadow-sm rounded-sm">
+        <section className="flex flex-col md:flex-row gap-6 md:gap-8 items-start bg-white border border-gray-200 p-6 md:p-8 shadow-sm rounded-2xl">
           {/* Avatar (Azure square/rounded profile style) */}
-          <div className="flex-shrink-0 relative w-24 h-24 md:w-32 md:h-32 border border-gray-200 shadow-sm rounded-sm overflow-hidden bg-gray-50">
+          <div className="flex-shrink-0 relative w-24 h-24 md:w-32 md:h-32 border border-gray-200 shadow-sm rounded-2xl overflow-hidden bg-gray-50">
             <Image
               src="/profile.jpg" // Replace with your actual image path
               alt="Kinshuk Jain Avatar"
@@ -155,7 +155,7 @@ export default function AboutUs() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="flex items-center justify-center w-9 h-9 bg-white text-gray-600 border border-gray-300 hover:border-[#0078D4] hover:text-[#0078D4] hover:bg-[#f3f9fd] rounded-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#0078D4]"
+                  className="flex items-center justify-center w-9 h-9 bg-white text-gray-600 border border-gray-300 hover:border-[#0078D4] hover:text-[#0078D4] hover:bg-[#f3f9fd] rounded-2xl transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#0078D4]"
                 >
                   {social.icon}
                 </a>
@@ -180,10 +180,10 @@ export default function AboutUs() {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col p-6 bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow rounded-sm"
+                className="group flex flex-col p-6 bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow rounded-2xl"
               >
                 <div className="flex items-center gap-3.5 mb-3">
-                  <div className="p-2.5 bg-[#f3f2f1] rounded-sm group-hover:bg-[#e1dfdd] transition-colors">
+                  <div className="p-2.5 bg-[#f3f2f1] rounded-2xl group-hover:bg-[#e1dfdd] transition-colors">
                     {link.icon}
                   </div>
                   <h4 className="text-[15px] font-semibold text-gray-900 group-hover:text-[#0078D4] transition-colors">

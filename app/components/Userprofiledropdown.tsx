@@ -21,10 +21,10 @@ export default function UserProfileDropdown({
 
   // Azure Standard Context Menu Button Classes
   const menuButtonClass =
-    "w-full flex items-center cursor-pointer gap-3 py-2 px-3 text-[13px] text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-sm outline-none";
+    "w-full flex items-center cursor-pointer gap-3 py-2 px-3 text-[13px] text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-xl outline-none";
 
   const dangerMenuButtonClass =
-    "w-full flex items-center cursor-pointer gap-3 py-2 px-3 text-[13px] text-[#a4262c] hover:bg-[#fdf3f4] transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-sm outline-none";
+    "w-full flex items-center cursor-pointer gap-3 py-2 px-3 text-[13px] text-[#a4262c] hover:bg-[#fdf3f4] transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-xl outline-none";
 
   useEffect(() => {
     if (variant !== "desktop") return;
@@ -103,7 +103,7 @@ export default function UserProfileDropdown({
   if (variant === "mobile") {
     return (
       <div
-        className="w-full bg-white rounded-sm border border-gray-200 shadow-sm"
+        className="w-full bg-white rounded-xl border border-gray-200 shadow-sm"
         ref={dropdownRef}
       >
         <button
@@ -155,7 +155,7 @@ export default function UserProfileDropdown({
       {/* Desktop Trigger (Styled for blue global header) */}
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex items-center gap-1.5 p-1 rounded-sm hover:bg-white/10 transition-colors duration-150 cursor-pointer outline-none group"
+        className="flex items-center gap-1.5 p-1 rounded-xl hover:bg-white/10 transition-colors duration-150 cursor-pointer outline-none group"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
@@ -169,7 +169,7 @@ export default function UserProfileDropdown({
 
       {/* Desktop Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 top-[calc(100%+8px)] w-[280px] bg-white border border-gray-200 shadow-md z-50 rounded-sm overflow-hidden">
+        <div className="absolute right-0 top-[calc(100%+8px)] w-[280px] bg-white border border-gray-200 shadow-md z-50 rounded-xl overflow-hidden">
           {/* User Info Header */}
           <div className="flex items-center gap-3 p-4 border-b border-gray-200 bg-[#faf9f8]">
             {renderAvatar(44)}

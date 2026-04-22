@@ -219,7 +219,7 @@ export default function RepositoryViewer() {
   const pathBreadcrumbs = currentPath.split("/").filter(Boolean);
 
   return (
-    <div className="min-h-screen bg-[#faf9f8] text-gray-900 font-sans">
+    <div className="min-h-screen bg-[#faf9f8] text-gray-900 ">
       {/* PAGE HEADER */}
       <div className="bg-white border-b border-gray-200">
         <div className="px-4 sm:px-6 py-4">
@@ -259,7 +259,7 @@ export default function RepositoryViewer() {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-[#0078D4] rounded-sm flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 bg-[#0078D4] rounded-xl flex items-center justify-center shrink-0">
               <Code2 size={20} className="text-white" />
             </div>
             <div>
@@ -336,13 +336,13 @@ export default function RepositoryViewer() {
 
         {/* ERROR DISPLAY */}
         {error && (
-          <div className="mb-6 p-4 bg-[#fdf3f4] border border-[#f4c8ca] text-[#a4262c] text-[13px] font-medium rounded-sm">
+          <div className="mb-6 p-4 bg-[#fdf3f4] border border-[#f4c8ca] text-[#a4262c] text-[13px] font-medium rounded-xl">
             Error: {error}
           </div>
         )}
 
         {/* CONTENT AREA */}
-        <div className="bg-white border border-gray-200 shadow-sm rounded-sm overflow-hidden">
+        <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden">
           {/* Section Header */}
           <div className="bg-[#fafafa] border-b border-gray-200 px-4 py-3 flex items-center justify-between text-[13px] font-semibold text-gray-700">
             <div className="flex items-center gap-2">

@@ -245,21 +245,21 @@ export default function AuthPage() {
 
   // Azure Standard Input Classes
   const inputClass =
-    "w-full px-3 py-2 bg-white border border-gray-300 text-[14px] text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#0078D4] focus:ring-1 focus:ring-[#0078D4] rounded-sm transition-all";
+    "w-full px-3 py-2 bg-white border border-gray-300 text-[14px] text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#0078D4] focus:ring-1 focus:ring-[#0078D4] rounded-xl transition-all";
 
   // Azure Standard Label Classes
   const labelClass = "block text-[13px] font-semibold text-gray-700 mb-1.5";
 
   // Azure Flat Button Effects
   const primaryButtonClass =
-    "w-full flex items-center justify-center gap-2 py-2 px-4 font-semibold text-[14px] bg-[#0078D4] hover:bg-[#005a9e] text-white rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+    "w-full flex items-center justify-center gap-2 py-2 px-4 font-semibold text-[14px] bg-[#0078D4] hover:bg-[#005a9e] text-white rounded-full cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
   const secondaryButtonClass =
-    "w-full flex items-center justify-center gap-2 py-2 px-4 font-semibold text-[14px] bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 rounded-sm transition-colors disabled:opacity-50";
+    "w-full flex items-center justify-center gap-2 py-2 px-4 font-semibold text-[14px] cursor-pointer bg-gray-800 border border-gray-300 text-gray-100 rounded-full transition-colors disabled:opacity-50";
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#faf9f8] text-gray-900 font-sans selection:bg-[#cce3f5]">
-      <div className="w-full max-w-[440px] bg-white border border-gray-200 p-8 shadow-sm rounded-sm">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[#faf9f8] text-gray-900  selection:bg-[#cce3f5]">
+      <div className="w-full max-w-[440px] p-8">
         {/* Header Section */}
         <div className="flex flex-col items-center text-center mb-6">
           <div className="mb-4">
@@ -280,9 +280,9 @@ export default function AuthPage() {
 
         {/* Security Badge */}
         <div className="flex justify-center mb-6">
-          <div className="flex items-center gap-1.5 text-[12px] text-gray-500 bg-gray-50 px-3 py-1 rounded-sm border border-gray-100">
+          <div className="flex items-center gap-1.5 text-[12px] text-black bg-blue-400 px-3 py-2 rounded-full border border-gray-100">
             <LockKeyhole className="w-3.5 h-3.5" />
-            <span>Secured by</span>
+            <span className="font-bold">Secured by</span>
             <div className="relative flex items-center justify-start w-[40px] h-[16px] overflow-hidden">
               <AnimatePresence mode="popLayout">
                 <motion.span
@@ -291,7 +291,7 @@ export default function AuthPage() {
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -15, opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="text-[#0078D4] font-medium absolute left-0"
+                  className="text-black  font-semibold absolute left-0"
                 >
                   {providers[index]}
                 </motion.span>
@@ -302,7 +302,7 @@ export default function AuthPage() {
 
         {/* Error Banner */}
         {authError && (
-          <div className="mb-5 p-3 bg-[#fdf3f4] border border-[#f4c8ca] text-[#a4262c] text-[13px] font-medium rounded-sm">
+          <div className="mb-5 p-3 bg-[#fdf3f4] border border-[#f4c8ca] text-[#a4262c] text-[13px] font-medium rounded-xl">
             {authError}
           </div>
         )}

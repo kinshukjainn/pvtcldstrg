@@ -29,7 +29,7 @@ export default function Header() {
   const closeMenu = () => setIsMobileMenuOpen(false);
 
   const navLinkClasses =
-    "px-3 py-1.5 text-black hover:bg-black/5 rounded-sm font-semibold text-[13px] transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5";
+    "px-3 py-1.5 text-black hover:bg-blue-200 rounded-xl font-semibold text-[13px] transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5";
 
   const mobileNavLinkClasses =
     "flex items-center gap-3 w-full text-left px-6 py-3.5 text-gray-900 font-semibold hover:bg-gray-100 hover:text-[#0078D4] border-b border-gray-100 transition-colors text-[14px] cursor-pointer";
@@ -38,14 +38,14 @@ export default function Header() {
   const mobileIconSize = "w-[18px] h-[18px] text-gray-600";
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-gray-200/20 backdrop-blur-sm text-black rounded-b-3xl shadow-md">
+    <header className="sticky top-0 z-50 w-full bg-white text-black border-b border-gray-300">
       <div className="flex items-center justify-between h-12 px-3 sm:px-4 w-full max-w-[1920px] mx-auto">
         {/* Left Section: Logo & Desktop Navigation */}
         <div className="flex items-center h-full">
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-2 hover:bg-black/5 px-2 py-1.5 rounded-sm transition-colors duration-150 z-50 mr-4"
+            className="flex items-center gap-2 hover:bg-black/5 px-2 py-1.5 rounded-xl transition-colors duration-150 z-50 mr-4"
             onClick={closeMenu}
           >
             <Image
@@ -132,7 +132,7 @@ export default function Header() {
               </Link>
             )}
             {isLoaded && userId && (
-              <div className="flex items-center hover:bg-black/5 p-1 rounded-sm transition-colors cursor-pointer ml-1">
+              <div className="flex items-center hover:bg-black/5 p-1 rounded-xl transition-colors cursor-pointer ml-1">
                 <UserProfileDropdown variant="desktop" />
               </div>
             )}
@@ -140,7 +140,7 @@ export default function Header() {
 
           {/* Mobile Menu Toggle */}
           <button
-            className="md:hidden flex items-center justify-center p-2 hover:bg-black/5 rounded-sm transition-colors duration-150 cursor-pointer"
+            className="md:hidden flex items-center justify-center p-2 hover:bg-black/5 rounded-xl transition-colors duration-150 cursor-pointer"
             onClick={toggleMenu}
             aria-label="Toggle mobile menu"
           >
@@ -245,7 +245,7 @@ export default function Header() {
             <div className="px-6 py-4">
               <Link
                 href="/verify-regis"
-                className="flex items-center justify-center gap-2 w-full bg-[#0078D4] hover:bg-[#005a9e] text-white px-4 py-2.5 rounded-sm text-[14px] font-semibold transition-colors"
+                className="flex items-center justify-center gap-2 w-full bg-[#0078D4] hover:bg-[#005a9e] text-white px-4 py-2.5 rounded-xl text-[14px] font-semibold transition-colors"
                 onClick={closeMenu}
               >
                 <LogIn className="w-[16px] h-[16px]" />

@@ -208,10 +208,10 @@ export default function ChangelogTracker() {
 
   // Azure input field styles
   const inputClass =
-    "bg-white text-gray-900 border border-gray-300 px-3 py-1.5 rounded-sm outline-none focus:border-[#0078D4] focus:ring-1 focus:ring-[#0078D4] transition-all w-full sm:w-auto";
+    "bg-white text-gray-900 border border-gray-300 px-3 py-1.5 rounded-xl outline-none focus:border-[#0078D4] focus:ring-1 focus:ring-[#0078D4] transition-all w-full sm:w-auto";
 
   return (
-    <div className="min-h-screen bg-[#faf9f8] text-[#201f1e] text-[13px] sm:text-[14px] p-4 md:p-8 font-sans selection:bg-[#cce3f5] selection:text-black">
+    <div className="min-h-screen bg-[#faf9f8] text-[#201f1e] text-[13px] sm:text-[14px] p-4 md:p-8  selection:bg-[#cce3f5] selection:text-black">
       <div className="max-w-7xl mx-auto">
         {/* ── TOP HEADER (Breadcrumbs & Links) ── */}
         <div className="mb-2 border-b border-gray-200 pb-4">
@@ -244,7 +244,7 @@ export default function ChangelogTracker() {
         </div>
 
         {/* ── META INFO TABLE ── */}
-        <div className="bg-white border border-gray-200 shadow-sm rounded-sm py-4 px-4 sm:px-6 mb-6">
+        <div className="bg-white border border-gray-200 shadow-sm rounded-xl py-4 px-4 sm:px-6 mb-6">
           <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-y-3 sm:gap-x-4 text-[13px] sm:text-[14px]">
             <div className="text-gray-500 font-semibold">Description</div>
             <div className="text-gray-900">
@@ -283,7 +283,7 @@ export default function ChangelogTracker() {
 
         {/* ── FILTERS BLOCK ── */}
         {showFilters && (
-          <div className="bg-white border border-gray-200 shadow-sm rounded-sm p-4 mb-6 text-[13px]">
+          <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-4 mb-6 text-[13px]">
             <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-end">
               <label className="flex flex-col gap-1.5 w-full sm:w-auto">
                 <span className="text-gray-700 font-semibold">Search:</span>
@@ -333,7 +333,7 @@ export default function ChangelogTracker() {
                   setAuthorFilter("all");
                   setTypeFilter("all");
                 }}
-                className="bg-white text-gray-800 px-4 py-1.5 font-semibold cursor-pointer border border-gray-300 hover:bg-gray-50 rounded-sm transition-colors w-full sm:w-auto"
+                className="bg-white text-gray-800 px-4 py-1.5 font-semibold cursor-pointer border border-gray-300 hover:bg-gray-50 rounded-xl transition-colors w-full sm:w-auto"
               >
                 Clear
               </button>
@@ -348,13 +348,13 @@ export default function ChangelogTracker() {
 
         {/* ── ERROR & LOADING STATES ── */}
         {loading && (
-          <div className="p-4 text-gray-800 font-medium bg-[#fff4ce] border border-[#ffb900] rounded-sm mb-4">
+          <div className="p-4 text-gray-800 font-medium bg-[#fff4ce] border border-[#ffb900] rounded-xl mb-4">
             Fetching repository history (page {fetchingProgress})...
           </div>
         )}
 
         {error && (
-          <div className="p-4 text-[#a4262c] font-medium bg-[#fdf3f4] border border-[#f4c8ca] mb-4 rounded-sm flex items-center justify-between">
+          <div className="p-4 text-[#a4262c] font-medium bg-[#fdf3f4] border border-[#f4c8ca] mb-4 rounded-xl flex items-center justify-between">
             <span>FATAL ERROR: {error}</span>
             <button
               onClick={fetchCommits}
@@ -366,14 +366,14 @@ export default function ChangelogTracker() {
         )}
 
         {!loading && !error && displayCommits.length === 0 && (
-          <div className="p-6 text-gray-500 italic bg-white border border-gray-200 rounded-sm text-center">
+          <div className="p-6 text-gray-500 italic bg-white border border-gray-200 rounded-xl text-center">
             No commits found matching the current criteria.
           </div>
         )}
 
         {/* ── LIST ── */}
         {!loading && !error && displayCommits.length > 0 && (
-          <div className="w-full flex flex-col bg-white border border-gray-200 shadow-sm rounded-sm overflow-hidden">
+          <div className="w-full flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden">
             {displayCommits.map((commit, index) => {
               const title = getCommitTitle(commit.commit.message);
               // Clean alternate row colors for readability (Azure style)
@@ -398,7 +398,7 @@ export default function ChangelogTracker() {
                   <div className="flex-1 min-w-0 text-gray-800 flex items-center flex-wrap gap-2 text-[13px] sm:text-[14px]">
                     <span className="break-words">{title}</span>
                     {index === 0 && (
-                      <span className="bg-[#e1dfdd] text-gray-900 text-[11px] font-semibold px-1.5 py-0.5 rounded-sm">
+                      <span className="bg-[#e1dfdd] text-gray-900 text-[11px] font-semibold px-1.5 py-0.5 rounded-xl">
                         master
                       </span>
                     )}
