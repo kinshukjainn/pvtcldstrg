@@ -1,11 +1,13 @@
 "use client";
+
 import React, {
   useState,
   useEffect,
   useRef,
   Suspense,
   type ReactNode,
-  type RefObject,
+  type ComponentType,
+  type SVGProps,
 } from "react";
 import {
   ShieldCheck,
@@ -30,53 +32,114 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import HeroGrid from "./components/HeroGrid";
 
-interface FadeInItemProps {
+/* ══════════════════════════════════════════════════════════════════
+   KOSHA — refined white theme, mono typography.
+   All original routes & clerk auth preserved.
+   ══════════════════════════════════════════════════════════════════ */
+
+const MONO = "'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace";
+const SERIF = "'Fraunces', 'Iowan Old Style', Georgia, serif";
+
+/* Design tokens */
+const INK = "#0a0a0a";
+const INK_2 = "#0a0a0a";
+const INK_3 = "#78716c";
+const MUTED = "#a8a29e";
+const PAPER = "#faf9f4";
+const PAPER_2 = "#f4f2ea";
+const LINE = "#e4e1d5";
+const LINE_2 = "#d8d4c3";
+const BLUE = "#1d4ed8";
+const BLUE_SOFT = "#eef2ff";
+const AMBER = "#b45309";
+const AMBER_SOFT = "#fef3c7";
+const EMERALD = "#15803d";
+
+/* ═══════════ Types ═══════════ */
+type Tone = "blue" | "amber";
+type IconType = ComponentType<SVGProps<SVGSVGElement>>;
+
+interface KProps {
+  children: ReactNode;
+  tone?: Tone;
+}
+interface BarBlockProps {
+  children: ReactNode;
+  tone?: Tone;
+  className?: string;
+}
+interface RevealProps {
   children: ReactNode;
   delay?: number;
   className?: string;
 }
-interface FeatureCardProps {
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+interface Feature {
+  id: string;
   title: string;
-  description: string;
-  delay: number;
-}
-interface ButtonProps {
-  children: ReactNode;
-  href: string;
-  className?: string;
-}
-interface QuickActionProps {
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  title: string;
-  description: string;
-  href: string;
-  delay: number;
+  body: string;
+  icon: IconType;
 }
 interface OnboardingStepProps {
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  icon: IconType;
   step: number;
   title: string;
   description: string;
   delay: number;
 }
+interface QuickActionProps {
+  icon: IconType;
+  title: string;
+  description: string;
+  href: string;
+  delay: number;
+}
 
-/* ── Simple fade-in using IntersectionObserver (no JS timers per item) ── */
-const FadeInItem = ({
+/* ═══════════ Inline highlighted keyword ═══════════ */
+const K = ({ children, tone = "blue" }: KProps) => {
+  const color = tone === "amber" ? AMBER : BLUE;
+  const bg = tone === "amber" ? AMBER_SOFT : BLUE_SOFT;
+  return (
+    <span
+      style={{
+        color,
+        background: `linear-gradient(180deg, transparent 60%, ${bg} 60%)`,
+        padding: "0 2px",
+        fontWeight: 500,
+      }}
+    >
+      {children}
+    </span>
+  );
+};
+
+/* ═══════════ Vertical accent bar ═══════════ */
+const BarBlock = ({
   children,
-  delay = 0,
+  tone = "blue",
   className = "",
-}: FadeInItemProps) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+}: BarBlockProps) => {
+  const color = tone === "amber" ? AMBER : BLUE;
+  return (
+    <div
+      className={`relative pl-5 sm:pl-6 ${className}`}
+      style={{ borderLeft: `2px solid ${color}` }}
+    >
+      {children}
+    </div>
+  );
+};
 
+/* ═══════════ Fade-in on view ═══════════ */
+const useInView = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setVisible(true);
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
           obs.disconnect();
         }
       },
@@ -85,15 +148,19 @@ const FadeInItem = ({
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
+  return [ref, inView] as const;
+};
 
+const Reveal = ({ children, delay = 0, className = "" }: RevealProps) => {
+  const [ref, inView] = useInView();
   return (
     <div
       ref={ref}
-      className={`transition-all duration-500 ease-out ${className}`}
+      className={className}
       style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(12px)",
-        transitionDelay: `${delay}ms`,
+        opacity: inView ? 1 : 0,
+        transform: inView ? "translateY(0)" : "translateY(8px)",
+        transition: `opacity .6s ease-out ${delay}ms, transform .6s ease-out ${delay}ms`,
       }}
     >
       {children}
@@ -101,132 +168,68 @@ const FadeInItem = ({
   );
 };
 
-/* ── Simple InView hook ── */
-const useInView = (ref: RefObject<HTMLElement | null>) => {
-  const [inView, setInView] = useState(false);
-  useEffect(() => {
-    if (!ref.current) return;
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) setInView(true);
-      },
-      { threshold: 0.15 },
-    );
-    obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, [ref]);
-  return inView;
+/* ═══════════ Greeting helper ═══════════ */
+const getGreeting = () => {
+  const h = new Date().getHours();
+  if (h >= 5 && h < 12) return "Good morning";
+  if (h >= 12 && h < 17) return "Good afternoon";
+  return "Good evening";
 };
 
-/* ── Clean Feature Card (no 3D tilt, just a simple hover lift) ── */
-const FeatureCard = ({
-  icon: Icon,
-  title,
-  description,
-  delay,
-}: FeatureCardProps) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(cardRef);
-
-  return (
-    <div
-      ref={cardRef}
-      className="bg-gray-200/80 border border-[#e8e6e3] rounded-xl p-5 sm:p-6 hover:shadow-lg hover:border-[#0078d4]/30 hover:-translate-y-0.5 transition-all duration-300 group"
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? "translateY(0)" : "translateY(16px)",
-        transition: `opacity 0.5s ease-out ${delay}ms, transform 0.5s ease-out ${delay}ms, box-shadow 0.3s, border-color 0.3s`,
-      }}
-    >
-      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-gradient-to-br from-[#eff6fc] to-[#deecf9] flex items-center justify-center mb-3.5 group-hover:shadow-md transition-shadow duration-300">
-        <Icon className="w-5 h-5 text-[#0078d4]" />
-      </div>
-      <h3
-        className="text-[15px] sm:text-base font-semibold text-[#1b1a19] mb-1"
-        style={{ fontFamily: "'Segoe UI Variable', 'Segoe UI', sans-serif" }}
-      >
-        {title}
-      </h3>
-      <p
-        className="text-[13px] sm:text-sm text-[#605e5c] leading-relaxed"
-        style={{ fontFamily: "'Segoe UI Variable', 'Segoe UI', sans-serif" }}
-      >
-        {description}
-      </p>
-    </div>
-  );
+/* ═══════════ New-user flag ═══════════ */
+const useIsNewUser = () => {
+  const searchParams = useSearchParams();
+  return searchParams.get("new") === "true";
 };
 
-/* ── Greeting helper ── */
-const getGreeting = (name?: string) => {
-  const hour = new Date().getHours();
-  let greeting: string;
-  if (hour >= 5 && hour < 12) greeting = "Good morning";
-  else if (hour >= 12 && hour < 17) greeting = "Good afternoon";
-  else greeting = "Good evening";
-  return name ? `${greeting}, ${name}` : greeting;
-};
-
-/* ── Buttons ── */
-const PrimaryButton = ({ children, href, className = "" }: ButtonProps) => (
+/* ═══════════ Primary & secondary link buttons ═══════════ */
+const PrimaryLink = ({
+  children,
+  href,
+  className = "",
+}: {
+  children: ReactNode;
+  href: string;
+  className?: string;
+}) => (
   <Link
     href={href}
-    className={`inline-flex items-center justify-center gap-2 font-semibold px-7 py-3 rounded-lg text-white transition-all duration-200 text-sm sm:text-[15px] shadow-md hover:shadow-lg hover:brightness-110 active:scale-[0.98] ${className}`}
+    className={`inline-flex items-center gap-2 px-5 py-3 rounded-lg text-[13.5px] transition hover:opacity-90 ${className}`}
     style={{
-      fontFamily: "'Segoe UI Variable', 'Segoe UI', sans-serif",
-      background: "linear-gradient(135deg, #0078d4 0%, #005a9e 100%)",
+      background: INK,
+      color: PAPER,
+      fontFamily: MONO,
+      fontWeight: 500,
     }}
   >
     {children}
   </Link>
 );
 
-const SecondaryButton = ({ children, href, className = "" }: ButtonProps) => (
+const SecondaryLink = ({
+  children,
+  href,
+  className = "",
+}: {
+  children: ReactNode;
+  href: string;
+  className?: string;
+}) => (
   <Link
     href={href}
-    className={`inline-flex items-center justify-center gap-2 font-semibold px-7 py-3 rounded-lg text-[#1b1a19] bg-white border border-[#d2d0ce] hover:bg-[#faf9f8] hover:border-[#0078d4]/40 active:bg-[#f3f2f1] transition-all duration-200 text-sm sm:text-[15px] ${className}`}
-    style={{ fontFamily: "'Segoe UI Variable', 'Segoe UI', sans-serif" }}
+    className={`inline-flex items-center gap-2 px-5 py-3 rounded-lg text-[13.5px] transition hover:bg-[#fcfaf3] ${className}`}
+    style={{
+      background: "transparent",
+      color: INK_2,
+      border: `1px solid ${LINE_2}`,
+      fontFamily: MONO,
+    }}
   >
     {children}
   </Link>
 );
 
-/* ── Quick Action Card (returning user) ── */
-const QuickAction = ({
-  icon: Icon,
-  title,
-  description,
-  href,
-  delay,
-}: QuickActionProps) => (
-  <FadeInItem delay={delay}>
-    <Link
-      href={href}
-      className="group flex items-center gap-4 p-4 sm:p-5 bg-white rounded-xl border border-gray-300 hover:border-[#0078d4]/40 hover:shadow-md transition-all duration-200"
-    >
-      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-gradient-to-br from-[#eff6fc] to-[#deecf9] flex items-center justify-center shrink-0">
-        <Icon className="w-5 h-5 text-[#0078d4]" />
-      </div>
-      <div className="min-w-0 flex-1">
-        <h3
-          className="text-sm sm:text-[15px] font-semibold text-[#1b1a19] group-hover:text-[#0078d4] transition-colors"
-          style={{ fontFamily: "'Segoe UI Variable', 'Segoe UI', sans-serif" }}
-        >
-          {title}
-        </h3>
-        <p
-          className="text-xs sm:text-[13px] text-[#605e5c]"
-          style={{ fontFamily: "'Segoe UI Variable', 'Segoe UI', sans-serif" }}
-        >
-          {description}
-        </p>
-      </div>
-      <ChevronRight className="w-4 h-4 text-[#a19f9d] group-hover:text-[#0078d4] group-hover:translate-x-0.5 transition-all duration-200 shrink-0" />
-    </Link>
-  </FadeInItem>
-);
-
-/* ── Onboarding Step (new users) ── */
+/* ═══════════ Onboarding step (new-user) ═══════════ */
 const OnboardingStep = ({
   icon: Icon,
   step,
@@ -234,62 +237,857 @@ const OnboardingStep = ({
   description,
   delay,
 }: OnboardingStepProps) => (
-  <FadeInItem delay={delay}>
-    <div className="flex items-start gap-3.5 p-4 sm:p-5 bg-white border border-[#e8e6e3] rounded-xl">
-      <div className="relative shrink-0">
-        <div
-          className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center"
-          style={{
-            background: "linear-gradient(135deg, #0078d4 0%, #005a9e 100%)",
-          }}
-        >
-          <Icon className="w-5 h-5 text-white" />
-        </div>
-        <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-white border-2 border-[#0078d4] flex items-center justify-center">
-          <span
-            className="text-[10px] font-bold text-[#0078d4]"
-            style={{ fontFamily: "'Segoe UI', sans-serif" }}
-          >
-            {step}
-          </span>
-        </div>
+  <Reveal delay={delay}>
+    <div
+      className="group flex items-start gap-4 p-4 sm:p-5 rounded-lg transition-colors hover:bg-[#fcfaf3]"
+      style={{
+        background: "#fff",
+        border: `1px solid ${LINE}`,
+        fontFamily: MONO,
+      }}
+    >
+      <span
+        className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-[12px] transition-colors"
+        style={{
+          background: PAPER_2,
+          border: `1px solid ${LINE}`,
+          color: INK_3,
+          fontFamily: MONO,
+          fontWeight: 500,
+        }}
+      >
+        {step.toString().padStart(2, "0")}
+      </span>
+      <div
+        className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+        style={{ background: BLUE_SOFT, border: `1px solid #dbe4ff` }}
+      >
+        <Icon className="w-[18px] h-[18px]" style={{ color: BLUE }} />
       </div>
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1 pt-0.5">
         <h3
-          className="text-sm sm:text-[15px] font-semibold text-[#1b1a19] mb-0.5"
-          style={{ fontFamily: "'Segoe UI Variable', 'Segoe UI', sans-serif" }}
+          className="text-[15px] mb-0.5"
+          style={{ color: INK, fontWeight: 600 }}
         >
           {title}
         </h3>
-        <p
-          className="text-[13px] sm:text-sm text-[#605e5c] leading-relaxed"
-          style={{ fontFamily: "'Segoe UI Variable', 'Segoe UI', sans-serif" }}
-        >
+        <p className="text-[13px] leading-[1.65]" style={{ color: INK_3 }}>
           {description}
         </p>
       </div>
     </div>
-  </FadeInItem>
+  </Reveal>
 );
 
-/* ── Check if user just registered ── */
-const useIsNewUser = () => {
-  const searchParams = useSearchParams();
-  return searchParams.get("new") === "true";
-};
+/* ═══════════ Quick action (returning user) ═══════════ */
+const QuickAction = ({
+  icon: Icon,
+  title,
+  description,
+  href,
+  delay,
+}: QuickActionProps) => (
+  <Reveal delay={delay}>
+    <Link
+      href={href}
+      className="group flex items-center gap-4 p-4 sm:p-5 rounded-lg transition-all hover:bg-[#fcfaf3]"
+      style={{
+        background: "#fff",
+        border: `1px solid ${LINE}`,
+        fontFamily: MONO,
+      }}
+    >
+      <span
+        className="shrink-0 text-[15px] transition-colors"
+        style={{ color: MUTED, fontFamily: MONO }}
+        aria-hidden
+      >
+        →
+      </span>
+      <div
+        className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+        style={{ background: BLUE_SOFT, border: `1px solid #dbe4ff` }}
+      >
+        <Icon className="w-[18px] h-[18px]" style={{ color: BLUE }} />
+      </div>
+      <div className="min-w-0 flex-1">
+        <h3
+          className="text-[15px] transition-colors group-hover:text-[#1d4ed8]"
+          style={{ color: INK, fontWeight: 600 }}
+        >
+          {title}
+        </h3>
+        <p className="text-[13px]" style={{ color: INK_3 }}>
+          {description}
+        </p>
+      </div>
+      <ChevronRight
+        className="w-4 h-4 shrink-0 transition-all group-hover:translate-x-0.5"
+        style={{ color: MUTED }}
+      />
+    </Link>
+  </Reveal>
+);
 
-/* ── Simple CSS-only file icon crossfade (replaces framer-motion) ── */
+/* ═══════════ Hero — new user ═══════════ */
+const NewUserHero = ({ firstName }: { firstName: string }) => (
+  <div className="relative max-w-3xl mx-auto px-5 sm:px-8 pt-16 sm:pt-24 pb-16">
+    <Reveal delay={0}>
+      <div
+        className="inline-flex items-center gap-2 text-[12px] mb-6"
+        style={{ fontFamily: MONO, color: INK_3 }}
+      >
+        <span
+          className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full"
+          style={{
+            background: AMBER_SOFT,
+            border: `1px solid #fde68a`,
+            color: AMBER,
+          }}
+        >
+          <PartyPopper className="w-3 h-3" />
+          account provisioned
+        </span>
+      </div>
+    </Reveal>
 
-/* ── Default Export with Suspense Wrapper ── */
+    <Reveal delay={80}>
+      <h1
+        className="text-[38px] sm:text-[52px] md:text-[60px] leading-[1.04] tracking-[-0.03em]"
+        style={{ fontFamily: MONO, color: INK, fontWeight: 500 }}
+      >
+        Welcome,{" "}
+        <span
+          style={{
+            fontFamily: SERIF,
+            fontStyle: "italic",
+            color: BLUE,
+            fontWeight: 400,
+          }}
+        >
+          {firstName}
+        </span>
+        .
+      </h1>
+    </Reveal>
+
+    <Reveal delay={160}>
+      <div className="mt-8">
+        <BarBlock>
+          <p
+            className="text-[15px] sm:text-[16px] leading-[1.75] max-w-[58ch]"
+            style={{ fontFamily: MONO, color: INK_2 }}
+          >
+            Your workspace is ready. You have <K>5 GB</K> of encrypted storage
+            on <K>AWS S3</K> — private by default, yours forever. No credit
+            card, no trial.
+          </p>
+        </BarBlock>
+      </div>
+    </Reveal>
+
+    <Reveal delay={240}>
+      <div
+        className="mt-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12.5px]"
+        style={{
+          background: "#f4faf5",
+          border: `1px solid #d9ecdd`,
+          color: EMERALD,
+          fontFamily: MONO,
+        }}
+      >
+        <Check className="w-3.5 h-3.5" />
+        All systems go. You&apos;re in.
+      </div>
+    </Reveal>
+
+    <Reveal delay={320}>
+      <div className="mt-12 mb-5">
+        <h2
+          className="text-[22px] sm:text-[26px] tracking-tight"
+          style={{ fontFamily: MONO, color: INK, fontWeight: 600 }}
+        >
+          Quick start.
+        </h2>
+      </div>
+    </Reveal>
+
+    <div className="space-y-2.5">
+      <OnboardingStep
+        icon={Upload}
+        step={1}
+        title="Upload your first file"
+        description="Drag and drop any file into your dashboard — we support PDFs, images, documents, videos, and more."
+        delay={380}
+      />
+      <OnboardingStep
+        icon={FolderOpen}
+        step={2}
+        title="Organize with folders"
+        description="Create folders to keep everything tidy. Your files, your structure."
+        delay={440}
+      />
+      <OnboardingStep
+        icon={ShieldCheck}
+        step={3}
+        title="Enjoy total privacy"
+        description="Your files are encrypted and only accessible by you. No tracking, no ads, no compromises."
+        delay={500}
+      />
+    </div>
+
+    <Reveal delay={580}>
+      <div className="mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+        <PrimaryLink href="/dashboard">
+          <Rocket className="w-4 h-4" />
+          Go to Dashboard
+          <ArrowRight className="w-3.5 h-3.5" />
+        </PrimaryLink>
+        <div
+          className="flex items-center gap-4 text-[12px]"
+          style={{ fontFamily: MONO, color: INK_3 }}
+        >
+          <span className="flex items-center gap-1.5">
+            <Check className="w-3 h-3" style={{ color: EMERALD }} />
+            5GB Free
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Check className="w-3 h-3" style={{ color: EMERALD }} />
+            Secure
+          </span>
+        </div>
+      </div>
+    </Reveal>
+  </div>
+);
+
+/* ═══════════ Hero — returning user ═══════════ */
+const ReturningUserHero = ({ firstName }: { firstName: string }) => (
+  <div className="relative max-w-3xl mx-auto px-5 sm:px-8 pt-16 sm:pt-24 pb-16">
+    <Reveal delay={0}>
+      <h1
+        className="text-[38px] sm:text-[52px] md:text-[60px] leading-[1.04] tracking-[-0.03em]"
+        style={{ fontFamily: MONO, color: INK, fontWeight: 500 }}
+      >
+        {getGreeting()},{" "}
+        <span
+          style={{
+            fontFamily: SERIF,
+            fontStyle: "italic",
+            color: BLUE,
+            fontWeight: 400,
+          }}
+        >
+          {firstName}
+        </span>
+        .
+      </h1>
+    </Reveal>
+
+    <Reveal delay={120}>
+      <div className="mt-6">
+        <BarBlock>
+          <p
+            className="text-[15px] sm:text-[16px] leading-[1.75]"
+            style={{ fontFamily: MONO, color: INK_2 }}
+          >
+            System <K>operational</K>. Pick up where you left off.
+          </p>
+        </BarBlock>
+      </div>
+    </Reveal>
+
+    <Reveal delay={220}>
+      <div
+        className="mt-10 mb-4 text-[12px] uppercase tracking-[0.14em]"
+        style={{ fontFamily: MONO, color: MUTED }}
+      >
+        Jump back in
+      </div>
+    </Reveal>
+
+    <div className="space-y-2.5">
+      <QuickAction
+        icon={FolderOpen}
+        title="Open Dashboard"
+        description="View and manage all your stored files"
+        href="/dashboard"
+        delay={280}
+      />
+      <QuickAction
+        icon={Upload}
+        title="Upload Files"
+        description="Add new documents to your storage"
+        href="/dashboard"
+        delay={340}
+      />
+    </div>
+  </div>
+);
+
+/* ═══════════ Hero — logged-out ═══════════ */
+const LoggedOutHero = () => (
+  <section className="relative overflow-hidden">
+    <div
+      aria-hidden
+      className="absolute inset-0 pointer-events-none opacity-[0.45]"
+      style={{
+        backgroundImage: `linear-gradient(${LINE} 1px, transparent 1px), linear-gradient(90deg, ${LINE} 1px, transparent 1px)`,
+        backgroundSize: "64px 64px",
+        maskImage:
+          "radial-gradient(ellipse at 50% 0%, black 30%, transparent 75%)",
+        WebkitMaskImage:
+          "radial-gradient(ellipse at 50% 0%, black 30%, transparent 75%)",
+      }}
+    />
+    <div className="relative max-w-4xl mx-auto px-5 sm:px-8 pt-20 sm:pt-32 pb-16 sm:pb-20 text-center">
+      <Reveal delay={0}>
+        <div
+          className="inline-flex items-center gap-2 text-[12px] mb-10"
+          style={{ fontFamily: MONO, color: INK_3 }}
+        >
+          <span
+            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full"
+            style={{
+              background: PAPER_2,
+              border: `1px solid ${LINE}`,
+              color: INK_2,
+            }}
+          >
+            <LockKeyhole className="w-3 h-3" style={{ color: BLUE }} />
+            Secured by AWS Cloud
+          </span>
+        </div>
+      </Reveal>
+
+      <Reveal delay={80}>
+        <h1
+          className="text-[44px] sm:text-[60px] md:text-[76px] leading-[1.02] tracking-[-0.03em]"
+          style={{ fontFamily: MONO, color: INK, fontWeight: 500 }}
+        >
+          Your data.
+          <br />
+          <span
+            style={{
+              fontFamily: SERIF,
+              fontWeight: 400,
+              fontStyle: "italic",
+              color: BLUE,
+            }}
+          >
+            Only yours.
+          </span>
+        </h1>
+      </Reveal>
+
+      <Reveal delay={180}>
+        <div className="mt-12 flex justify-center">
+          <BarBlock className="text-left">
+            <p
+              className="text-[15px] sm:text-[16.5px] leading-[1.75] max-w-[58ch]"
+              style={{ fontFamily: MONO, color: INK_2 }}
+            >
+              A cloud storage platform stripped of the noise. No{" "}
+              <K>bloatware</K>, no complicated settings, and{" "}
+              <K tone="amber">zero</K> compromises on your privacy.
+            </p>
+          </BarBlock>
+        </div>
+      </Reveal>
+
+      <Reveal delay={280}>
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+          <PrimaryLink href="/verify-regis">
+            Start for free
+            <ArrowRight className="w-3.5 h-3.5" />
+          </PrimaryLink>
+          <SecondaryLink href="/supported-formats">
+            Supported Formats
+          </SecondaryLink>
+        </div>
+      </Reveal>
+
+      <Reveal delay={360}>
+        <div
+          className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[12.5px]"
+          style={{ fontFamily: MONO, color: INK_3 }}
+        >
+          <span className="flex items-center gap-1.5">
+            <Check className="w-3 h-3" style={{ color: EMERALD }} />
+            no credit card
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Check className="w-3 h-3" style={{ color: EMERALD }} />
+            encrypted
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Check className="w-3 h-3" style={{ color: EMERALD }} />
+            zero AI training
+          </span>
+        </div>
+      </Reveal>
+    </div>
+  </section>
+);
+
+/* ═══════════ Preview section (video, logged-out only) ═══════════ */
+const PreviewSection = () => (
+  <section className="relative max-w-5xl mx-auto px-5 sm:px-8 pb-12 sm:pb-20">
+    <Reveal delay={0}>
+      <div className="mb-8 text-center">
+        <div
+          className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] mb-3"
+          style={{
+            background: "#f4faf5",
+            border: `1px solid #d9ecdd`,
+            color: EMERALD,
+            fontFamily: MONO,
+          }}
+        >
+          <span
+            className="w-1.5 h-1.5 rounded-full animate-pulse"
+            style={{ background: EMERALD }}
+          />
+          LIVE PREVIEW
+        </div>
+        <h2
+          className="text-[26px] sm:text-[32px] md:text-[36px] leading-[1.1] tracking-[-0.02em]"
+          style={{ fontFamily: MONO, color: INK, fontWeight: 500 }}
+        >
+          See it{" "}
+          <span
+            style={{
+              fontFamily: SERIF,
+              fontStyle: "italic",
+              color: BLUE,
+              fontWeight: 400,
+            }}
+          >
+            in action
+          </span>
+          .
+        </h2>
+        <p
+          className="mt-2 text-[14px]"
+          style={{ fontFamily: MONO, color: INK_3 }}
+        >
+          A dashboard that respects your time and your data.
+        </p>
+      </div>
+    </Reveal>
+
+    <Reveal delay={80}>
+      <div
+        className="relative rounded-xl overflow-hidden"
+        style={{
+          background: "#fff",
+          border: `1px solid ${LINE}`,
+          boxShadow: `0 1px 2px rgba(0,0,0,0.04), 0 24px 60px -30px rgba(29,78,216,0.2)`,
+        }}
+      >
+        <div
+          className="flex items-center gap-2.5 px-4 py-2.5"
+          style={{ background: PAPER_2, borderBottom: `1px solid ${LINE}` }}
+        >
+          <div className="flex gap-1.5 shrink-0">
+            <span
+              className="w-2.5 h-2.5 rounded-full"
+              style={{ background: "#fff", border: `1px solid ${LINE_2}` }}
+            />
+            <span
+              className="w-2.5 h-2.5 rounded-full"
+              style={{ background: "#fff", border: `1px solid ${LINE_2}` }}
+            />
+            <span
+              className="w-2.5 h-2.5 rounded-full"
+              style={{ background: "#fff", border: `1px solid ${LINE_2}` }}
+            />
+          </div>
+          <div
+            className="flex-1 min-w-0 mx-2 sm:mx-3 px-3 py-1 rounded text-[11.5px] text-center truncate"
+            style={{
+              background: "#fff",
+              border: `1px solid ${LINE}`,
+              color: INK_3,
+              fontFamily: MONO,
+            }}
+          >
+            kosha.cloudkinshuk.in/dashboard
+          </div>
+        </div>
+
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          onError={(e) => {
+            const v = e.currentTarget;
+            console.error("Video error:", {
+              code: v.error?.code,
+              message: v.error?.message,
+            });
+          }}
+          className="w-full h-auto block aspect-video object-cover"
+          style={{ background: PAPER_2 }}
+        >
+          <source src="/videos/brandy.mp4" type="video/mp4" />
+        </video>
+      </div>
+    </Reveal>
+  </section>
+);
+
+/* ═══════════ Features grid (all 8 from original) ═══════════ */
+const FEATURES: Feature[] = [
+  {
+    id: "01",
+    title: "5 GB Free Forever",
+    body: "Generous AWS backed storage for everyone. Drop your files without worrying about space.",
+    icon: HardDrive,
+  },
+  {
+    id: "02",
+    title: "Absolute Privacy",
+    body: "Amazon S3 Encryption. We can't see your files or sell your habits.",
+    icon: ShieldCheck,
+  },
+  {
+    id: "03",
+    title: "Zero Bloat",
+    body: "No unnecessary features. A clean interface designed to get out of your way.",
+    icon: Layout,
+  },
+  {
+    id: "04",
+    title: "Lightning Fast",
+    body: "Optimized for speed. Uploads and downloads in the blink of an eye.",
+    icon: Zap,
+  },
+  {
+    id: "05",
+    title: "No AI training",
+    body: "We do not use your data to train AI models. Your files are yours alone.",
+    icon: BrainCircuit,
+  },
+  {
+    id: "06",
+    title: "No bloated AI",
+    body: "We do not offer any AI features. We focus on secure, private storage without distractions.",
+    icon: BrickWallShield,
+  },
+  {
+    id: "07",
+    title: "Multiple Formats",
+    body: "We support a wide range of file formats including documents, images, videos, and more.",
+    icon: FileCog,
+  },
+  {
+    id: "08",
+    title: "You Control Your Data",
+    body: "We do not collect any data about your files or usage. Full control over what you share.",
+    icon: Cog,
+  },
+];
+
+const FeaturesGrid = () => (
+  <section
+    id="features"
+    className="relative max-w-7xl mx-auto px-5 sm:px-8 py-20 sm:py-24"
+    style={{ borderTop: `1px solid ${LINE}` }}
+  >
+    <Reveal>
+      <div className="max-w-3xl mx-auto text-center mb-14">
+        <h2
+          className="text-[32px] sm:text-[44px] leading-[1.05] tracking-[-0.025em]"
+          style={{ fontFamily: MONO, color: INK, fontWeight: 500 }}
+        >
+          Brilliantly{" "}
+          <span
+            style={{
+              fontFamily: SERIF,
+              fontStyle: "italic",
+              color: BLUE,
+              fontWeight: 400,
+            }}
+          >
+            simple
+          </span>
+          .
+        </h2>
+        <p
+          className="mt-4 text-[15px] leading-[1.7]"
+          style={{ fontFamily: MONO, color: INK_3 }}
+        >
+          Everything you need. Nothing you don&apos;t.
+        </p>
+      </div>
+    </Reveal>
+
+    <div
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto"
+      style={{
+        border: `1px solid ${LINE}`,
+        borderRadius: "4px",
+        background: "#fff",
+        overflow: "hidden",
+      }}
+    >
+      {FEATURES.map((f, i) => {
+        const Icon = f.icon;
+        const cols = 4;
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        const lastRow = row === Math.ceil(FEATURES.length / cols) - 1;
+        return (
+          <Reveal key={f.id} delay={i * 50}>
+            <div
+              className="group h-full p-6 sm:p-7 relative transition-colors hover:bg-[#fcfaf3]"
+              style={{
+                borderRight: col < cols - 1 ? `1px solid ${LINE}` : "none",
+                borderBottom: !lastRow ? `1px solid ${LINE}` : "none",
+                fontFamily: MONO,
+              }}
+            >
+              <div className="flex items-start justify-between mb-5">
+                <Icon
+                  className="w-5 h-5 transition-colors"
+                  style={{ color: INK_2 }}
+                />
+                <span
+                  className="text-[11px]"
+                  style={{ color: MUTED, letterSpacing: "0.1em" }}
+                >
+                  {f.id}
+                </span>
+              </div>
+              <h3
+                className="text-[15.5px] mb-2.5 tracking-tight"
+                style={{ color: INK, fontWeight: 600 }}
+              >
+                {f.title}
+              </h3>
+              <p className="text-[13px] leading-[1.7]" style={{ color: INK_3 }}>
+                {f.body}
+              </p>
+              <div
+                className="absolute bottom-0 left-0 h-[2px] transition-all duration-500 group-hover:w-full w-0"
+                style={{ background: BLUE }}
+              />
+            </div>
+          </Reveal>
+        );
+      })}
+    </div>
+  </section>
+);
+
+/* ═══════════ CTA (logged-in vs logged-out) ═══════════ */
+const CTA = ({ isLoggedIn }: { isLoggedIn: boolean }) => (
+  <section
+    id="pricing"
+    className="relative max-w-7xl mx-auto px-5 sm:px-8 py-20 sm:py-24"
+  >
+    <Reveal>
+      <div
+        className="relative overflow-hidden rounded-lg p-8 sm:p-14"
+        style={{ background: "#fff", border: `1px solid ${LINE}` }}
+      >
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none opacity-[0.5]"
+          style={{
+            backgroundImage: `linear-gradient(${LINE} 1px, transparent 1px), linear-gradient(90deg, ${LINE} 1px, transparent 1px)`,
+            backgroundSize: "32px 32px",
+            maskImage:
+              "radial-gradient(ellipse at 80% 30%, black 0%, transparent 60%)",
+            WebkitMaskImage:
+              "radial-gradient(ellipse at 80% 30%, black 0%, transparent 60%)",
+          }}
+        />
+        <div className="relative">
+          {isLoggedIn ? (
+            <div className="max-w-2xl">
+              <h2
+                className="text-[32px] sm:text-[44px] leading-[1.05] tracking-[-0.025em]"
+                style={{ fontFamily: MONO, color: INK, fontWeight: 500 }}
+              >
+                Your files are{" "}
+                <span
+                  style={{
+                    fontFamily: SERIF,
+                    fontStyle: "italic",
+                    color: BLUE,
+                    fontWeight: 400,
+                  }}
+                >
+                  waiting
+                </span>
+                .
+              </h2>
+              <p
+                className="mt-4 max-w-[54ch] text-[15px] leading-[1.8]"
+                style={{ fontFamily: MONO, color: INK_3 }}
+              >
+                Jump back into your dashboard and keep your workflow going.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <PrimaryLink href="/dashboard">
+                  View Dashboard
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </PrimaryLink>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+              <div className="lg:col-span-7">
+                <h2
+                  className="text-[32px] sm:text-[48px] leading-[1.05] tracking-[-0.025em]"
+                  style={{ fontFamily: MONO, color: INK, fontWeight: 500 }}
+                >
+                  Ready to take back{" "}
+                  <span
+                    style={{
+                      fontFamily: SERIF,
+                      fontStyle: "italic",
+                      color: BLUE,
+                      fontWeight: 400,
+                    }}
+                  >
+                    your data
+                  </span>
+                  ?
+                </h2>
+                <p
+                  className="mt-4 max-w-[54ch] text-[15px] leading-[1.8]"
+                  style={{ fontFamily: MONO, color: INK_3 }}
+                >
+                  Join thousands who have migrated to a simpler, more secure way
+                  to store their digital life.
+                </p>
+                <div className="mt-8 flex flex-wrap items-center gap-3">
+                  <PrimaryLink href="/verify-regis">
+                    Create Free Account
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </PrimaryLink>
+                  <SecondaryLink href="/supported-formats">
+                    Learn more
+                  </SecondaryLink>
+                </div>
+              </div>
+
+              <div className="lg:col-span-5">
+                <div
+                  className="p-5 rounded-lg"
+                  style={{
+                    background: PAPER,
+                    border: `1px solid ${LINE}`,
+                    fontFamily: MONO,
+                  }}
+                >
+                  <div
+                    className="text-[11px] uppercase tracking-[0.15em]"
+                    style={{ color: MUTED }}
+                  >
+                    free plan
+                  </div>
+                  <div
+                    className="mt-2 flex items-baseline gap-1.5"
+                    style={{ color: INK, fontWeight: 600 }}
+                  >
+                    <span className="text-[38px] tracking-tight">Free</span>
+                    <span
+                      className="text-[13px]"
+                      style={{ color: INK_3, fontWeight: 400 }}
+                    >
+                      / forever
+                    </span>
+                  </div>
+                  <ul
+                    className="mt-4 space-y-2 text-[12.5px]"
+                    style={{ color: INK_2 }}
+                  >
+                    {[
+                      "5 GB encrypted storage",
+                      "Unlimited file types",
+                      "Private by default",
+                      "Fast downloads, anywhere",
+                      "No AI training, ever",
+                    ].map((x) => (
+                      <li key={x} className="flex items-start gap-2">
+                        <Check
+                          className="w-3.5 h-3.5 mt-0.5 shrink-0"
+                          style={{ color: EMERALD }}
+                        />
+                        {x}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </Reveal>
+  </section>
+);
+
+/* ═══════════ Footer ═══════════ */
+const Footer = () => (
+  <footer
+    style={{
+      borderTop: `1px solid ${LINE}`,
+      background: PAPER,
+      fontFamily: MONO,
+    }}
+  >
+    <div className="max-w-7xl mx-auto px-5 sm:px-8 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div
+        className="flex items-center gap-3 text-[13px]"
+        style={{ color: INK_2 }}
+      >
+        <span
+          className="inline-flex items-center justify-center w-6 h-6 rounded-lg text-white text-[11px] font-bold"
+          style={{ background: INK }}
+        >
+          K
+        </span>
+        <span style={{ fontWeight: 600, color: INK }}>kosha</span>
+        <span style={{ color: MUTED }}>·</span>
+        <span>© 2026 · built with care</span>
+      </div>
+      <div
+        className="flex flex-wrap items-center gap-5 text-[12.5px]"
+        style={{ color: INK_3 }}
+      >
+        <Link href="/privacy" className="hover:text-black transition">
+          privacy
+        </Link>
+        <Link href="/terms" className="hover:text-black transition">
+          terms
+        </Link>
+        <Link href="/supported-formats" className="hover:text-black transition">
+          formats
+        </Link>
+      </div>
+    </div>
+  </footer>
+);
+
+/* ═══════════ Root — Suspense wrapper (original) ═══════════ */
 export default function Home() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#faf9f8]" />}>
+    <Suspense
+      fallback={<div className="min-h-screen" style={{ background: PAPER }} />}
+    >
       <HomeContent />
     </Suspense>
   );
 }
 
-/* ── Page Content ── */
+/* ═══════════ HomeContent — clerk auth + variant routing (original) ═══════════ */
 function HomeContent() {
   const { isLoaded, userId } = useAuth();
   const { user } = useUser();
@@ -300,353 +1098,44 @@ function HomeContent() {
 
   return (
     <div
-      className="min-h-screen text-[#1b1a19] selection:bg-[#deecf9] selection:text-[#0078d4] overflow-x-hidden"
-      style={{
-        fontFamily:
-          "'Segoe UI Variable', 'Segoe UI', -apple-system, sans-serif",
-      }}
+      className="min-h-screen"
+      style={{ background: PAPER, color: INK, fontFamily: MONO }}
     >
-      {/* ═══════════════════ HERO ═══════════════════ */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&display=swap');
+
+        html { scroll-behavior: smooth; }
+
+        body {
+          background-color: ${PAPER};
+          background-image:
+            url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.035 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+        }
+
+        ::selection {
+          background: ${BLUE_SOFT};
+          color: ${BLUE};
+        }
+      `}</style>
+
       <main className="relative">
         <HeroGrid />
 
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 pt-14 sm:pt-20 md:pt-28 pb-8 sm:pb-12 md:pb-16">
-          {isLoggedIn && isNewUser ? (
-            /* ── Just Registered Hero ── */
-            <div className="max-w-2xl mx-auto space-y-4 sm:space-y-5">
-              <FadeInItem delay={0}>
-                <div className="bg-white border border-[#e8e6e3] rounded-xl p-5 sm:p-7 shadow-sm">
-                  <div className="flex items-center gap-3 sm:gap-4 mb-5">
-                    <div
-                      className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shrink-0"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, #fff4ce 0%, #ffe8a3 100%)",
-                      }}
-                    >
-                      <PartyPopper className="w-6 h-6 sm:w-7 sm:h-7 text-[#d83b01]" />
-                    </div>
-                    <div className="min-w-0">
-                      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#1b1a19] tracking-tight">
-                        Welcome,{" "}
-                        <span className="bg-gradient-to-r from-[#0078d4] to-[#005a9e] bg-clip-text text-transparent">
-                          {firstName}
-                        </span>
-                      </h1>
-                    </div>
-                  </div>
-                  <div className="bg-gradient-to-r from-[#dff6dd] to-[#e8f9e6] border border-[#107c10]/25 rounded-lg px-4 py-3 flex items-center gap-2.5">
-                    <div className="w-5 h-5 rounded-full bg-[#107c10]/10 flex items-center justify-center shrink-0">
-                      <Check className="w-3 h-3 text-[#107c10]" />
-                    </div>
-                    <p className="text-sm sm:text-[15px] text-[#1b1a19] font-medium">
-                      Your account is ready. You have{" "}
-                      <span className="font-bold text-[#107c10]">
-                        5 GB of free storage
-                      </span>
-                      .
-                    </p>
-                  </div>
-                </div>
-              </FadeInItem>
+        {isLoggedIn && isNewUser ? (
+          <NewUserHero firstName={firstName} />
+        ) : isLoggedIn ? (
+          <ReturningUserHero firstName={firstName} />
+        ) : (
+          <LoggedOutHero />
+        )}
 
-              <div className="space-y-2.5">
-                <OnboardingStep
-                  icon={Upload}
-                  step={1}
-                  title="Upload your first file"
-                  description="Drag and drop any file into your dashboard — we support PDFs, images, documents, videos, and more."
-                  delay={100}
-                />
-                <OnboardingStep
-                  icon={FolderOpen}
-                  step={2}
-                  title="Organize with folders"
-                  description="Create folders to keep everything tidy. Your files, your structure."
-                  delay={180}
-                />
-                <OnboardingStep
-                  icon={ShieldCheck}
-                  step={3}
-                  title="Enjoy total privacy"
-                  description="Your files are encrypted and only accessible by you. No tracking, no ads, no compromises."
-                  delay={260}
-                />
-              </div>
-
-              <FadeInItem delay={340}>
-                <div className="flex flex-col sm:flex-row items-center justify-center pt-2 gap-3 sm:gap-4">
-                  <PrimaryButton href="/dashboard" className="w-full sm:w-auto">
-                    <Rocket className="w-4 h-4" />
-                    Go to Dashboard
-                  </PrimaryButton>
-                  <div className="flex items-center gap-4 text-xs sm:text-[13px] font-medium text-[#605e5c]">
-                    <span className="flex items-center gap-1.5">
-                      <Check className="w-3.5 h-3.5 text-[#107c10]" /> 5GB Free
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <Check className="w-3.5 h-3.5 text-[#107c10]" /> Secure
-                    </span>
-                  </div>
-                </div>
-              </FadeInItem>
-            </div>
-          ) : isLoggedIn ? (
-            /* ── Returning User Hero ── */
-            <div className="max-w-2xl mx-auto space-y-4 sm:space-y-5">
-              <FadeInItem delay={0}>
-                <div className="p-5 sm:p-7 space-y-1.5">
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1b1a19] tracking-tight leading-tight">
-                    {getGreeting()},{" "}
-                    <span className="bg-gradient-to-r from-[#0078d4] to-[#005a9e] bg-clip-text text-transparent">
-                      {firstName}
-                    </span>
-                  </h1>
-                  <p className="text-sm sm:text-base text-[#605e5c] font-medium">
-                    System operational. Pick up where you left off.
-                  </p>
-                </div>
-              </FadeInItem>
-
-              <div className="space-y-2.5">
-                <QuickAction
-                  icon={FolderOpen}
-                  title="Open Dashboard"
-                  description="View and manage all your stored files"
-                  href="/dashboard"
-                  delay={100}
-                />
-                <QuickAction
-                  icon={Upload}
-                  title="Upload Files"
-                  description="Add new documents to your storage"
-                  href="/dashboard"
-                  delay={180}
-                />
-              </div>
-            </div>
-          ) : (
-            /* ── Logged-out Hero ── */
-            <div className="max-w-4xl mx-auto space-y-5 sm:space-y-6 text-center">
-              <FadeInItem delay={0}>
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/70 border border-[#deecf9] rounded-full text-xs sm:text-[13px] text-[#0078d4] font-semibold tracking-wide shadow-sm">
-                  <LockKeyhole className="w-3.5 h-3.5" />
-                  <span>Secured by AWS Cloud</span>
-                </div>
-              </FadeInItem>
-
-              <FadeInItem delay={100}>
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-bold text-[#1b1a19] tracking-tight leading-tight flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-                  <span>Your Data.</span>
-                  <span className="bg-gradient-to-r from-[#0078d4] via-[#0063b1] to-[#005a9e] bg-clip-text text-transparent">
-                    Only Yours.
-                  </span>
-                </h1>
-              </FadeInItem>
-
-              <FadeInItem delay={200}>
-                <p className="text-sm sm:text-base md:text-lg text-black max-w-2xl mx-auto leading-relaxed text-left font-medium py-2 px-4">
-                  A cloud storage platform stripped of the noise. No bloatware,
-                  no complicated settings, and zero compromises on your privacy.
-                </p>
-              </FadeInItem>
-
-              <FadeInItem delay={300}>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-3 sm:pt-5">
-                  <PrimaryButton
-                    href="/verify-regis"
-                    className="w-full sm:w-auto text-[15px] px-9 py-3.5"
-                  >
-                    Start for free
-                    <ArrowRight className="w-4 h-4" />
-                  </PrimaryButton>
-                  <SecondaryButton
-                    href="/supported-formats"
-                    className="w-full sm:w-auto"
-                  >
-                    Supported Formats
-                  </SecondaryButton>
-                </div>
-              </FadeInItem>
-            </div>
-          )}
-
-          {/* ═══════════════ PRODUCT PREVIEW — logged-out only ═══════════════ */}
-          {isLoaded && !userId && (
-            <section className="max-w-5xl mx-auto pt-12 sm:pt-16 md:pt-20 pb-4 sm:pb-6">
-              <FadeInItem delay={0}>
-                <div className="mb-6 sm:mb-8 text-center">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#dff6dd]/80 border border-[#107c10]/20 rounded-full text-[11px] sm:text-xs text-[#107c10] font-semibold tracking-wide mb-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#107c10] animate-pulse" />
-                    <span>LIVE PREVIEW</span>
-                  </div>
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#1b1a19] tracking-tight mb-1">
-                    See it in action.
-                  </h2>
-                  <p className="text-[#605e5c] font-medium text-sm">
-                    A dashboard that respects your time and your data.
-                  </p>
-                </div>
-
-                <div className="relative bg-white border border-[#e8e6e3] rounded-xl shadow-lg shadow-blue-300/40 overflow-hidden">
-                  {/* Browser top bar */}
-                  <div className="flex items-center gap-2.5 px-4 py-2.5 bg-[#f6f5f4] border-b border-[#e8e6e3]">
-                    <div className="flex gap-1.5 shrink-0">
-                      <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#d13438]/70" />
-                      <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#ffaa44]/70" />
-                      <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#107c10]/70" />
-                    </div>
-                    <div className="flex-1 min-w-0 mx-2 sm:mx-3 px-3 py-1 bg-white border border-[#e8e6e3] rounded-md text-[10px] sm:text-xs text-[#605e5c] font-medium text-center truncate">
-                      kosha.cloudkinshuk.in/dashboard
-                    </div>
-                  </div>
-
-                  <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    preload="metadata"
-                    onError={(e) => {
-                      const v = e.currentTarget;
-                      console.error("Video error:", {
-                        code: v.error?.code,
-                        message: v.error?.message,
-                      });
-                    }}
-                    className="w-full h-auto block aspect-video object-cover bg-[#f3f2f1]"
-                  >
-                    <source src="/videos/brandy.mp4" type="video/mp4" />
-                  </video>
-                </div>
-              </FadeInItem>
-            </section>
-          )}
-        </div>
+        {/* Preview video — logged-out only (original behavior) */}
+        {isLoaded && !userId && <PreviewSection />}
       </main>
 
-      {/* ═══════════════════ FEATURES ═══════════════════ */}
-      <section
-        id="features"
-        className="relative max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20"
-      >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-px bg-gradient-to-r from-transparent via-[#d2d0ce] to-transparent" />
-
-        <div className="mb-8 sm:mb-10">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#1b1a19] tracking-tight mb-1.5">
-            Brilliantly Simple.
-          </h2>
-          <p className="text-[#0078d4] font-semibold text-[13px] sm:text-sm tracking-wide">
-            Everything you need. Nothing you don&apos;t.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <FeatureCard
-            icon={HardDrive}
-            title="5 GB Free Forever"
-            description="Generous AWS backed storage for everyone. Drop your files without worrying about space."
-            delay={0}
-          />
-          <FeatureCard
-            icon={ShieldCheck}
-            title="Absolute Privacy"
-            description="Amazon S3 Encryption. We can't see your files or sell your habits."
-            delay={60}
-          />
-          <FeatureCard
-            icon={Layout}
-            title="Zero Bloat"
-            description="No unnecessary features. A clean interface designed to get out of your way."
-            delay={120}
-          />
-          <FeatureCard
-            icon={Zap}
-            title="Lightning Fast"
-            description="Optimized for speed. Uploads and downloads in the blink of an eye."
-            delay={180}
-          />
-          <FeatureCard
-            icon={BrainCircuit}
-            title="No data training for AI"
-            description="We do not use your data to train AI models. Your files are yours alone."
-            delay={240}
-          />
-          <FeatureCard
-            icon={BrickWallShield}
-            title="No bloated AI features"
-            description="We do not offer any AI features. We focus on secure, private storage without distractions."
-            delay={300}
-          />
-          <FeatureCard
-            icon={FileCog}
-            title="Multiple file formats"
-            description="We support a wide range of file formats including documents, images, videos, and more."
-            delay={360}
-          />
-          <FeatureCard
-            icon={Cog}
-            title="You control your data"
-            description="We do not collect any data about your files or usage. Full control over what you share."
-            delay={420}
-          />
-        </div>
-      </section>
-
-      {/* ═══════════════════ CTA ═══════════════════ */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-14 md:py-18">
-        <div
-          className="relative rounded-2xl p-7 sm:p-10 md:p-12 flex flex-col items-center text-center overflow-hidden"
-          style={{
-            background:
-              "linear-gradient(135deg, #0078d4 0%, #005a9e 50%, #004578 100%)",
-          }}
-        >
-          {/* Decorative glow */}
-          <div
-            className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-15 pointer-events-none blur-3xl"
-            style={{
-              background:
-                "radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 60%)",
-            }}
-          />
-
-          <div className="relative z-10">
-            {isLoggedIn ? (
-              <>
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2.5 tracking-tight">
-                  Your files are waiting
-                </h2>
-                <p className="text-[#c7dff7] font-medium text-sm sm:text-[15px] mb-6 sm:mb-7 max-w-md">
-                  Jump back into your dashboard and keep your workflow going.
-                </p>
-                <Link
-                  href="/dashboard"
-                  className="inline-flex items-center justify-center gap-2 font-semibold px-7 py-3 rounded-lg text-[#0078d4] bg-white hover:bg-[#f3f2f1] active:bg-[#edebe9] transition-all duration-200 text-[15px] shadow-lg hover:shadow-xl active:scale-[0.98]"
-                >
-                  View Dashboard <ArrowRight className="w-4 h-4" />
-                </Link>
-              </>
-            ) : (
-              <>
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2.5 tracking-tight">
-                  Ready to take back your data?
-                </h2>
-                <p className="text-[#c7dff7] font-medium text-sm sm:text-[15px] mb-6 sm:mb-7 max-w-md">
-                  Join thousands who have migrated to a simpler, more secure way
-                  to store their digital life.
-                </p>
-                <Link
-                  href="/verify-regis"
-                  className="inline-flex items-center justify-center gap-2 font-semibold px-7 py-3 rounded-lg text-[#0078d4] bg-white hover:bg-[#f3f2f1] active:bg-[#edebe9] transition-all duration-200 text-[15px] shadow-lg hover:shadow-xl active:scale-[0.98]"
-                >
-                  Create Free Account <ArrowRight className="w-4 h-4" />
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </section>
+      <FeaturesGrid />
+      <CTA isLoggedIn={isLoggedIn} />
+      <Footer />
     </div>
   );
 }

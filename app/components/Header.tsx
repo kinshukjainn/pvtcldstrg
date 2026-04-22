@@ -125,10 +125,10 @@ export default function Header() {
             {isLoaded && !userId && (
               <Link
                 href="/verify-regis"
-                className="bg-[#0078D4] text-white hover:bg-[#005a9e] px-4 py-2 rounded-full text-[13px] font-semibold transition-colors shadow-sm ml-1 flex items-center gap-1.5"
+                className="bg-[#0078D4] text-white hover:bg-[#005a9e] px-4 py-2 rounded-full text-[10px] font-semibold transition-colors shadow-sm ml-1 flex items-center gap-1"
               >
                 <LogIn className="w-[14px] h-[14px]" />
-                Sign In / Up
+                Sign In | Up
               </Link>
             )}
             {isLoaded && userId && (
